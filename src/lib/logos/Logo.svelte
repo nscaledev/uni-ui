@@ -23,16 +23,16 @@
 		const parser = new DOMParser();
 
 		const svg = parser.parseFromString(raw, 'image/svg+xml');
-		if (!svg.activeElement) return;
+		if (!svg.firstElementChild) return;
 
 		for (const cls of (props.class || '').split(' ')) {
-			svg.activeElement.classList.add(cls);
+			svg.firstElementChild.classList.add(cls);
 		}
 
 		const elem = document.getElementById('logo');
 		if (!elem) return;
 
-		elem.replaceWith(svg.activeElement);
+		elem.replaceWith(svg.firstElementChild);
 	}
 
 	if (env.PUBLIC_LOGO) {
@@ -42,8 +42,6 @@
 
 {#if env.PUBLIC_LOGO}
 	<div id="logo"></div>
-
-	<!--<img class={props.class || ''} src={env.PUBLIC_LOGO} alt="logo" />-->
 {:else}
 	<svg
 		width="200"
