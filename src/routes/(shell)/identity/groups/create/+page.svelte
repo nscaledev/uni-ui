@@ -107,7 +107,7 @@
 	<Button
 		icon="mdi:cancel-bold"
 		label="Cancel"
-		class="preset-filled-surface-500"
+		class="preset-outlined-surface-600-400"
 		href="/identity/groups"
 	/>
 	<Button

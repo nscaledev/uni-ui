@@ -45,7 +45,7 @@
 		<Button
 			icon="mdi:arrow-left"
 			label="Previous"
-			class="preset-filled-surface-500 shadow-lg"
+			class="preset-outlined-surface-600-400 shadow-lg"
 			clicked={left}
 			disabled={step === 0}
 		/>
