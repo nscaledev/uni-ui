@@ -17,7 +17,7 @@
 	let { metadata, badges, extraMetadata }: Props = $props();
 </script>
 
-<div class="flex flex-col gap-4">
+<div class="flex flex-col gap-8">
 	<div class="flex gap-2 items-center flex-wrap">
 		<Badge icon={ProvisioningStatus.icon(metadata)} iconcolor={ProvisioningStatus.color(metadata)}>
 			{metadata.provisioningStatus}
@@ -38,6 +38,7 @@
 	</div>
 
 	<div class="grid grid-cols-[repeat(3,max-content)] gap-2 text-sm">
+		<ShellMetadataItem icon="mdi:identifier" label="ID" value={metadata.id} />
 		<ShellMetadataItem
 			icon="mdi:clock-time-five-outline"
 			label="Age"

@@ -12,7 +12,7 @@
 </script>
 
 <article
-	class="flex flex-col gap-4 lg:gap-[unset] lg:col-span-full lg:grid lg:grid-cols-subgrid card shadow-md p-4 bg-surface-50-950 border border-surface-200-800"
+	class="flex flex-col gap-4 lg:gap-[unset] lg:col-span-full lg:grid lg:grid-cols-subgrid lg:auto-rows-min card shadow-md p-4 bg-surface-50-950 border border-surface-200-800"
 >
 	<div class="contents lg:col-span-full lg:flex lg:pb-4 justify-between">
 		{#if badges}

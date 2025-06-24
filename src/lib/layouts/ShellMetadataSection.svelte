@@ -14,28 +14,19 @@
 		names?: Array<string>;
 		// Whether the input is valid.
 		valid?: boolean;
-		// Is the name mutable?
-		nameMutable?: boolean;
 	}
 
-	let {
-		metadata = $bindable(),
-		names,
-		valid = $bindable(false),
-		nameMutable = true
-	}: Props = $props();
+	let { metadata = $bindable(), names, valid = $bindable(false) }: Props = $props();
 </script>
 
 <ShellSection title="Resource Metadata">
-	{#if nameMutable}
-		<TextInput
-			bind:value={metadata.name}
-			label="Resource name."
-			hint="Name should be unique, contain 0-9, a-z, . or - and be at most 63 characters."
-			validators={Validation.GetKubernetesNameValidators(names)}
-			bind:valid
-		/>
-	{/if}
+	<TextInput
+		bind:value={metadata.name}
+		label="Resource name."
+		hint="Name should be unique, contain 0-9, a-z, . or - and be at most 63 characters."
+		validators={Validation.GetKubernetesNameValidators(names)}
+		bind:valid
+	/>
 	<TextInput
 		bind:value={metadata.description}
 		label="Resource decription."

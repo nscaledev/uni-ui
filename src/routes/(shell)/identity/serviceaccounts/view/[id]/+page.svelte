@@ -97,8 +97,7 @@
 		{/snippet}
 	</ShellViewHeader>
 
-	<!-- Token subjects are bound to the user name, so names are immutable -->
-	<ShellMetadataSection metadata={serviceAccount.metadata} nameMutable={false} />
+	<ShellMetadataSection metadata={serviceAccount.metadata} />
 
 	<ShellSection title="Access Control">
 		<MultiSelect
@@ -118,13 +117,13 @@
 		<Button
 			icon="mdi:cancel-bold"
 			label="Cancel"
-			class="preset-filled-surface-500"
+			class="preset-outlined-surface-600-400"
 			href="/identity/serviceaccounts"
 		/>
 		<Button
 			icon="mdi:refresh"
 			label="Refresh Access Token"
-			class="preset-filled-surface-500"
+			class="preset-outlined-surface-600-400"
 			clicked={rotate}
 		/>
 
