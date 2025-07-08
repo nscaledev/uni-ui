@@ -14,16 +14,12 @@ export const load: PageLoad = async ({ fetch, parent, url }) => {
 		error(400, 'region ID not in query');
 	}
 
-	const images = Clients.kubernetes(fetch).apiV1OrganizationsOrganizationIDRegionsRegionIDImagesGet(
-		{
-			organizationID: organizationID,
-			regionID: regionID
-		}
-	);
+	const images = Clients.compute(fetch).apiV1OrganizationsOrganizationIDRegionsRegionIDImagesGet({
+		organizationID: organizationID,
+		regionID: regionID
+	});
 
-	const flavors = Clients.kubernetes(
-		fetch
-	).apiV1OrganizationsOrganizationIDRegionsRegionIDFlavorsGet({
+	const flavors = Clients.compute(fetch).apiV1OrganizationsOrganizationIDRegionsRegionIDFlavorsGet({
 		organizationID: organizationID,
 		regionID: regionID
 	});
