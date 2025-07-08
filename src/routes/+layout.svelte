@@ -13,7 +13,7 @@
 <svelte:head>
 	<title>{env.PUBLIC_TITLE}</title>
 	{#if env.PUBLIC_FAVICON}
-		<link rel="shortcut icon" href={env.PUBLIC_FAVICON} />
+		<link rel="icon" href={env.PUBLIC_FAVICON} type="image/svg+xml" />
 	{/if}
 	<script src="/js/iconify-icon-1.0.5.min.js"></script>
 </svelte:head>
