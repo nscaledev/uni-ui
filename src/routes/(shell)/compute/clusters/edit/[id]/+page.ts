@@ -22,16 +22,12 @@ export const load: PageLoad = async ({ fetch, parent, params }) => {
 
 	const names = otherProjectClusters.map((x) => x.metadata.name);
 
-	const images = Clients.kubernetes(fetch).apiV1OrganizationsOrganizationIDRegionsRegionIDImagesGet(
-		{
-			organizationID: organizationID,
-			regionID: cluster.spec.regionId
-		}
-	);
+	const images = Clients.compute(fetch).apiV1OrganizationsOrganizationIDRegionsRegionIDImagesGet({
+		organizationID: organizationID,
+		regionID: cluster.spec.regionId
+	});
 
-	const flavors = Clients.kubernetes(
-		fetch
-	).apiV1OrganizationsOrganizationIDRegionsRegionIDFlavorsGet({
+	const flavors = Clients.compute(fetch).apiV1OrganizationsOrganizationIDRegionsRegionIDFlavorsGet({
 		organizationID: organizationID,
 		regionID: cluster.spec.regionId
 	});
