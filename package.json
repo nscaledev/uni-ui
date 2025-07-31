@@ -19,7 +19,6 @@
 		"openapi": "openapi-generator-cli",
 		"openapi:identity": "openapi-generator-cli generate -g typescript-fetch --global-property skipFormModel=false -i https://raw.githubusercontent.com/unikorn-cloud/identity/main/pkg/openapi/server.spec.yaml -o src/lib/openapi/identity",
 		"openapi:kubernetes": "openapi-generator-cli generate -g typescript-fetch -i https://raw.githubusercontent.com/unikorn-cloud/kubernetes/main/pkg/openapi/server.spec.yaml -o src/lib/openapi/kubernetes",
-		"openapi:application": "openapi-generator-cli generate -g typescript-fetch -i https://raw.githubusercontent.com/unikorn-cloud/application/main/pkg/openapi/server.spec.yaml -o src/lib/openapi/application",
 		"openapi:region": "openapi-generator-cli generate -g typescript-fetch -i https://raw.githubusercontent.com/unikorn-cloud/region/main/pkg/openapi/server.spec.yaml -o src/lib/openapi/region",
 		"openapi:compute": "openapi-generator-cli generate -g typescript-fetch -i https://raw.githubusercontent.com/unikorn-cloud/compute/main/pkg/openapi/server.spec.yaml -o src/lib/openapi/compute"
 	},
