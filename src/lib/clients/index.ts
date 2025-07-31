@@ -5,7 +5,6 @@ import type { InternalToken } from '$lib/oauth2';
 
 import * as Kubernetes from '$lib/openapi/kubernetes';
 import * as Compute from '$lib/openapi/compute';
-import * as Application from '$lib/openapi/application';
 import * as Identity from '$lib/openapi/identity';
 import * as Region from '$lib/openapi/region';
 import { token, removeCredentials } from '$lib/credentials';
@@ -164,17 +163,6 @@ export function compute(fetchImpl?: typeof fetch): Compute.DefaultApi {
 	});
 
 	return new Compute.DefaultApi(config);
-}
-
-export function application(fetchImpl?: typeof fetch): Application.DefaultApi {
-	const config = new Application.Configuration({
-		basePath: env.PUBLIC_APPLICATION_HOST,
-		accessToken: async () => accessToken(fetchImpl),
-		middleware: [authenticationMiddleware(), traceContextMiddleware()],
-		fetchApi: fetchImpl
-	});
-
-	return new Application.DefaultApi(config);
 }
 
 export function identity(fetchImpl?: typeof fetch): Identity.DefaultApi {
