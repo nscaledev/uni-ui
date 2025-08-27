@@ -37,7 +37,7 @@
 	function submit() {
 		const parameters = {
 			organizationID: data.organizationID,
-			groupid: $page.params.id,
+			groupid: group.metadata.id,
 			groupWrite: group
 		};
 
