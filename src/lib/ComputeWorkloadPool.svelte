@@ -135,7 +135,7 @@
 
 	// Pool is valid if the name is.
 	$effect.pre(() => {
-		valid = Validation.kubernetesNameValid(pool.name);
+		valid = Validation.kubernetesLabelValueValid(pool.name);
 	});
 
 	function newFirewallRule(): Compute.FirewallRule {
@@ -188,8 +188,8 @@
 	<ShellSection title="Pool Metadata">
 		<TextInput
 			label="Choose a name for your workload pool."
-			hint="Name should be unique, contain 0-9, a-z, . or - and be at most 63 characters."
-			validators={Validation.GetKubernetesNameValidators([])}
+			hint={Validation.kubernetesLabelValueHint}
+			validators={Validation.GetKubernetesLabelValueValidators([])}
 			bind:value={pool.name}
 			bind:valid
 		/>

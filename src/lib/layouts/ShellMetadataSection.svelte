@@ -23,8 +23,8 @@
 	<TextInput
 		bind:value={metadata.name}
 		label="Resource name."
-		hint="Name should be unique, contain 0-9, a-z, . or - and be at most 63 characters."
-		validators={Validation.GetKubernetesNameValidators(names)}
+		hint={Validation.kubernetesLabelValueHint}
+		validators={Validation.GetKubernetesLabelValueValidators(names)}
 		bind:valid
 	/>
 	<TextInput
