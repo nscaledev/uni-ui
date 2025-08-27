@@ -39,7 +39,7 @@
 	function submit() {
 		const parameters = {
 			organizationID: data.organizationID,
-			projectID: $page.params.id,
+			projectID: project.metadata.id,
 			projectWrite: project
 		};
 
