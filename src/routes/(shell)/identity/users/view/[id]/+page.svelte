@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { page } from '$app/stores';
 
 	let { data }: { data: PageData } = $props();
 
@@ -31,7 +30,7 @@
 	function submit() {
 		const parameters = {
 			organizationID: data.organizationID,
-			userID: $page.params.id,
+			userID: user.metadata.id,
 			userWrite: user
 		};
 

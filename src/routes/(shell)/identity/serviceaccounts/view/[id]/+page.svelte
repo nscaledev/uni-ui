@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { page } from '$app/stores';
 
 	let { data }: { data: PageData } = $props();
 
@@ -32,7 +31,7 @@
 	function submit() {
 		const parameters = {
 			organizationID: data.organizationID,
-			serviceAccountID: $page.params.id,
+			serviceAccountID: serviceAccount.metadata.id,
 			serviceAccountWrite: serviceAccount
 		};
 
@@ -47,7 +46,7 @@
 	function rotate() {
 		const parameters = {
 			organizationID: data.organizationID,
-			serviceAccountID: $page.params.id
+			serviceAccountID: serviceAccount.metadata.id
 		};
 
 		Clients.identity()
