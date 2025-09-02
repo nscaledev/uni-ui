@@ -1,5 +1,6 @@
 import Base64url from 'crypto-js/enc-base64url';
 import SHA512 from 'crypto-js/sha512';
+import SHA256 from 'crypto-js/sha256';
 import CryptoJS from 'crypto-js/core';
 
 import type { JWTVerifyResult } from 'jose';
@@ -55,27 +56,30 @@ export function discovery(fetchImpl: typeof fetch): Promise<DiscoveryInfo> {
 
 // See OIDC Core 1.0 sections 3.1.3.6, 3.1.3.8.
 export function compareAccessTokenHash(jwt: JWTVerifyResult, at: string) {
-	let atHash;
+	let sum;
 
 	switch (jwt.protectedHeader.alg) {
+		case 'RS256':
+		case 'ES256':
+				 sum = SHA256(at);
+				 break;
+		case 'RS512':
 		case 'ES512':
-			{
-				const sum = SHA512(at);
+				 sum = SHA512(at);
+			break;
+		default:
+			throw new Error(`unhandled hash algorithm ${jwt.protectedHeader.alg}`);
+	}
 
-				atHash = Base64url.stringify(
+	const atHash = Base64url.stringify(
 					CryptoJS.lib.WordArray.create(
 						sum.words.slice(0, sum.words.length >> 1),
 						sum.sigBytes >> 1
 					)
 				);
-			}
-
-			break;
-		default:
-			throw `unhandled hash algorithm ${jwt.protectedHeader.alg}`;
-	}
 
 	if (atHash != jwt.payload.at_hash) {
-		throw `access token hash mismatch`;
+		// FIXME remove the hashes from the output
+		throw new Error(`access token hash mismatch "${atHash}" != "${jwt.payload.at_hash}"`);
 	}
 }

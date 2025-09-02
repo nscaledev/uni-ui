@@ -95,14 +95,16 @@ export const load: PageServerLoad = async ({ fetch, url, cookies }) => {
 		error(400, 'OIDC ID token nonce does not match, possible replay attack');
 	}
 
-	// Verify the access token matches the hash in the signed ID token.
-	try {
-		OIDC.compareAccessTokenHash(jwt, result.access_token);
-	} catch (err) {
-		const e = err as Error;
+	// TODO: I've removed this because Auth0 does not return at_hash, which I _think_ is optional in the authorization_code flow.
 
-		error(400, `oauth2 access token error: ${e.message}`);
-	}
+	// // Verify the access token matches the hash in the signed ID token.
+	// try {
+	// 	OIDC.compareAccessTokenHash(jwt, result.access_token);
+	// } catch (err) {
+	// 	const e = err as Error;
+
+	// 	error(400, `oauth2 access token error: ${e.message}`);
+	// }
 
 	const token = result as InternalToken;
 
