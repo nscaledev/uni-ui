@@ -11,13 +11,17 @@ export const load: PageServerLoad = ({ cookies }) => {
 
 	const nonce = btoa(nonceBytes.toString());
 
-	const codeChallengeVerifierBytes = new Uint8Array(32);
+	const codeChallengeVerifierBytes = new Uint8Array(33); // a multiple of 3 so that the base64 encoding does not have padding, which can upset OIDC APIs
 	crypto.getRandomValues(codeChallengeVerifierBytes);
 
-	const codeChallengeVerifier = btoa(codeChallengeVerifierBytes.toString());
+	const codeChallengeVerifier = urlsafe(btoa(String.fromCharCode(...codeChallengeVerifierBytes)));
 
 	cookies.set('oidc_nonce', nonce, { path: '/' });
 	cookies.set('oidc_code_challenge_verifier', codeChallengeVerifier, { path: '/' });
 
 	return {};
 };
+
+function urlsafe(str: String) {
+	return str.replaceAll('+', '-').replaceAll('/', '_')
+}
