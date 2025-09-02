@@ -6,7 +6,7 @@ import type { JWTVerifyResult } from 'jose';
 import { env } from '$env/dynamic/public';
 
 // These are required variables from the environment.
-export const issuer = env.PUBLIC_IDENTITY_HOST || '';
+export const issuer = env.PUBLIC_ISSUER_HOST || '';
 
 export type IDToken = {
 	// openid scope.

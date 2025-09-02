@@ -30,6 +30,8 @@ spec:
         env:
         - name: PUBLIC_APPLICATION_VERSION
           value: {{ .Chart.Version }}
+        - name: PUBLIC_ISSUER_HOST
+          value: https://{{ .Values.oauth2.issuer | default (include "unikorn.identity.host" . )}}
         - name: PUBLIC_IDENTITY_HOST
           value: https://{{ include "unikorn.identity.host" . }}
         - name: PUBLIC_REGION_HOST

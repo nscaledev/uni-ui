@@ -51,6 +51,7 @@ compute:
   host: compute.unikorn-cloud.org
 
 oauth2:
+  issuer: ~
   # The client identifier assigned to this application.
   clientID: 3fc34852-9186-4884-b580-78bf4bcf628a
   # The client secret.
