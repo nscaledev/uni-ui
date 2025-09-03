@@ -7,10 +7,11 @@
 		title: string;
 		children?: Snippet;
 		confirm: () => void;
+		disabled?: boolean;
 		[key: string]: any;
 	}
 
-	let { icon, label, title, children, confirm, ...props }: Props = $props();
+	let { icon, label, title, children, confirm, disabled = false, ...props }: Props = $props();
 
 	import { Modal } from '@skeletonlabs/skeleton-svelte';
 
@@ -28,10 +29,12 @@
 
 <Modal
 	{open}
-	onOpenChange={(e) => (open = e.open)}
+	onOpenChange={(e) => {
+		if (!disabled) open = e.open;
+	}}
 	contentBase="card bg-surface-100-900 p-4 space-y-4 shadow-xl max-w-screen-sm"
 	backdropClasses="backdrop-blur-sm"
-	triggerBase="btn flex items-center p-0 {props.class || ''}"
+	triggerBase="btn flex items-center p-0 {disabled ? 'disabled' : ''} {props.class || ''}"
 >
 	{#snippet trigger()}
 		<iconify-icon {icon} class="text-2xl"></iconify-icon>

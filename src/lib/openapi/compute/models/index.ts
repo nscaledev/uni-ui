@@ -22,6 +22,7 @@ export * from './ImageOS';
 export * from './ImageSelector';
 export * from './ImageSpec';
 export * from './ImageVirtualization';
+export * from './InstanceLifecyclePhase';
 export * from './MachinePool';
 export * from './ModelError';
 export * from './OrganizationScopedResourceReadMetadata';

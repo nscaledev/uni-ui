@@ -9,6 +9,7 @@
 
 	import * as RegionUtil from '$lib/regionutil';
 	import * as ProvisioningStatus from '$lib/provisioningStatus';
+	import * as MachineStatus from '$lib/machineStatus';
 	import * as HealthStatus from '$lib/healthStatus';
 	import * as Clients from '$lib/clients';
 	import * as Compute from '$lib/openapi/compute';
@@ -50,7 +51,7 @@
 		return data.flavors.find((x) => x.metadata.id == id) as Compute.Flavor;
 	}
 
-	function confirm(resource: Compute.ComputeClusterRead): void {
+	function deleteCluster(resource: Compute.ComputeClusterRead): void {
 		const parameters = {
 			organizationID: resource.metadata.organizationId,
 			projectID: resource.metadata.projectId,
@@ -78,6 +79,78 @@
 			window.URL.revokeObjectURL(url);
 		}
 	}
+
+	function startMachine(
+		cluster: Compute.ComputeClusterRead,
+		machine: Compute.ComputeClusterMachineStatus
+	): void {
+		const parameters = {
+			organizationID: cluster.metadata.organizationId,
+			projectID: cluster.metadata.projectId,
+			clusterID: cluster.metadata.id,
+			machineID: machine.id
+		};
+
+		Clients.compute()
+			.apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDStartPost(
+				parameters
+			)
+			.catch((e: Error) => Clients.error(e));
+	}
+
+	function stopMachine(
+		cluster: Compute.ComputeClusterRead,
+		machine: Compute.ComputeClusterMachineStatus
+	): void {
+		const parameters = {
+			organizationID: cluster.metadata.organizationId,
+			projectID: cluster.metadata.projectId,
+			clusterID: cluster.metadata.id,
+			machineID: machine.id
+		};
+
+		Clients.compute()
+			.apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDStopPost(
+				parameters
+			)
+			.catch((e: Error) => Clients.error(e));
+	}
+
+	function softRebootMachine(
+		cluster: Compute.ComputeClusterRead,
+		machine: Compute.ComputeClusterMachineStatus
+	): void {
+		const parameters = {
+			organizationID: cluster.metadata.organizationId,
+			projectID: cluster.metadata.projectId,
+			clusterID: cluster.metadata.id,
+			machineID: machine.id
+		};
+
+		Clients.compute()
+			.apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDSoftrebootPost(
+				parameters
+			)
+			.catch((e: Error) => Clients.error(e));
+	}
+
+	function hardRebootMachine(
+		cluster: Compute.ComputeClusterRead,
+		machine: Compute.ComputeClusterMachineStatus
+	): void {
+		const parameters = {
+			organizationID: cluster.metadata.organizationId,
+			projectID: cluster.metadata.projectId,
+			clusterID: cluster.metadata.id,
+			machineID: machine.id
+		};
+
+		Clients.compute()
+			.apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDHardrebootPost(
+				parameters
+			)
+			.catch((e: Error) => Clients.error(e));
+	}
 </script>
 
 <ShellPageHeader {settings}>
@@ -92,7 +165,7 @@
 			icon="mdi:trash-can-outline"
 			label="Delete"
 			title="Are you sure?"
-			confirm={() => confirm(data.cluster)}
+			confirm={() => deleteCluster(data.cluster)}
 		></ModalIcon>
 	{/snippet}
 </ShellPageHeader>
@@ -135,10 +208,12 @@
 										)}
 										iconcolor={HealthStatus.statusColor(
 											machine.healthStatus as Identity.ResourceHealthStatus
-										)}
+										)}>{machine.healthStatus}</Badge
 									>
-										{machine.healthStatus}
-									</Badge>
+									<Badge
+										icon={MachineStatus.statusIcon(machine.status)}
+										iconcolor={MachineStatus.statusColor(machine.status)}>{machine.status}</Badge
+									>
 								{/snippet}
 							</ShellListItemBadges>
 						{/snippet}
@@ -158,6 +233,35 @@
 								value={machine.publicIP}
 							/>
 						{/if}
+
+						{#snippet trail()}
+							<ModalIcon
+								icon={machine.status !== Compute.InstanceLifecyclePhase.Stopped
+									? 'mdi:stop'
+									: 'mdi:play'}
+								label={machine.status !== Compute.InstanceLifecyclePhase.Stopped ? 'Stop' : 'Start'}
+								title="Are you sure?"
+								confirm={() =>
+									machine.status !== Compute.InstanceLifecyclePhase.Stopped
+										? stopMachine(data.cluster, machine)
+										: startMachine(data.cluster, machine)}
+								disabled={!MachineStatus.canStopOrStart(machine.status)}
+							></ModalIcon>
+							<ModalIcon
+								icon="mdi:restart"
+								label="Soft Reboot"
+								title="Are you sure?"
+								confirm={() => softRebootMachine(data.cluster, machine)}
+								disabled={!MachineStatus.canReboot(machine.status)}
+							></ModalIcon>
+							<ModalIcon
+								icon="mdi:restart-alert"
+								label="Hard Reboot"
+								title="Are you sure?"
+								confirm={() => hardRebootMachine(data.cluster, machine)}
+								disabled={!MachineStatus.canReboot(machine.status)}
+							></ModalIcon>
+						{/snippet}
 					</ShellListItem>
 				{/each}
 			{/each}
