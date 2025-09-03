@@ -69,6 +69,12 @@ export interface ComputeClusterMachineStatus {
      */
     publicIP?: string;
     /**
+     * Machine status.
+     * @type {string}
+     * @memberof ComputeClusterMachineStatus
+     */
+    status: ComputeClusterMachineStatusStatusEnum;
+    /**
      * 
      * @type {ResourceProvisioningStatus}
      * @memberof ComputeClusterMachineStatus
@@ -82,6 +88,19 @@ export interface ComputeClusterMachineStatus {
     healthStatus: ResourceHealthStatus;
 }
 
+
+/**
+ * @export
+ */
+export const ComputeClusterMachineStatusStatusEnum = {
+    Pending: 'Pending',
+    Running: 'Running',
+    Stopping: 'Stopping',
+    Stopped: 'Stopped'
+} as const;
+export type ComputeClusterMachineStatusStatusEnum = typeof ComputeClusterMachineStatusStatusEnum[keyof typeof ComputeClusterMachineStatusStatusEnum];
+
+
 /**
  * Check if a given object implements the ComputeClusterMachineStatus interface.
  */
@@ -91,6 +110,7 @@ export function instanceOfComputeClusterMachineStatus(value: object): boolean {
     isInstance = isInstance && "hostname" in value;
     isInstance = isInstance && "imageID" in value;
     isInstance = isInstance && "flavorID" in value;
+    isInstance = isInstance && "status" in value;
     isInstance = isInstance && "provisioningStatus" in value;
     isInstance = isInstance && "healthStatus" in value;
 
@@ -113,6 +133,7 @@ export function ComputeClusterMachineStatusFromJSONTyped(json: any, ignoreDiscri
         'flavorID': json['flavorID'],
         'privateIP': !exists(json, 'privateIP') ? undefined : json['privateIP'],
         'publicIP': !exists(json, 'publicIP') ? undefined : json['publicIP'],
+        'status': json['status'],
         'provisioningStatus': ResourceProvisioningStatusFromJSON(json['provisioningStatus']),
         'healthStatus': ResourceHealthStatusFromJSON(json['healthStatus']),
     };
@@ -133,6 +154,7 @@ export function ComputeClusterMachineStatusToJSON(value?: ComputeClusterMachineS
         'flavorID': value.flavorID,
         'privateIP': value.privateIP,
         'publicIP': value.publicIP,
+        'status': value.status,
         'provisioningStatus': ResourceProvisioningStatusToJSON(value.provisioningStatus),
         'healthStatus': ResourceHealthStatusToJSON(value.healthStatus),
     };
