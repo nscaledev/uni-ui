@@ -1,16 +1,16 @@
 export const ssr = false;
 
 import type { PageLoad } from './$types';
-import { error } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
 
 import * as Clients from '$lib/clients';
 
-export const load: PageLoad = async ({ fetch, parent, params }) => {
+export const load: PageLoad = async ({ fetch, parent, params, url }) => {
 	const { organizationID, clusters } = await parent();
 
 	const cluster = clusters.find((x) => params['id'] == x.metadata.id);
 	if (!cluster) {
-		error(404, 'kubernetes cluster not found');
+		redirect(307, url.pathname.split('/').slice(0, -2).join('/'));
 	}
 
 	// Find all clusters in this project that aren't the one we care about and
