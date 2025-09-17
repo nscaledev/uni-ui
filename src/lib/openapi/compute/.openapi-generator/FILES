@@ -23,6 +23,7 @@ models/ImageOS.ts
 models/ImageSelector.ts
 models/ImageSpec.ts
 models/ImageVirtualization.ts
+models/InstanceLifecyclePhase.ts
 models/MachinePool.ts
 models/ModelError.ts
 models/OrganizationScopedResourceReadMetadata.ts
