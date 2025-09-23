@@ -16,6 +16,7 @@ models/ImageGpu.ts
 models/ImageOS.ts
 models/ImageSpec.ts
 models/ImageVirtualization.ts
+models/InstanceLifecyclePhase.ts
 models/ModelError.ts
 models/NetworkDirection.ts
 models/NetworkProtocol.ts

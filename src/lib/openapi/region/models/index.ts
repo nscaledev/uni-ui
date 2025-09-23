@@ -15,6 +15,7 @@ export * from './ImageGpu';
 export * from './ImageOS';
 export * from './ImageSpec';
 export * from './ImageVirtualization';
+export * from './InstanceLifecyclePhase';
 export * from './ModelError';
 export * from './NetworkDirection';
 export * from './NetworkProtocol';

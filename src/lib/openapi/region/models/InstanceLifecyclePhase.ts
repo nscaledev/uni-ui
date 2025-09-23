@@ -1,8 +1,8 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * Compute Service API
- * The Compute Service API provides services that allows provisioning and life cycle management of Compute clusters.
+ * Region Service API
+ * Cloud region discovery and routing service.  This is service not intended for direct access by end users.  Region related functionality is typically exposed by higher level services e.g. Compute and Kubernetes, that provide subsets of resources that are compatible with that service.
  *
  * The version of the OpenAPI document: 1.7.0
  * 
