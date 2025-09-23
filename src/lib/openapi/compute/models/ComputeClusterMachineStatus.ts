@@ -13,6 +13,12 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { InstanceLifecyclePhase } from './InstanceLifecyclePhase';
+import {
+    InstanceLifecyclePhaseFromJSON,
+    InstanceLifecyclePhaseFromJSONTyped,
+    InstanceLifecyclePhaseToJSON,
+} from './InstanceLifecyclePhase';
 import type { ResourceHealthStatus } from './ResourceHealthStatus';
 import {
     ResourceHealthStatusFromJSON,
@@ -70,6 +76,12 @@ export interface ComputeClusterMachineStatus {
     publicIP?: string;
     /**
      * 
+     * @type {InstanceLifecyclePhase}
+     * @memberof ComputeClusterMachineStatus
+     */
+    status: InstanceLifecyclePhase;
+    /**
+     * 
      * @type {ResourceProvisioningStatus}
      * @memberof ComputeClusterMachineStatus
      */
@@ -91,6 +103,7 @@ export function instanceOfComputeClusterMachineStatus(value: object): boolean {
     isInstance = isInstance && "hostname" in value;
     isInstance = isInstance && "imageID" in value;
     isInstance = isInstance && "flavorID" in value;
+    isInstance = isInstance && "status" in value;
     isInstance = isInstance && "provisioningStatus" in value;
     isInstance = isInstance && "healthStatus" in value;
 
@@ -113,6 +126,7 @@ export function ComputeClusterMachineStatusFromJSONTyped(json: any, ignoreDiscri
         'flavorID': json['flavorID'],
         'privateIP': !exists(json, 'privateIP') ? undefined : json['privateIP'],
         'publicIP': !exists(json, 'publicIP') ? undefined : json['publicIP'],
+        'status': InstanceLifecyclePhaseFromJSON(json['status']),
         'provisioningStatus': ResourceProvisioningStatusFromJSON(json['provisioningStatus']),
         'healthStatus': ResourceHealthStatusFromJSON(json['healthStatus']),
     };
@@ -133,6 +147,7 @@ export function ComputeClusterMachineStatusToJSON(value?: ComputeClusterMachineS
         'flavorID': value.flavorID,
         'privateIP': value.privateIP,
         'publicIP': value.publicIP,
+        'status': InstanceLifecyclePhaseToJSON(value.status),
         'provisioningStatus': ResourceProvisioningStatusToJSON(value.provisioningStatus),
         'healthStatus': ResourceHealthStatusToJSON(value.healthStatus),
     };

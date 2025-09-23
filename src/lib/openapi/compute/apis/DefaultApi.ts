@@ -64,6 +64,34 @@ export interface ApiV1OrganizationsOrganizationIDProjectsProjectIDClustersCluste
     clusterID: string;
 }
 
+export interface ApiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDHardrebootPostRequest {
+    organizationID: string;
+    projectID: string;
+    clusterID: string;
+    machineID: string;
+}
+
+export interface ApiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDSoftrebootPostRequest {
+    organizationID: string;
+    projectID: string;
+    clusterID: string;
+    machineID: string;
+}
+
+export interface ApiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDStartPostRequest {
+    organizationID: string;
+    projectID: string;
+    clusterID: string;
+    machineID: string;
+}
+
+export interface ApiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDStopPostRequest {
+    organizationID: string;
+    projectID: string;
+    clusterID: string;
+    machineID: string;
+}
+
 export interface ApiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDPutRequest {
     organizationID: string;
     projectID: string;
@@ -267,6 +295,190 @@ export class DefaultApi extends runtime.BaseAPI {
     async apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDGet(requestParameters: ApiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ComputeClusterRead> {
         const response = await this.apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDGetRaw(requestParameters, initOverrides);
         return await response.value();
+    }
+
+    /**
+     * Hard reboot a machine within a cluster.
+     */
+    async apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDHardrebootPostRaw(requestParameters: ApiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDHardrebootPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
+            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDHardrebootPost.');
+        }
+
+        if (requestParameters.projectID === null || requestParameters.projectID === undefined) {
+            throw new runtime.RequiredError('projectID','Required parameter requestParameters.projectID was null or undefined when calling apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDHardrebootPost.');
+        }
+
+        if (requestParameters.clusterID === null || requestParameters.clusterID === undefined) {
+            throw new runtime.RequiredError('clusterID','Required parameter requestParameters.clusterID was null or undefined when calling apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDHardrebootPost.');
+        }
+
+        if (requestParameters.machineID === null || requestParameters.machineID === undefined) {
+            throw new runtime.RequiredError('machineID','Required parameter requestParameters.machineID was null or undefined when calling apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDHardrebootPost.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v1/organizations/{organizationID}/projects/{projectID}/clusters/{clusterID}/machines/{machineID}/hardreboot`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))).replace(`{${"projectID"}}`, encodeURIComponent(String(requestParameters.projectID))).replace(`{${"clusterID"}}`, encodeURIComponent(String(requestParameters.clusterID))).replace(`{${"machineID"}}`, encodeURIComponent(String(requestParameters.machineID))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Hard reboot a machine within a cluster.
+     */
+    async apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDHardrebootPost(requestParameters: ApiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDHardrebootPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDHardrebootPostRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     * Soft reboot a machine within a cluster.
+     */
+    async apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDSoftrebootPostRaw(requestParameters: ApiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDSoftrebootPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
+            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDSoftrebootPost.');
+        }
+
+        if (requestParameters.projectID === null || requestParameters.projectID === undefined) {
+            throw new runtime.RequiredError('projectID','Required parameter requestParameters.projectID was null or undefined when calling apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDSoftrebootPost.');
+        }
+
+        if (requestParameters.clusterID === null || requestParameters.clusterID === undefined) {
+            throw new runtime.RequiredError('clusterID','Required parameter requestParameters.clusterID was null or undefined when calling apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDSoftrebootPost.');
+        }
+
+        if (requestParameters.machineID === null || requestParameters.machineID === undefined) {
+            throw new runtime.RequiredError('machineID','Required parameter requestParameters.machineID was null or undefined when calling apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDSoftrebootPost.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v1/organizations/{organizationID}/projects/{projectID}/clusters/{clusterID}/machines/{machineID}/softreboot`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))).replace(`{${"projectID"}}`, encodeURIComponent(String(requestParameters.projectID))).replace(`{${"clusterID"}}`, encodeURIComponent(String(requestParameters.clusterID))).replace(`{${"machineID"}}`, encodeURIComponent(String(requestParameters.machineID))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Soft reboot a machine within a cluster.
+     */
+    async apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDSoftrebootPost(requestParameters: ApiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDSoftrebootPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDSoftrebootPostRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     * Start a stopped machine within a cluster.
+     */
+    async apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDStartPostRaw(requestParameters: ApiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDStartPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
+            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDStartPost.');
+        }
+
+        if (requestParameters.projectID === null || requestParameters.projectID === undefined) {
+            throw new runtime.RequiredError('projectID','Required parameter requestParameters.projectID was null or undefined when calling apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDStartPost.');
+        }
+
+        if (requestParameters.clusterID === null || requestParameters.clusterID === undefined) {
+            throw new runtime.RequiredError('clusterID','Required parameter requestParameters.clusterID was null or undefined when calling apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDStartPost.');
+        }
+
+        if (requestParameters.machineID === null || requestParameters.machineID === undefined) {
+            throw new runtime.RequiredError('machineID','Required parameter requestParameters.machineID was null or undefined when calling apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDStartPost.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v1/organizations/{organizationID}/projects/{projectID}/clusters/{clusterID}/machines/{machineID}/start`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))).replace(`{${"projectID"}}`, encodeURIComponent(String(requestParameters.projectID))).replace(`{${"clusterID"}}`, encodeURIComponent(String(requestParameters.clusterID))).replace(`{${"machineID"}}`, encodeURIComponent(String(requestParameters.machineID))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Start a stopped machine within a cluster.
+     */
+    async apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDStartPost(requestParameters: ApiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDStartPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDStartPostRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     * Stop a running machine within a cluster.
+     */
+    async apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDStopPostRaw(requestParameters: ApiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDStopPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
+            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDStopPost.');
+        }
+
+        if (requestParameters.projectID === null || requestParameters.projectID === undefined) {
+            throw new runtime.RequiredError('projectID','Required parameter requestParameters.projectID was null or undefined when calling apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDStopPost.');
+        }
+
+        if (requestParameters.clusterID === null || requestParameters.clusterID === undefined) {
+            throw new runtime.RequiredError('clusterID','Required parameter requestParameters.clusterID was null or undefined when calling apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDStopPost.');
+        }
+
+        if (requestParameters.machineID === null || requestParameters.machineID === undefined) {
+            throw new runtime.RequiredError('machineID','Required parameter requestParameters.machineID was null or undefined when calling apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDStopPost.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v1/organizations/{organizationID}/projects/{projectID}/clusters/{clusterID}/machines/{machineID}/stop`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))).replace(`{${"projectID"}}`, encodeURIComponent(String(requestParameters.projectID))).replace(`{${"clusterID"}}`, encodeURIComponent(String(requestParameters.clusterID))).replace(`{${"machineID"}}`, encodeURIComponent(String(requestParameters.machineID))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Stop a running machine within a cluster.
+     */
+    async apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDStopPost(requestParameters: ApiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDStopPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDMachinesMachineIDStopPostRaw(requestParameters, initOverrides);
     }
 
     /**
