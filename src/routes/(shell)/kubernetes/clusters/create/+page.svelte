@@ -8,6 +8,7 @@
 	import * as Clients from '$lib/clients';
 	import * as Kubernetes from '$lib/openapi/kubernetes';
 
+	import { env as publicEnv } from '$env/dynamic/public';
 	import type { ShellPageSettings } from '$lib/layouts/types.ts';
 	import ShellPageHeader from '$lib/layouts/ShellPageHeader.svelte';
 	import ShellMetadataSection from '$lib/layouts/ShellMetadataSection.svelte';
@@ -30,6 +31,8 @@
 		gpuOperator: true,
 		observabilityAgent: false
 	};
+
+	const enableObservabilityAgent = publicEnv.PUBLIC_FEATURE_OBSERVABILITY_AGENT === 'true';
 
 	const settings: ShellPageSettings = {
 		feature: 'Infrastructure',
@@ -346,19 +349,22 @@
 		{:else if index === 2}
 			<h2 class="h2">Advanced Options</h2>
 
-			<ShellSection title="Observability Agent">
-				<p>
-					Install the observability agent to collect Kubernetes metrics and telemetry and forward them to your observability stack.
-				</p>
+			{#if enableObservabilityAgent}
+				<ShellSection title="Observability Agent">
+					<p>
+						Install the observability agent to collect Kubernetes metrics and telemetry and forward
+						them to your observability stack.
+					</p>
 
-				<Switch
-					name="observability-agent"
-					label="Deploy observability agent"
-					hint="Installs telemetry collectors in the cluster."
-					initial={Boolean(resource.spec.features?.observabilityAgent)}
-					onCheckedChange={observabilityAgentChange}
-				/>
-			</ShellSection>
+					<Switch
+						name="observability-agent"
+						label="Deploy observability agent"
+						hint="Installs telemetry collectors in the cluster."
+						initial={Boolean(resource.spec.features?.observabilityAgent)}
+						onCheckedChange={observabilityAgentChange}
+					/>
+				</ShellSection>
+			{/if}
 
 			<ShellSection title="Auto Upgrade">
 				<p>

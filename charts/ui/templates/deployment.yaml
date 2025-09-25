@@ -40,6 +40,8 @@ spec:
           value: https://{{ include "unikorn.application.host" . }}
         - name: PUBLIC_COMPUTE_HOST
           value: https://{{ include "unikorn.compute.host" . }}
+        - name: PUBLIC_FEATURE_OBSERVABILITY_AGENT
+          value: {{ ternary "true" "false" .Values.features.observabilityAgent | quote }}
         {{- if .Values.tls.private }}
         - name: NODE_EXTRA_CA_CERTS
           value: /var/run/secrets/unikorn-cloud.org/ca.crt
