@@ -16,6 +16,7 @@ export * from './KubernetesClusterAutoUpgrade';
 export * from './KubernetesClusterAutoUpgradeDaysOfWeek';
 export * from './KubernetesClusterAutoUpgradeWindow';
 export * from './KubernetesClusterAutoscaling';
+export * from './KubernetesClusterFeatures';
 export * from './KubernetesClusterNetwork';
 export * from './KubernetesClusterRead';
 export * from './KubernetesClusterSpec';
