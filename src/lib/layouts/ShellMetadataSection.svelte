@@ -29,7 +29,7 @@
 	/>
 	<TextInput
 		bind:value={metadata.description}
-		label="Resource decription."
+		label="Resource description."
 		hint="This is optional but may add more verbose information about the resource."
 	/>
 </ShellSection>
