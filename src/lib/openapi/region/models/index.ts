@@ -1,5 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
+export * from './ConsoleOutput';
+export * from './ConsoleSession';
 export * from './ExternalNetwork';
 export * from './Flavor';
 export * from './FlavorSpec';
@@ -42,12 +44,10 @@ export * from './ResourceProvisioningStatus';
 export * from './ResourceReadMetadata';
 export * from './ResourceWriteMetadata';
 export * from './SecurityGroupRead';
-export * from './SecurityGroupReadSpec';
+export * from './SecurityGroupRule';
 export * from './SecurityGroupRulePort';
 export * from './SecurityGroupRulePortRange';
-export * from './SecurityGroupRuleRead';
-export * from './SecurityGroupRuleSpec';
-export * from './SecurityGroupRuleWrite';
+export * from './SecurityGroupSpec';
 export * from './SecurityGroupWrite';
 export * from './ServerNetwork';
 export * from './ServerNetworkAllowedAddressPair';

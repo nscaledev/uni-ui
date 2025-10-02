@@ -1,6 +1,8 @@
 apis/DefaultApi.ts
 apis/index.ts
 index.ts
+models/ConsoleOutput.ts
+models/ConsoleSession.ts
 models/ExternalNetwork.ts
 models/Flavor.ts
 models/FlavorSpec.ts
@@ -43,12 +45,10 @@ models/ResourceProvisioningStatus.ts
 models/ResourceReadMetadata.ts
 models/ResourceWriteMetadata.ts
 models/SecurityGroupRead.ts
-models/SecurityGroupReadSpec.ts
+models/SecurityGroupRule.ts
 models/SecurityGroupRulePort.ts
 models/SecurityGroupRulePortRange.ts
-models/SecurityGroupRuleRead.ts
-models/SecurityGroupRuleSpec.ts
-models/SecurityGroupRuleWrite.ts
+models/SecurityGroupSpec.ts
 models/SecurityGroupWrite.ts
 models/ServerNetwork.ts
 models/ServerNetworkAllowedAddressPair.ts

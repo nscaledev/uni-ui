@@ -10,6 +10,8 @@ export * from './ComputeClusterWorkloadPool';
 export * from './ComputeClusterWorkloadPoolStatus';
 export * from './ComputeClusterWrite';
 export * from './ComputeImage';
+export * from './ConsoleOutput';
+export * from './ConsoleSession';
 export * from './EvictionWrite';
 export * from './FirewallRule';
 export * from './Flavor';
