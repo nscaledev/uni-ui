@@ -3,6 +3,7 @@
 
 	let { data }: { data: PageData } = $props();
 
+	import { env as publicEnv } from '$env/dynamic/public';
 	import * as Clients from '$lib/clients';
 	import * as Kubernetes from '$lib/openapi/kubernetes';
 	import * as RegionUtil from '$lib/regionutil';
@@ -21,6 +22,19 @@
 	import KubernetesWorkloadPool from '$lib/KubernetesWorkloadPool.svelte';
 	import Flavor from '$lib/Flavor.svelte';
 
+	type KubernetesClusterFeaturesUI = Kubernetes.KubernetesClusterFeatures & {
+		autoscaling?: boolean;
+		gpuOperator?: boolean;
+	};
+
+	const DEFAULT_CLUSTER_FEATURES: KubernetesClusterFeaturesUI = {
+		autoscaling: true,
+		gpuOperator: true,
+		observabilityAgent: false
+	};
+
+	const enableObservabilityAgent = publicEnv.PUBLIC_FEATURE_OBSERVABILITY_AGENT === 'true';
+
 	const settings: ShellPageSettings = {
 		feature: 'Infrastructure',
 		name: 'View/update Kubernetes Cluster',
@@ -34,8 +48,23 @@
 		return cluster;
 	});
 
+	function clusterFeatures(): KubernetesClusterFeaturesUI {
+		if (!cluster.spec.features) {
+			cluster.spec.features = { ...DEFAULT_CLUSTER_FEATURES };
+		} else {
+			cluster.spec.features = {
+				...DEFAULT_CLUSTER_FEATURES,
+				...cluster.spec.features
+			} as KubernetesClusterFeaturesUI;
+		}
+
+		return cluster.spec.features as KubernetesClusterFeaturesUI;
+	}
+
 	$effect.pre(() => {
 		if (!cluster) return;
+
+		clusterFeatures();
 
 		// Upgrade legacy clusters...
 		if (!cluster.spec.autoUpgrade) {
@@ -49,6 +78,12 @@
 	const versions = [...new Set(data.images.map((x) => x.spec.softwareVersions?.kubernetes || ''))]
 		.sort()
 		.reverse();
+
+	function observabilityAgentChange(e: { checked: boolean }) {
+		const features = clusterFeatures();
+
+		features.observabilityAgent = e.checked;
+	}
 
 	function autoUpgradeChange(e: { checked: boolean }) {
 		if (!cluster.spec.autoUpgrade) {
@@ -320,6 +355,23 @@
 			</ResourceList>
 		{:else if index === 2}
 			<h2 class="h2">Advanced Options</h2>
+
+			{#if enableObservabilityAgent}
+				<ShellSection title="Observability Agent">
+					<p>
+						Install the observability agent to collect Kubernetes metrics and telemetry and forward
+						them to your observability stack.
+					</p>
+
+					<Switch
+						name="observability-agent"
+						label="Deploy observability agent"
+						hint="Installs telemetry collectors in the cluster."
+						initial={Boolean($state.snapshot(cluster.spec.features?.observabilityAgent))}
+						onCheckedChange={observabilityAgentChange}
+					/>
+				</ShellSection>
+			{/if}
 
 			<ShellSection title="Auto Upgrade">
 				<p>
