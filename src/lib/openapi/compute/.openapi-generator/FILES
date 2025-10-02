@@ -11,6 +11,8 @@ models/ComputeClusterWorkloadPool.ts
 models/ComputeClusterWorkloadPoolStatus.ts
 models/ComputeClusterWrite.ts
 models/ComputeImage.ts
+models/ConsoleOutput.ts
+models/ConsoleSession.ts
 models/EvictionWrite.ts
 models/FirewallRule.ts
 models/Flavor.ts
