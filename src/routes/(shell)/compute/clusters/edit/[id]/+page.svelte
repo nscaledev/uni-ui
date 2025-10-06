@@ -101,10 +101,6 @@
 	let workloadPoolActive: boolean = $state(false);
 
 	function workloadPoolAdd(): number {
-		if (!resource.spec.workloadPools) {
-			resource.spec.workloadPools = [];
-		}
-
 		let pool: Compute.ComputeClusterWorkloadPool = {
 			name: '',
 			machine: {
@@ -124,18 +120,16 @@
 	}
 
 	function workloadPoolRemove(index: number) {
-		resource.spec.workloadPools?.splice(index, 1);
+		resource.spec.workloadPools.splice(index, 1);
 	}
 
 	// When editing a pool, make a local copy of the firewall rule.
 	function workloadPoolActivate(index: number) {
-		if (!resource.spec.workloadPools) return;
 		firewallRules = resource.spec.workloadPools[index].machine.firewall || [];
 	}
 
 	// When finishing editing a pool, copy the local version to the resource.
 	function workloadPoolDeactivate(index: number) {
-		if (!resource.spec.workloadPools) return;
 		resource.spec.workloadPools[index].machine.firewall = firewallRules;
 	}
 
@@ -144,7 +138,7 @@
 	let workloadPoolValidFull: boolean = $derived.by(() => {
 		if (firewallRuleActive || !workloadPoolValid) return false;
 
-		const names = resource.spec.workloadPools?.map((x) => x.name) || [];
+		const names = resource.spec.workloadPools.map((x) => x.name);
 		const uniqueNames = new Set(names);
 
 		if (names.length != uniqueNames.size) return false;
@@ -211,58 +205,54 @@
 				{/snippet}
 
 				{#snippet expanded(pool: Compute.ComputeClusterWorkloadPool, index: number)}
-					{#if resource.spec.workloadPools}
-						<ComputeWorkloadPool
-							flavors={data.flavors}
-							images={data.images}
-							bind:pool={resource.spec.workloadPools[index]}
-							bind:valid={workloadPoolValid}
-						>
-							{#snippet firewall()}
-								<ResourceList
-									title="Firewall Rules"
-									titleClass="h3"
-									columns={4}
-									items={firewallRules}
-									bind:active={firewallRuleActive}
-									valid={firewallRuleValid}
-									add={firewallRuleAdd}
-									remove={firewallRuleRemove}
-								>
-									{#snippet normal(rule: Compute.FirewallRule, index: number)}
-										<div class="flex gap-2 items-center">
-											<iconify-icon icon="tabler:arrows-down-up" class="text-2xl"></iconify-icon>
-											{rule.direction}
-										</div>
-										<div class="flex gap-2 items-center">
-											<iconify-icon icon="tabler:protocol" class="text-2xl"></iconify-icon>
-											{rule.protocol}
-										</div>
-										<div class="flex gap-2 items-center">
-											<iconify-icon icon="fluent:usb-port-24-regular" class="text-2xl"
-											></iconify-icon>
-											{rule.port.toString() + (rule.portMax ? '-' + rule.portMax.toString() : '')}
-										</div>
-										<div class="flex gap-2 items-center">
-											<iconify-icon icon="mdi:check-network-outline" class="text-2xl"
-											></iconify-icon>
+					<ComputeWorkloadPool
+						flavors={data.flavors}
+						images={data.images}
+						bind:pool={resource.spec.workloadPools[index]}
+						bind:valid={workloadPoolValid}
+					>
+						{#snippet firewall()}
+							<ResourceList
+								title="Firewall Rules"
+								titleClass="h3"
+								columns={4}
+								items={firewallRules}
+								bind:active={firewallRuleActive}
+								valid={firewallRuleValid}
+								add={firewallRuleAdd}
+								remove={firewallRuleRemove}
+							>
+								{#snippet normal(rule: Compute.FirewallRule, index: number)}
+									<div class="flex gap-2 items-center">
+										<iconify-icon icon="tabler:arrows-down-up" class="text-2xl"></iconify-icon>
+										{rule.direction}
+									</div>
+									<div class="flex gap-2 items-center">
+										<iconify-icon icon="tabler:protocol" class="text-2xl"></iconify-icon>
+										{rule.protocol}
+									</div>
+									<div class="flex gap-2 items-center">
+										<iconify-icon icon="fluent:usb-port-24-regular" class="text-2xl"></iconify-icon>
+										{rule.port.toString() + (rule.portMax ? '-' + rule.portMax.toString() : '')}
+									</div>
+									<div class="flex gap-2 items-center">
+										<iconify-icon icon="mdi:check-network-outline" class="text-2xl"></iconify-icon>
 
-											{rule.prefixes.join(', ')}
-										</div>
-									{/snippet}
+										{rule.prefixes.join(', ')}
+									</div>
+								{/snippet}
 
-									{#snippet expanded(rule: Compute.FirewallRule, index: number)}
-										<div class="flex flex-col gap-4">
-											<ComputeWorkloadPoolSecurityRule
-												bind:rule={firewallRules[index]}
-												bind:valid={firewallRuleValid}
-											/>
-										</div>
-									{/snippet}
-								</ResourceList>
-							{/snippet}
-						</ComputeWorkloadPool>
-					{/if}
+								{#snippet expanded(rule: Compute.FirewallRule, index: number)}
+									<div class="flex flex-col gap-4">
+										<ComputeWorkloadPoolSecurityRule
+											bind:rule={firewallRules[index]}
+											bind:valid={firewallRuleValid}
+										/>
+									</div>
+								{/snippet}
+							</ResourceList>
+						{/snippet}
+					</ComputeWorkloadPool>
 				{/snippet}
 			</ResourceList>
 		{/if}
