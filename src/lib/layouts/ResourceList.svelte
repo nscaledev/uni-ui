@@ -14,7 +14,7 @@
 		// Number of columns to render per list item.
 		columns: number;
 		// Items in the list.
-		items: Array<any> | undefined;
+		items: Array<any>;
 		// Initial item to have expanded.
 		initialItem?: number;
 		// Normal list element renderer e.g. a summary.
@@ -64,7 +64,7 @@
 
 		activeItemInit = true;
 
-		if (items && initialItem != null && initialItem >= 0 && initialItem < items.length) {
+		if (initialItem != null && initialItem >= 0 && initialItem < items.length) {
 			itemActivate(initialItem);
 		}
 	});
@@ -104,7 +104,7 @@
 {@render description?.()}
 
 <div class="flex flex-col lg:grid lg:grid-cols-[repeat(6,max-content)_1fr] gap-2" {style}>
-	{#each items || [] as item, index}
+	{#each items as item, index}
 		{#if activeItem == index}
 			<div
 				class="col-span-full flex flex-col gap-4 p-2 lg:p-4 card preset-outlined-surface-500 shadow-lg"

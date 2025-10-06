@@ -37,7 +37,7 @@ export interface ComputeClusterSpec {
      * @type {Array<ComputeClusterWorkloadPool>}
      * @memberof ComputeClusterSpec
      */
-    workloadPools?: Array<ComputeClusterWorkloadPool>;
+    workloadPools: Array<ComputeClusterWorkloadPool>;
 }
 
 /**
@@ -46,6 +46,7 @@ export interface ComputeClusterSpec {
 export function instanceOfComputeClusterSpec(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "regionId" in value;
+    isInstance = isInstance && "workloadPools" in value;
 
     return isInstance;
 }
@@ -61,7 +62,7 @@ export function ComputeClusterSpecFromJSONTyped(json: any, ignoreDiscriminator: 
     return {
         
         'regionId': json['regionId'],
-        'workloadPools': !exists(json, 'workloadPools') ? undefined : ((json['workloadPools'] as Array<any>).map(ComputeClusterWorkloadPoolFromJSON)),
+        'workloadPools': ((json['workloadPools'] as Array<any>).map(ComputeClusterWorkloadPoolFromJSON)),
     };
 }
 
@@ -75,7 +76,7 @@ export function ComputeClusterSpecToJSON(value?: ComputeClusterSpec | null): any
     return {
         
         'regionId': value.regionId,
-        'workloadPools': value.workloadPools === undefined ? undefined : ((value.workloadPools as Array<any>).map(ComputeClusterWorkloadPoolToJSON)),
+        'workloadPools': ((value.workloadPools as Array<any>).map(ComputeClusterWorkloadPoolToJSON)),
     };
 }
 
