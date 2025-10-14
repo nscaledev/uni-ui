@@ -24,6 +24,8 @@ import type {
   Image,
   ModelError,
   NetworkRead,
+  NetworkV2Read,
+  NetworkV2Write,
   NetworkWrite,
   RegionDetailRead,
   RegionRead,
@@ -51,6 +53,10 @@ import {
     ModelErrorToJSON,
     NetworkReadFromJSON,
     NetworkReadToJSON,
+    NetworkV2ReadFromJSON,
+    NetworkV2ReadToJSON,
+    NetworkV2WriteFromJSON,
+    NetworkV2WriteToJSON,
     NetworkWriteFromJSON,
     NetworkWriteToJSON,
     RegionDetailReadFromJSON,
@@ -247,6 +253,38 @@ export interface ApiV1OrganizationsOrganizationIDSecuritygroupsGetRequest {
 export interface ApiV1OrganizationsOrganizationIDServersGetRequest {
     organizationID: string;
     tag?: Array<string>;
+}
+
+export interface ApiV2OrganizationsOrganizationIDNetworksGetRequest {
+    organizationID: string;
+    tag?: Array<string>;
+    projectID?: Array<string>;
+    regionID?: Array<string>;
+}
+
+export interface ApiV2OrganizationsOrganizationIDProjectsProjectIDNetworksGetRequest {
+    organizationID: string;
+    projectID: string;
+    tag?: Array<string>;
+    regionID?: Array<string>;
+}
+
+export interface ApiV2OrganizationsOrganizationIDProjectsProjectIDNetworksNetworkIDDeleteRequest {
+    organizationID: string;
+    projectID: string;
+    networkID: string;
+}
+
+export interface ApiV2OrganizationsOrganizationIDProjectsProjectIDNetworksNetworkIDGetRequest {
+    organizationID: string;
+    projectID: string;
+    networkID: string;
+}
+
+export interface ApiV2OrganizationsOrganizationIDProjectsProjectIDNetworksPostRequest {
+    organizationID: string;
+    projectID: string;
+    networkV2Write?: NetworkV2Write;
 }
 
 /**
@@ -1520,6 +1558,227 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async apiV1OrganizationsOrganizationIDServersGet(requestParameters: ApiV1OrganizationsOrganizationIDServersGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<ServerRead>> {
         const response = await this.apiV1OrganizationsOrganizationIDServersGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * List networks.
+     */
+    async apiV2OrganizationsOrganizationIDNetworksGetRaw(requestParameters: ApiV2OrganizationsOrganizationIDNetworksGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<NetworkV2Read>>> {
+        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
+            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV2OrganizationsOrganizationIDNetworksGet.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.tag) {
+            queryParameters['tag'] = requestParameters.tag.join(runtime.COLLECTION_FORMATS["csv"]);
+        }
+
+        if (requestParameters.projectID) {
+            queryParameters['projectID'] = requestParameters.projectID;
+        }
+
+        if (requestParameters.regionID) {
+            queryParameters['regionID'] = requestParameters.regionID;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/organizations/{organizationID}/networks`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(NetworkV2ReadFromJSON));
+    }
+
+    /**
+     * List networks.
+     */
+    async apiV2OrganizationsOrganizationIDNetworksGet(requestParameters: ApiV2OrganizationsOrganizationIDNetworksGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<NetworkV2Read>> {
+        const response = await this.apiV2OrganizationsOrganizationIDNetworksGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * List networks.
+     */
+    async apiV2OrganizationsOrganizationIDProjectsProjectIDNetworksGetRaw(requestParameters: ApiV2OrganizationsOrganizationIDProjectsProjectIDNetworksGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<NetworkV2Read>>> {
+        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
+            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV2OrganizationsOrganizationIDProjectsProjectIDNetworksGet.');
+        }
+
+        if (requestParameters.projectID === null || requestParameters.projectID === undefined) {
+            throw new runtime.RequiredError('projectID','Required parameter requestParameters.projectID was null or undefined when calling apiV2OrganizationsOrganizationIDProjectsProjectIDNetworksGet.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.tag) {
+            queryParameters['tag'] = requestParameters.tag.join(runtime.COLLECTION_FORMATS["csv"]);
+        }
+
+        if (requestParameters.regionID) {
+            queryParameters['regionID'] = requestParameters.regionID;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/organizations/{organizationID}/projects/{projectID}/networks`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))).replace(`{${"projectID"}}`, encodeURIComponent(String(requestParameters.projectID))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(NetworkV2ReadFromJSON));
+    }
+
+    /**
+     * List networks.
+     */
+    async apiV2OrganizationsOrganizationIDProjectsProjectIDNetworksGet(requestParameters: ApiV2OrganizationsOrganizationIDProjectsProjectIDNetworksGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<NetworkV2Read>> {
+        const response = await this.apiV2OrganizationsOrganizationIDProjectsProjectIDNetworksGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Delete a network.
+     */
+    async apiV2OrganizationsOrganizationIDProjectsProjectIDNetworksNetworkIDDeleteRaw(requestParameters: ApiV2OrganizationsOrganizationIDProjectsProjectIDNetworksNetworkIDDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
+            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV2OrganizationsOrganizationIDProjectsProjectIDNetworksNetworkIDDelete.');
+        }
+
+        if (requestParameters.projectID === null || requestParameters.projectID === undefined) {
+            throw new runtime.RequiredError('projectID','Required parameter requestParameters.projectID was null or undefined when calling apiV2OrganizationsOrganizationIDProjectsProjectIDNetworksNetworkIDDelete.');
+        }
+
+        if (requestParameters.networkID === null || requestParameters.networkID === undefined) {
+            throw new runtime.RequiredError('networkID','Required parameter requestParameters.networkID was null or undefined when calling apiV2OrganizationsOrganizationIDProjectsProjectIDNetworksNetworkIDDelete.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/organizations/{organizationID}/projects/{projectID}/networks/{networkID}`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))).replace(`{${"projectID"}}`, encodeURIComponent(String(requestParameters.projectID))).replace(`{${"networkID"}}`, encodeURIComponent(String(requestParameters.networkID))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Delete a network.
+     */
+    async apiV2OrganizationsOrganizationIDProjectsProjectIDNetworksNetworkIDDelete(requestParameters: ApiV2OrganizationsOrganizationIDProjectsProjectIDNetworksNetworkIDDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.apiV2OrganizationsOrganizationIDProjectsProjectIDNetworksNetworkIDDeleteRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     * Get a network.
+     */
+    async apiV2OrganizationsOrganizationIDProjectsProjectIDNetworksNetworkIDGetRaw(requestParameters: ApiV2OrganizationsOrganizationIDProjectsProjectIDNetworksNetworkIDGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<NetworkV2Read>> {
+        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
+            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV2OrganizationsOrganizationIDProjectsProjectIDNetworksNetworkIDGet.');
+        }
+
+        if (requestParameters.projectID === null || requestParameters.projectID === undefined) {
+            throw new runtime.RequiredError('projectID','Required parameter requestParameters.projectID was null or undefined when calling apiV2OrganizationsOrganizationIDProjectsProjectIDNetworksNetworkIDGet.');
+        }
+
+        if (requestParameters.networkID === null || requestParameters.networkID === undefined) {
+            throw new runtime.RequiredError('networkID','Required parameter requestParameters.networkID was null or undefined when calling apiV2OrganizationsOrganizationIDProjectsProjectIDNetworksNetworkIDGet.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/organizations/{organizationID}/projects/{projectID}/networks/{networkID}`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))).replace(`{${"projectID"}}`, encodeURIComponent(String(requestParameters.projectID))).replace(`{${"networkID"}}`, encodeURIComponent(String(requestParameters.networkID))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => NetworkV2ReadFromJSON(jsonValue));
+    }
+
+    /**
+     * Get a network.
+     */
+    async apiV2OrganizationsOrganizationIDProjectsProjectIDNetworksNetworkIDGet(requestParameters: ApiV2OrganizationsOrganizationIDProjectsProjectIDNetworksNetworkIDGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<NetworkV2Read> {
+        const response = await this.apiV2OrganizationsOrganizationIDProjectsProjectIDNetworksNetworkIDGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Create a new network.
+     */
+    async apiV2OrganizationsOrganizationIDProjectsProjectIDNetworksPostRaw(requestParameters: ApiV2OrganizationsOrganizationIDProjectsProjectIDNetworksPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<NetworkV2Read>> {
+        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
+            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV2OrganizationsOrganizationIDProjectsProjectIDNetworksPost.');
+        }
+
+        if (requestParameters.projectID === null || requestParameters.projectID === undefined) {
+            throw new runtime.RequiredError('projectID','Required parameter requestParameters.projectID was null or undefined when calling apiV2OrganizationsOrganizationIDProjectsProjectIDNetworksPost.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/organizations/{organizationID}/projects/{projectID}/networks`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))).replace(`{${"projectID"}}`, encodeURIComponent(String(requestParameters.projectID))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: NetworkV2WriteToJSON(requestParameters.networkV2Write),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => NetworkV2ReadFromJSON(jsonValue));
+    }
+
+    /**
+     * Create a new network.
+     */
+    async apiV2OrganizationsOrganizationIDProjectsProjectIDNetworksPost(requestParameters: ApiV2OrganizationsOrganizationIDProjectsProjectIDNetworksPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<NetworkV2Read> {
+        const response = await this.apiV2OrganizationsOrganizationIDProjectsProjectIDNetworksPostRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

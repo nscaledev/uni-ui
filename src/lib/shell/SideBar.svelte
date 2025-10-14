@@ -113,6 +113,17 @@
 				]
 			},
 			{
+				base: '/network',
+				title: 'Network',
+				icon: 'mdi:network-outline',
+				items: [
+					{
+						label: 'Networks',
+						href: 'networks'
+					}
+				]
+			},
+			{
 				base: '/compute',
 				title: 'Compute',
 				icon: 'mdi:computer',
