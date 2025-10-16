@@ -11,6 +11,7 @@
 	import SelectNew from '$lib/forms/SelectNew.svelte';
 	import RangeSlider from '$lib/forms/RangeSlider.svelte';
 	import Select from '$lib/forms/Select.svelte';
+	import InputChips from '$lib/forms/InputChips.svelte';
 	import Flavor from '$lib/Flavor.svelte';
 	import Image from '$lib/Image.svelte';
 	import ComputeWorkloadPoolSecurityRule from '$lib/ComputeWorkloadPoolSecurityRule.svelte';
@@ -182,6 +183,14 @@
 	function lookupFlavor(id: string): Compute.Flavor {
 		return flavors.find((x) => x.metadata.id == id) as Compute.Flavor;
 	}
+
+	let allowedAddressPairs: Array<string> = $state([]);
+
+	$effect(() => {
+		pool.machine.allowedAddressPairs = allowedAddressPairs.map((x) => {
+			return { cidr: x } as Compute.AllowedAddressPair;
+		});
+	});
 </script>
 
 <div class="flex flex-col gap-8">
@@ -271,6 +280,13 @@
 			hint="Selecting this option allocates a public IP address to each node in the pool."
 			initial={Boolean($state.snapshot(pool.machine.publicIPAllocation?.enabled))}
 			onCheckedChange={onPublicIPChange}
+		/>
+
+		<InputChips
+			name="allowed_address_pairs"
+			label="Allowed Address Pairs"
+			hint="A list of network prefixes that the server can send and receive e.g. acting as a router"
+			bind:value={allowedAddressPairs}
 		/>
 
 		{@render firewall()}

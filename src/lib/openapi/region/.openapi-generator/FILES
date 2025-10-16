@@ -25,6 +25,9 @@ models/NetworkProtocol.ts
 models/NetworkRead.ts
 models/NetworkReadSpec.ts
 models/NetworkSpecOpenstack.ts
+models/NetworkV2Read.ts
+models/NetworkV2Spec.ts
+models/NetworkV2Write.ts
 models/NetworkWrite.ts
 models/NetworkWriteSpec.ts
 models/OrganizationScopedResourceReadMetadata.ts
