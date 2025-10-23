@@ -23,7 +23,7 @@
 		"openapi:compute": "openapi-generator-cli generate -g typescript-fetch -i https://raw.githubusercontent.com/unikorn-cloud/compute/main/pkg/openapi/server.spec.yaml -o src/lib/openapi/compute"
 	},
 	"devDependencies": {
-		"@playwright/test": "^1.28.1",
+		"@playwright/test": "^1.56.1",
 		"@skeletonlabs/skeleton": "^3.0.0-next.12",
 		"@skeletonlabs/skeleton-svelte": "^1.0.0-next.21",
 		"@sveltejs/adapter-auto": "^3.0.0",
