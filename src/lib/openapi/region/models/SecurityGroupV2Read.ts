@@ -13,55 +13,55 @@
  */
 
 import { exists, mapValues } from '../runtime';
-import type { NetworkV2Spec } from './NetworkV2Spec';
-import {
-    NetworkV2SpecFromJSON,
-    NetworkV2SpecFromJSONTyped,
-    NetworkV2SpecToJSON,
-} from './NetworkV2Spec';
-import type { NetworkV2Status } from './NetworkV2Status';
-import {
-    NetworkV2StatusFromJSON,
-    NetworkV2StatusFromJSONTyped,
-    NetworkV2StatusToJSON,
-} from './NetworkV2Status';
 import type { ProjectScopedResourceReadMetadata } from './ProjectScopedResourceReadMetadata';
 import {
     ProjectScopedResourceReadMetadataFromJSON,
     ProjectScopedResourceReadMetadataFromJSONTyped,
     ProjectScopedResourceReadMetadataToJSON,
 } from './ProjectScopedResourceReadMetadata';
+import type { SecurityGroupV2Spec } from './SecurityGroupV2Spec';
+import {
+    SecurityGroupV2SpecFromJSON,
+    SecurityGroupV2SpecFromJSONTyped,
+    SecurityGroupV2SpecToJSON,
+} from './SecurityGroupV2Spec';
+import type { SecurityGroupV2Status } from './SecurityGroupV2Status';
+import {
+    SecurityGroupV2StatusFromJSON,
+    SecurityGroupV2StatusFromJSONTyped,
+    SecurityGroupV2StatusToJSON,
+} from './SecurityGroupV2Status';
 
 /**
- * A network.
+ * A security group.
  * @export
- * @interface NetworkV2Read
+ * @interface SecurityGroupV2Read
  */
-export interface NetworkV2Read {
+export interface SecurityGroupV2Read {
     /**
      * 
      * @type {ProjectScopedResourceReadMetadata}
-     * @memberof NetworkV2Read
+     * @memberof SecurityGroupV2Read
      */
     metadata: ProjectScopedResourceReadMetadata;
     /**
      * 
-     * @type {NetworkV2Spec}
-     * @memberof NetworkV2Read
+     * @type {SecurityGroupV2Spec}
+     * @memberof SecurityGroupV2Read
      */
-    spec: NetworkV2Spec;
+    spec: SecurityGroupV2Spec;
     /**
      * 
-     * @type {NetworkV2Status}
-     * @memberof NetworkV2Read
+     * @type {SecurityGroupV2Status}
+     * @memberof SecurityGroupV2Read
      */
-    status: NetworkV2Status;
+    status: SecurityGroupV2Status;
 }
 
 /**
- * Check if a given object implements the NetworkV2Read interface.
+ * Check if a given object implements the SecurityGroupV2Read interface.
  */
-export function instanceOfNetworkV2Read(value: object): boolean {
+export function instanceOfSecurityGroupV2Read(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "metadata" in value;
     isInstance = isInstance && "spec" in value;
@@ -70,23 +70,23 @@ export function instanceOfNetworkV2Read(value: object): boolean {
     return isInstance;
 }
 
-export function NetworkV2ReadFromJSON(json: any): NetworkV2Read {
-    return NetworkV2ReadFromJSONTyped(json, false);
+export function SecurityGroupV2ReadFromJSON(json: any): SecurityGroupV2Read {
+    return SecurityGroupV2ReadFromJSONTyped(json, false);
 }
 
-export function NetworkV2ReadFromJSONTyped(json: any, ignoreDiscriminator: boolean): NetworkV2Read {
+export function SecurityGroupV2ReadFromJSONTyped(json: any, ignoreDiscriminator: boolean): SecurityGroupV2Read {
     if ((json === undefined) || (json === null)) {
         return json;
     }
     return {
         
         'metadata': ProjectScopedResourceReadMetadataFromJSON(json['metadata']),
-        'spec': NetworkV2SpecFromJSON(json['spec']),
-        'status': NetworkV2StatusFromJSON(json['status']),
+        'spec': SecurityGroupV2SpecFromJSON(json['spec']),
+        'status': SecurityGroupV2StatusFromJSON(json['status']),
     };
 }
 
-export function NetworkV2ReadToJSON(value?: NetworkV2Read | null): any {
+export function SecurityGroupV2ReadToJSON(value?: SecurityGroupV2Read | null): any {
     if (value === undefined) {
         return undefined;
     }
@@ -96,8 +96,8 @@ export function NetworkV2ReadToJSON(value?: NetworkV2Read | null): any {
     return {
         
         'metadata': ProjectScopedResourceReadMetadataToJSON(value.metadata),
-        'spec': NetworkV2SpecToJSON(value.spec),
-        'status': NetworkV2StatusToJSON(value.status),
+        'spec': SecurityGroupV2SpecToJSON(value.spec),
+        'status': SecurityGroupV2StatusToJSON(value.status),
     };
 }
 

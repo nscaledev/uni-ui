@@ -25,8 +25,10 @@ models/NetworkProtocol.ts
 models/NetworkRead.ts
 models/NetworkReadSpec.ts
 models/NetworkSpecOpenstack.ts
+models/NetworkV2CreateSpec.ts
 models/NetworkV2Read.ts
 models/NetworkV2Spec.ts
+models/NetworkV2Status.ts
 models/NetworkV2Write.ts
 models/NetworkWrite.ts
 models/NetworkWriteSpec.ts
@@ -52,6 +54,12 @@ models/SecurityGroupRule.ts
 models/SecurityGroupRulePort.ts
 models/SecurityGroupRulePortRange.ts
 models/SecurityGroupSpec.ts
+models/SecurityGroupV2Create.ts
+models/SecurityGroupV2CreateSpec.ts
+models/SecurityGroupV2Read.ts
+models/SecurityGroupV2Spec.ts
+models/SecurityGroupV2Status.ts
+models/SecurityGroupV2Update.ts
 models/SecurityGroupWrite.ts
 models/ServerNetwork.ts
 models/ServerNetworkAllowedAddressPair.ts

@@ -13,43 +13,43 @@
  */
 
 import { exists, mapValues } from '../runtime';
-import type { NetworkV2CreateSpec } from './NetworkV2CreateSpec';
-import {
-    NetworkV2CreateSpecFromJSON,
-    NetworkV2CreateSpecFromJSONTyped,
-    NetworkV2CreateSpecToJSON,
-} from './NetworkV2CreateSpec';
 import type { ResourceWriteMetadata } from './ResourceWriteMetadata';
 import {
     ResourceWriteMetadataFromJSON,
     ResourceWriteMetadataFromJSONTyped,
     ResourceWriteMetadataToJSON,
 } from './ResourceWriteMetadata';
+import type { SecurityGroupV2CreateSpec } from './SecurityGroupV2CreateSpec';
+import {
+    SecurityGroupV2CreateSpecFromJSON,
+    SecurityGroupV2CreateSpecFromJSONTyped,
+    SecurityGroupV2CreateSpecToJSON,
+} from './SecurityGroupV2CreateSpec';
 
 /**
- * A network request.
+ * A security group request.
  * @export
- * @interface NetworkV2Write
+ * @interface SecurityGroupV2Create
  */
-export interface NetworkV2Write {
+export interface SecurityGroupV2Create {
     /**
      * 
      * @type {ResourceWriteMetadata}
-     * @memberof NetworkV2Write
+     * @memberof SecurityGroupV2Create
      */
     metadata: ResourceWriteMetadata;
     /**
      * 
-     * @type {NetworkV2CreateSpec}
-     * @memberof NetworkV2Write
+     * @type {SecurityGroupV2CreateSpec}
+     * @memberof SecurityGroupV2Create
      */
-    spec: NetworkV2CreateSpec;
+    spec: SecurityGroupV2CreateSpec;
 }
 
 /**
- * Check if a given object implements the NetworkV2Write interface.
+ * Check if a given object implements the SecurityGroupV2Create interface.
  */
-export function instanceOfNetworkV2Write(value: object): boolean {
+export function instanceOfSecurityGroupV2Create(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "metadata" in value;
     isInstance = isInstance && "spec" in value;
@@ -57,22 +57,22 @@ export function instanceOfNetworkV2Write(value: object): boolean {
     return isInstance;
 }
 
-export function NetworkV2WriteFromJSON(json: any): NetworkV2Write {
-    return NetworkV2WriteFromJSONTyped(json, false);
+export function SecurityGroupV2CreateFromJSON(json: any): SecurityGroupV2Create {
+    return SecurityGroupV2CreateFromJSONTyped(json, false);
 }
 
-export function NetworkV2WriteFromJSONTyped(json: any, ignoreDiscriminator: boolean): NetworkV2Write {
+export function SecurityGroupV2CreateFromJSONTyped(json: any, ignoreDiscriminator: boolean): SecurityGroupV2Create {
     if ((json === undefined) || (json === null)) {
         return json;
     }
     return {
         
         'metadata': ResourceWriteMetadataFromJSON(json['metadata']),
-        'spec': NetworkV2CreateSpecFromJSON(json['spec']),
+        'spec': SecurityGroupV2CreateSpecFromJSON(json['spec']),
     };
 }
 
-export function NetworkV2WriteToJSON(value?: NetworkV2Write | null): any {
+export function SecurityGroupV2CreateToJSON(value?: SecurityGroupV2Create | null): any {
     if (value === undefined) {
         return undefined;
     }
@@ -82,7 +82,7 @@ export function NetworkV2WriteToJSON(value?: NetworkV2Write | null): any {
     return {
         
         'metadata': ResourceWriteMetadataToJSON(value.metadata),
-        'spec': NetworkV2CreateSpecToJSON(value.spec),
+        'spec': SecurityGroupV2CreateSpecToJSON(value.spec),
     };
 }
 
