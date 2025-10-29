@@ -30,6 +30,9 @@ import type {
   RegionDetailRead,
   RegionRead,
   SecurityGroupRead,
+  SecurityGroupV2Create,
+  SecurityGroupV2Read,
+  SecurityGroupV2Update,
   SecurityGroupWrite,
   ServerRead,
   ServerWrite,
@@ -65,6 +68,12 @@ import {
     RegionReadToJSON,
     SecurityGroupReadFromJSON,
     SecurityGroupReadToJSON,
+    SecurityGroupV2CreateFromJSON,
+    SecurityGroupV2CreateToJSON,
+    SecurityGroupV2ReadFromJSON,
+    SecurityGroupV2ReadToJSON,
+    SecurityGroupV2UpdateFromJSON,
+    SecurityGroupV2UpdateToJSON,
     SecurityGroupWriteFromJSON,
     SecurityGroupWriteToJSON,
     ServerReadFromJSON,
@@ -285,6 +294,47 @@ export interface ApiV2OrganizationsOrganizationIDProjectsProjectIDNetworksPostRe
     organizationID: string;
     projectID: string;
     networkV2Write?: NetworkV2Write;
+}
+
+export interface ApiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsGetRequest {
+    organizationID: string;
+    projectID: string;
+    tag?: Array<string>;
+    regionID?: Array<string>;
+    networkID?: Array<string>;
+}
+
+export interface ApiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsPostRequest {
+    organizationID: string;
+    projectID: string;
+    securityGroupV2Create?: SecurityGroupV2Create;
+}
+
+export interface ApiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsSecurityGroupIDDeleteRequest {
+    organizationID: string;
+    projectID: string;
+    securityGroupID: string;
+}
+
+export interface ApiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsSecurityGroupIDGetRequest {
+    organizationID: string;
+    projectID: string;
+    securityGroupID: string;
+}
+
+export interface ApiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsSecurityGroupIDPutRequest {
+    organizationID: string;
+    projectID: string;
+    securityGroupID: string;
+    securityGroupV2Update?: SecurityGroupV2Update;
+}
+
+export interface ApiV2OrganizationsOrganizationIDSecuritygroupsGetRequest {
+    organizationID: string;
+    tag?: Array<string>;
+    projectID?: Array<string>;
+    regionID?: Array<string>;
+    networkID?: Array<string>;
 }
 
 /**
@@ -1779,6 +1829,281 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async apiV2OrganizationsOrganizationIDProjectsProjectIDNetworksPost(requestParameters: ApiV2OrganizationsOrganizationIDProjectsProjectIDNetworksPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<NetworkV2Read> {
         const response = await this.apiV2OrganizationsOrganizationIDProjectsProjectIDNetworksPostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * List security groups.
+     */
+    async apiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsGetRaw(requestParameters: ApiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SecurityGroupV2Read>>> {
+        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
+            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsGet.');
+        }
+
+        if (requestParameters.projectID === null || requestParameters.projectID === undefined) {
+            throw new runtime.RequiredError('projectID','Required parameter requestParameters.projectID was null or undefined when calling apiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsGet.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.tag) {
+            queryParameters['tag'] = requestParameters.tag.join(runtime.COLLECTION_FORMATS["csv"]);
+        }
+
+        if (requestParameters.regionID) {
+            queryParameters['regionID'] = requestParameters.regionID;
+        }
+
+        if (requestParameters.networkID) {
+            queryParameters['networkID'] = requestParameters.networkID;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/organizations/{organizationID}/projects/{projectID}/securitygroups`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))).replace(`{${"projectID"}}`, encodeURIComponent(String(requestParameters.projectID))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SecurityGroupV2ReadFromJSON));
+    }
+
+    /**
+     * List security groups.
+     */
+    async apiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsGet(requestParameters: ApiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<SecurityGroupV2Read>> {
+        const response = await this.apiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Create a new security group.
+     */
+    async apiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsPostRaw(requestParameters: ApiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SecurityGroupV2Read>> {
+        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
+            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsPost.');
+        }
+
+        if (requestParameters.projectID === null || requestParameters.projectID === undefined) {
+            throw new runtime.RequiredError('projectID','Required parameter requestParameters.projectID was null or undefined when calling apiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsPost.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/organizations/{organizationID}/projects/{projectID}/securitygroups`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))).replace(`{${"projectID"}}`, encodeURIComponent(String(requestParameters.projectID))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: SecurityGroupV2CreateToJSON(requestParameters.securityGroupV2Create),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SecurityGroupV2ReadFromJSON(jsonValue));
+    }
+
+    /**
+     * Create a new security group.
+     */
+    async apiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsPost(requestParameters: ApiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SecurityGroupV2Read> {
+        const response = await this.apiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsPostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Delete a security groups.
+     */
+    async apiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsSecurityGroupIDDeleteRaw(requestParameters: ApiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsSecurityGroupIDDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
+            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsSecurityGroupIDDelete.');
+        }
+
+        if (requestParameters.projectID === null || requestParameters.projectID === undefined) {
+            throw new runtime.RequiredError('projectID','Required parameter requestParameters.projectID was null or undefined when calling apiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsSecurityGroupIDDelete.');
+        }
+
+        if (requestParameters.securityGroupID === null || requestParameters.securityGroupID === undefined) {
+            throw new runtime.RequiredError('securityGroupID','Required parameter requestParameters.securityGroupID was null or undefined when calling apiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsSecurityGroupIDDelete.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/organizations/{organizationID}/projects/{projectID}/securitygroups/{securityGroupID}`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))).replace(`{${"projectID"}}`, encodeURIComponent(String(requestParameters.projectID))).replace(`{${"securityGroupID"}}`, encodeURIComponent(String(requestParameters.securityGroupID))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Delete a security groups.
+     */
+    async apiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsSecurityGroupIDDelete(requestParameters: ApiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsSecurityGroupIDDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.apiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsSecurityGroupIDDeleteRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     * Get a security group.
+     */
+    async apiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsSecurityGroupIDGetRaw(requestParameters: ApiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsSecurityGroupIDGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SecurityGroupV2Read>> {
+        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
+            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsSecurityGroupIDGet.');
+        }
+
+        if (requestParameters.projectID === null || requestParameters.projectID === undefined) {
+            throw new runtime.RequiredError('projectID','Required parameter requestParameters.projectID was null or undefined when calling apiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsSecurityGroupIDGet.');
+        }
+
+        if (requestParameters.securityGroupID === null || requestParameters.securityGroupID === undefined) {
+            throw new runtime.RequiredError('securityGroupID','Required parameter requestParameters.securityGroupID was null or undefined when calling apiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsSecurityGroupIDGet.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/organizations/{organizationID}/projects/{projectID}/securitygroups/{securityGroupID}`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))).replace(`{${"projectID"}}`, encodeURIComponent(String(requestParameters.projectID))).replace(`{${"securityGroupID"}}`, encodeURIComponent(String(requestParameters.securityGroupID))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SecurityGroupV2ReadFromJSON(jsonValue));
+    }
+
+    /**
+     * Get a security group.
+     */
+    async apiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsSecurityGroupIDGet(requestParameters: ApiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsSecurityGroupIDGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SecurityGroupV2Read> {
+        const response = await this.apiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsSecurityGroupIDGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Update a security group.
+     */
+    async apiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsSecurityGroupIDPutRaw(requestParameters: ApiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsSecurityGroupIDPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SecurityGroupV2Read>> {
+        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
+            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsSecurityGroupIDPut.');
+        }
+
+        if (requestParameters.projectID === null || requestParameters.projectID === undefined) {
+            throw new runtime.RequiredError('projectID','Required parameter requestParameters.projectID was null or undefined when calling apiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsSecurityGroupIDPut.');
+        }
+
+        if (requestParameters.securityGroupID === null || requestParameters.securityGroupID === undefined) {
+            throw new runtime.RequiredError('securityGroupID','Required parameter requestParameters.securityGroupID was null or undefined when calling apiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsSecurityGroupIDPut.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/organizations/{organizationID}/projects/{projectID}/securitygroups/{securityGroupID}`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))).replace(`{${"projectID"}}`, encodeURIComponent(String(requestParameters.projectID))).replace(`{${"securityGroupID"}}`, encodeURIComponent(String(requestParameters.securityGroupID))),
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: SecurityGroupV2UpdateToJSON(requestParameters.securityGroupV2Update),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SecurityGroupV2ReadFromJSON(jsonValue));
+    }
+
+    /**
+     * Update a security group.
+     */
+    async apiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsSecurityGroupIDPut(requestParameters: ApiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsSecurityGroupIDPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SecurityGroupV2Read> {
+        const response = await this.apiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsSecurityGroupIDPutRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * List security groups.
+     */
+    async apiV2OrganizationsOrganizationIDSecuritygroupsGetRaw(requestParameters: ApiV2OrganizationsOrganizationIDSecuritygroupsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SecurityGroupV2Read>>> {
+        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
+            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV2OrganizationsOrganizationIDSecuritygroupsGet.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.tag) {
+            queryParameters['tag'] = requestParameters.tag.join(runtime.COLLECTION_FORMATS["csv"]);
+        }
+
+        if (requestParameters.projectID) {
+            queryParameters['projectID'] = requestParameters.projectID;
+        }
+
+        if (requestParameters.regionID) {
+            queryParameters['regionID'] = requestParameters.regionID;
+        }
+
+        if (requestParameters.networkID) {
+            queryParameters['networkID'] = requestParameters.networkID;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/organizations/{organizationID}/securitygroups`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SecurityGroupV2ReadFromJSON));
+    }
+
+    /**
+     * List security groups.
+     */
+    async apiV2OrganizationsOrganizationIDSecuritygroupsGet(requestParameters: ApiV2OrganizationsOrganizationIDSecuritygroupsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<SecurityGroupV2Read>> {
+        const response = await this.apiV2OrganizationsOrganizationIDSecuritygroupsGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

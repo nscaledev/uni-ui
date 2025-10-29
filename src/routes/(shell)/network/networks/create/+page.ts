@@ -6,7 +6,7 @@ import { error } from '@sveltejs/kit';
 export const load: PageLoad = async ({ url }) => {
 	const projectID = url.searchParams.get('projectID');
 	if (!projectID) {
-		error(400, 'projectIDID not in query');
+		error(400, 'project ID not in query');
 	}
 
 	const regionID = url.searchParams.get('regionID');

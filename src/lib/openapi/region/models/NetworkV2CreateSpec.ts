@@ -16,39 +16,46 @@ import { exists, mapValues } from '../runtime';
 /**
  * A network's specification.
  * @export
- * @interface NetworkV2Spec
+ * @interface NetworkV2CreateSpec
  */
-export interface NetworkV2Spec {
+export interface NetworkV2CreateSpec {
     /**
      * An IPv4 prefix for the network.
      * @type {string}
-     * @memberof NetworkV2Spec
+     * @memberof NetworkV2CreateSpec
      */
     prefix: string;
     /**
      * A list of IPv4 addresses.
      * @type {Array<string>}
-     * @memberof NetworkV2Spec
+     * @memberof NetworkV2CreateSpec
      */
     dnsNameservers: Array<string>;
+    /**
+     * The region a network is to be provisioned in.
+     * @type {string}
+     * @memberof NetworkV2CreateSpec
+     */
+    regionId: string;
 }
 
 /**
- * Check if a given object implements the NetworkV2Spec interface.
+ * Check if a given object implements the NetworkV2CreateSpec interface.
  */
-export function instanceOfNetworkV2Spec(value: object): boolean {
+export function instanceOfNetworkV2CreateSpec(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "prefix" in value;
     isInstance = isInstance && "dnsNameservers" in value;
+    isInstance = isInstance && "regionId" in value;
 
     return isInstance;
 }
 
-export function NetworkV2SpecFromJSON(json: any): NetworkV2Spec {
-    return NetworkV2SpecFromJSONTyped(json, false);
+export function NetworkV2CreateSpecFromJSON(json: any): NetworkV2CreateSpec {
+    return NetworkV2CreateSpecFromJSONTyped(json, false);
 }
 
-export function NetworkV2SpecFromJSONTyped(json: any, ignoreDiscriminator: boolean): NetworkV2Spec {
+export function NetworkV2CreateSpecFromJSONTyped(json: any, ignoreDiscriminator: boolean): NetworkV2CreateSpec {
     if ((json === undefined) || (json === null)) {
         return json;
     }
@@ -56,10 +63,11 @@ export function NetworkV2SpecFromJSONTyped(json: any, ignoreDiscriminator: boole
         
         'prefix': json['prefix'],
         'dnsNameservers': json['dnsNameservers'],
+        'regionId': json['regionId'],
     };
 }
 
-export function NetworkV2SpecToJSON(value?: NetworkV2Spec | null): any {
+export function NetworkV2CreateSpecToJSON(value?: NetworkV2CreateSpec | null): any {
     if (value === undefined) {
         return undefined;
     }
@@ -70,6 +78,7 @@ export function NetworkV2SpecToJSON(value?: NetworkV2Spec | null): any {
         
         'prefix': value.prefix,
         'dnsNameservers': value.dnsNameservers,
+        'regionId': value.regionId,
     };
 }
 

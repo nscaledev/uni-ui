@@ -120,6 +120,10 @@
 					{
 						label: 'Networks',
 						href: 'networks'
+					},
+					{
+						label: 'Security Groups',
+						href: 'securitygroups'
 					}
 				]
 			},

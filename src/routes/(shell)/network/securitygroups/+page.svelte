@@ -17,41 +17,42 @@
 	import ShellListItemHeader from '$lib/layouts/ShellListItemHeader.svelte';
 	import ShellListItemBadges from '$lib/layouts/ShellListItemBadges.svelte';
 	import ShellListItemMetadata from '$lib/layouts/ShellListItemMetadata.svelte';
-	import ShellMetadataItem from '$lib/layouts/ShellMetadataItem.svelte';
 	import Badge from '$lib/layouts/Badge.svelte';
 	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
 	import PopupButton from '$lib/forms/PopupButton.svelte';
 
 	const settings: ShellPageSettings = {
 		feature: 'Regions',
-		name: 'Networks',
-		description: 'Manage your networks',
-		icon: 'mdi:network-outline'
+		name: 'Security Groups',
+		description: 'Manage your network security groups',
+		icon: 'mdi:security-network'
 	};
 
 	onMount(() => {
-		const interval = setInterval(() => navigating.to || invalidate('layout:networks'), 5000);
+		const interval = setInterval(() => navigating.to || invalidate('layout:securitygroups'), 5000);
 
 		return () => clearInterval(interval);
 	});
 
-	let createProjectID = $state(data.projects[0]?.metadata.id);
-	let createRegionID = $state(data.regions[0]?.metadata.id);
+	let createNetworkID = $state(data.networks[0]?.metadata.id);
 
-	function lookupRegion(id: string): Region.RegionRead {
-		return data.regions.find((x) => x.metadata.id == id) as Region.RegionRead;
+	function lookupNetwork(id: string): Region.NetworkV2Read {
+		return data.networks.find((x) => x.metadata.id == id) as Region.NetworkV2Read;
 	}
 
-	function confirm(resource: Region.NetworkV2Read) {
-		const parameters = {
-			organizationID: resource.metadata.organizationId,
-			projectID: resource.metadata.projectId,
-			networkID: resource.metadata.id
-		};
+	function confirm(resource: Region.SecurityGroupV2Read) {
+		const parameters: Region.ApiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsSecurityGroupIDDeleteRequest =
+			{
+				organizationID: resource.metadata.organizationId,
+				projectID: resource.metadata.projectId,
+				securityGroupID: resource.metadata.id
+			};
 
 		Clients.region()
-			.apiV2OrganizationsOrganizationIDProjectsProjectIDNetworksNetworkIDDelete(parameters)
-			.then(() => invalidate('layout:networks'))
+			.apiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsSecurityGroupIDDelete(
+				parameters
+			)
+			.then(() => invalidate('layout:securitygroups'))
 			.catch((e: Error) => Clients.error(e));
 	}
 </script>
@@ -62,33 +63,20 @@
 			<PopupButton icon="mdi:add" class="self-end" label="Create">
 				{#snippet contents()}
 					<div class="flex flex-col gap-4">
-						<div class="font-bold">Project</div>
+						<div class="font-bold">Network</div>
 
 						<div class="input-group grid grid-cols-[auto_1fr]">
-							<iconify-icon icon="mdi:folder-open-outline" class="ig-cell"></iconify-icon>
+							<iconify-icon icon="mdi:network-outline" class="ig-cell"></iconify-icon>
 
-							<select class="ig-select" bind:value={createProjectID}>
-								{#each data.projects as p}
+							<select class="ig-select" bind:value={createNetworkID}>
+								{#each data.networks as p}
 									<option value={p.metadata.id}>{p.metadata.name}</option>
 								{/each}
 							</select>
 						</div>
 
-						<div class="font-bold">Region</div>
-
-						<div class="input-group grid grid-cols-[auto_1fr]">
-							<iconify-icon icon={RegionUtil.iconIcon(lookupRegion(createRegionID))} class="ig-cell"
-							></iconify-icon>
-
-							<select class="ig-select" bind:value={createRegionID}>
-								{#each data.regions as r}
-									<option value={r.metadata.id}>{r.metadata.name}</option>
-								{/each}
-							</select>
-						</div>
-
 						<a
-							href="/network/networks/create?projectID={createProjectID}&regionID={createRegionID}"
+							href="/network/securitygroups/create?networkID={createNetworkID}"
 							class="btn preset-filled-primary-500">Create</a
 						>
 					</div>
@@ -99,10 +87,14 @@
 </ShellPageHeader>
 
 <ShellList>
-	{#each data.networks as resource}
+	{#each data.securityGroups as resource}
 		<ShellListItem>
 			{#snippet main()}
-				<ShellListItemHeader metadata={resource.metadata} projects={data.projects} />
+				<ShellListItemHeader
+					metadata={resource.metadata}
+					projects={data.projects}
+					href="/network/securitygroups/edit/{resource.metadata.id}"
+				/>
 			{/snippet}
 
 			{#snippet badges()}
@@ -110,6 +102,9 @@
 					{#snippet extra()}
 						<Badge icon={RegionUtil.icon(data.regions, resource.status.regionId)}>
 							{RegionUtil.name(data.regions, resource.status.regionId)}
+						</Badge>
+						<Badge icon="mdi:network-outline">
+							{lookupNetwork(resource.status.networkId).metadata.name}
 						</Badge>
 					{/snippet}
 				</ShellListItemBadges>
@@ -125,15 +120,6 @@
 			{/snippet}
 
 			<ShellListItemMetadata metadata={resource.metadata} />
-
-			<ShellListItemMetadata>
-				<ShellMetadataItem icon="mdi:network-outline" label="Prefix" value={resource.spec.prefix} />
-				<ShellMetadataItem
-					icon="mdi:dns-outline"
-					label="DNS Nameservers"
-					value={resource.spec.dnsNameservers.join(', ')}
-				/>
-			</ShellListItemMetadata>
 		</ShellListItem>
 	{/each}
 </ShellList>
