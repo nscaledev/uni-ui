@@ -69,15 +69,12 @@
 	function submit() {
 		resource.spec.rules = rules;
 
-		const parameters: Region.ApiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsPostRequest =
-			{
-				organizationID: data.organizationID,
-				projectID: data.network.metadata.projectId,
-				securityGroupV2Create: resource
-			};
+		const parameters: Region.ApiV2SecuritygroupsPostRequest = {
+			securityGroupV2Create: resource
+		};
 
 		Clients.region()
-			.apiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsPost(parameters)
+			.apiV2SecuritygroupsPost(parameters)
 			.then(() => window.location.assign('/network/securitygroups'))
 			.catch((e: Error) => Clients.error(e));
 	}

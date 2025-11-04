@@ -44,13 +44,11 @@
 
 	function confirm(resource: Region.NetworkV2Read) {
 		const parameters = {
-			organizationID: resource.metadata.organizationId,
-			projectID: resource.metadata.projectId,
 			networkID: resource.metadata.id
 		};
 
 		Clients.region()
-			.apiV2OrganizationsOrganizationIDProjectsProjectIDNetworksNetworkIDDelete(parameters)
+			.apiV2NetworksNetworkIDDelete(parameters)
 			.then(() => invalidate('layout:networks'))
 			.catch((e: Error) => Clients.error(e));
 	}

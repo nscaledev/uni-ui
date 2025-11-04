@@ -5,7 +5,6 @@ export * from './AclEndpoint';
 export * from './AclOperation';
 export * from './AclOrganization';
 export * from './AclProject';
-export * from './AclScopedEndpoints';
 export * from './AllocationRead';
 export * from './AllocationSpec';
 export * from './AllocationWrite';

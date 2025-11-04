@@ -6,7 +6,6 @@ models/AclEndpoint.ts
 models/AclOperation.ts
 models/AclOrganization.ts
 models/AclProject.ts
-models/AclScopedEndpoints.ts
 models/AllocationRead.ts
 models/AllocationSpec.ts
 models/AllocationWrite.ts

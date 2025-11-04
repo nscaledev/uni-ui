@@ -25,12 +25,12 @@ import {
     AclOrganizationFromJSONTyped,
     AclOrganizationToJSON,
 } from './AclOrganization';
-import type { AclScopedEndpoints } from './AclScopedEndpoints';
+import type { AclProject } from './AclProject';
 import {
-    AclScopedEndpointsFromJSON,
-    AclScopedEndpointsFromJSONTyped,
-    AclScopedEndpointsToJSON,
-} from './AclScopedEndpoints';
+    AclProjectFromJSON,
+    AclProjectFromJSONTyped,
+    AclProjectToJSON,
+} from './AclProject';
 
 /**
  * A list of access control scopes and permissions.
@@ -52,16 +52,16 @@ export interface Acl {
     organizations?: Array<AclOrganization>;
     /**
      * 
-     * @type {AclScopedEndpoints}
+     * @type {AclOrganization}
      * @memberof Acl
      */
-    organization?: AclScopedEndpoints;
+    organization?: AclOrganization;
     /**
-     * A list of resource scoped endpoint permissions.
-     * @type {Array<AclScopedEndpoints>}
+     * A list of projects the subject is a member of.
+     * @type {Array<AclProject>}
      * @memberof Acl
      */
-    projects?: Array<AclScopedEndpoints>;
+    projects?: Array<AclProject>;
 }
 
 /**
@@ -85,8 +85,8 @@ export function AclFromJSONTyped(json: any, ignoreDiscriminator: boolean): Acl {
         
         'global': !exists(json, 'global') ? undefined : ((json['global'] as Array<any>).map(AclEndpointFromJSON)),
         'organizations': !exists(json, 'organizations') ? undefined : ((json['organizations'] as Array<any>).map(AclOrganizationFromJSON)),
-        'organization': !exists(json, 'organization') ? undefined : AclScopedEndpointsFromJSON(json['organization']),
-        'projects': !exists(json, 'projects') ? undefined : ((json['projects'] as Array<any>).map(AclScopedEndpointsFromJSON)),
+        'organization': !exists(json, 'organization') ? undefined : AclOrganizationFromJSON(json['organization']),
+        'projects': !exists(json, 'projects') ? undefined : ((json['projects'] as Array<any>).map(AclProjectFromJSON)),
     };
 }
 
@@ -101,8 +101,8 @@ export function AclToJSON(value?: Acl | null): any {
         
         'global': value.global === undefined ? undefined : ((value.global as Array<any>).map(AclEndpointToJSON)),
         'organizations': value.organizations === undefined ? undefined : ((value.organizations as Array<any>).map(AclOrganizationToJSON)),
-        'organization': AclScopedEndpointsToJSON(value.organization),
-        'projects': value.projects === undefined ? undefined : ((value.projects as Array<any>).map(AclScopedEndpointsToJSON)),
+        'organization': AclOrganizationToJSON(value.organization),
+        'projects': value.projects === undefined ? undefined : ((value.projects as Array<any>).map(AclProjectToJSON)),
     };
 }
 

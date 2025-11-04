@@ -27,10 +27,10 @@ export interface SecurityGroupV2Status {
     regionId: string;
     /**
      * The network a security group belongs to.
-     * @type {any}
+     * @type {string}
      * @memberof SecurityGroupV2Status
      */
-    networkId: any | null;
+    networkId: string;
 }
 
 /**

@@ -32,6 +32,8 @@
 			})
 		},
 		spec: {
+			organizationId: data.organizationID,
+			projectId: data.projectID,
 			regionId: data.regionID,
 			prefix: '192.168.0.0/24',
 			dnsNameservers: ['8.8.8.8', '8.8.4.4']
@@ -46,13 +48,11 @@
 
 	function submit() {
 		const parameters = {
-			organizationID: data.organizationID,
-			projectID: data.projectID,
 			networkV2Write: resource
 		};
 
 		Clients.region()
-			.apiV2OrganizationsOrganizationIDProjectsProjectIDNetworksPost(parameters)
+			.apiV2NetworksPost(parameters)
 			.then(() => window.location.assign('/network/networks'))
 			.catch((e: Error) => Clients.error(e));
 	}
