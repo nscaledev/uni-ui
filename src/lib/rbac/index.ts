@@ -34,30 +34,58 @@ function operationAllowedEndpoints(
 	);
 }
 
-// This find a matching endpoint if the ID matches.
-function operationAllowedScopedEndpoints(
-	endpoints: Identity.AclScopedEndpoints | undefined,
-	id: string,
+function operationAllowedOrganization(
+	organizationACL: Identity.AclOrganization,
+	organizationID: string,
 	endpoint: string,
 	operations: Array<Identity.AclOperation>
 ): boolean {
-	if (!endpoints) return false;
+	if (organizationACL.id != organizationID) return false;
 
-	return id == endpoints.id && operationAllowedEndpoints(endpoints.endpoints, endpoint, operations);
+	return operationAllowedEndpoints(organizationACL.endpoints, endpoint, operations);
 }
 
-// This finds a matching endpoint if the ID exists in a list of scoped endpoints.
-function operationAllowedScopedEndpointsList(
-	endpoints: Array<Identity.AclScopedEndpoints> | undefined,
-	id: string,
+function operationAllowedProject(
+	projectACL: Identity.AclProject,
+	projectID: string,
 	endpoint: string,
 	operations: Array<Identity.AclOperation>
 ): boolean {
-	if (!endpoints) return false;
+	if (projectACL.id != projectID) return false;
 
-	return endpoints.some((e: Identity.AclScopedEndpoints): boolean =>
-		operationAllowedScopedEndpoints(e, id, endpoint, operations)
-	);
+	return operationAllowedEndpoints(projectACL.endpoints, endpoint, operations);
+}
+
+function operationAllowedOrganizationScoped(
+	organizationsACL: Array<Identity.AclOrganization> | undefined,
+	organizationID: string,
+	endpoint: string,
+	operations: Array<Identity.AclOperation>
+): boolean {
+	if (!organizationsACL) return false;
+
+	return organizationsACL.some((o: Identity.AclOrganization) => {
+		return operationAllowedOrganization(o, organizationID, endpoint, operations);
+	});
+}
+
+function operationAllowedProjectScoped(
+	organizationsACL: Array<Identity.AclOrganization> | undefined,
+	organizationID: string,
+	projectID: string,
+	endpoint: string,
+	operations: Array<Identity.AclOperation>
+): boolean {
+	if (!organizationsACL) return false;
+
+	return organizationsACL.some((o: Identity.AclOrganization) => {
+		return (
+			operationAllowedOrganization(o, organizationID, endpoint, operations) ||
+			o.projects?.some((p: Identity.AclProject) => {
+				return operationAllowedOrganization(p, projectID, endpoint, operations);
+			})
+		);
+	});
 }
 
 // This is used to see if the ACL is permitted to perform
@@ -70,7 +98,7 @@ function organizationOperationAllowed(
 ): boolean {
 	return (
 		operationAllowedEndpoints(acl.global, endpoint, operations) ||
-		operationAllowedScopedEndpoints(acl.organization, organizationID, endpoint, operations)
+		operationAllowedOrganizationScoped(acl.organizations, organizationID, endpoint, operations)
 	);
 }
 
@@ -84,8 +112,14 @@ function projectOperationAllowed(
 	operations: Array<Identity.AclOperation>
 ): boolean {
 	return (
-		organizationOperationAllowed(acl, organizationID, endpoint, operations) ||
-		operationAllowedScopedEndpointsList(acl.projects, projectID, endpoint, operations)
+		operationAllowedEndpoints(acl.global, endpoint, operations) ||
+		operationAllowedProjectScoped(
+			acl.organizations,
+			organizationID,
+			projectID,
+			endpoint,
+			operations
+		)
 	);
 }
 

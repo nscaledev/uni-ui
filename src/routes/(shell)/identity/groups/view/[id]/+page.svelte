@@ -78,7 +78,7 @@
 	<MultiSelect
 		label="Select group members."
 		options={users}
-		value={group.spec.userIDs}
+		value={group.spec.userIDs || []}
 		onValueChange={(e) => (group.spec.userIDs = e.value)}
 	>
 		{#snippet selected(value: string)}

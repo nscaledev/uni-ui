@@ -19,6 +19,12 @@ import {
     AclEndpointFromJSONTyped,
     AclEndpointToJSON,
 } from './AclEndpoint';
+import type { AclOrganization } from './AclOrganization';
+import {
+    AclOrganizationFromJSON,
+    AclOrganizationFromJSONTyped,
+    AclOrganizationToJSON,
+} from './AclOrganization';
 import type { AclScopedEndpoints } from './AclScopedEndpoints';
 import {
     AclScopedEndpointsFromJSON,
@@ -38,6 +44,12 @@ export interface Acl {
      * @memberof Acl
      */
     global?: Array<AclEndpoint>;
+    /**
+     * A list of organizations the subject is a member of.
+     * @type {Array<AclOrganization>}
+     * @memberof Acl
+     */
+    organizations?: Array<AclOrganization>;
     /**
      * 
      * @type {AclScopedEndpoints}
@@ -72,6 +84,7 @@ export function AclFromJSONTyped(json: any, ignoreDiscriminator: boolean): Acl {
     return {
         
         'global': !exists(json, 'global') ? undefined : ((json['global'] as Array<any>).map(AclEndpointFromJSON)),
+        'organizations': !exists(json, 'organizations') ? undefined : ((json['organizations'] as Array<any>).map(AclOrganizationFromJSON)),
         'organization': !exists(json, 'organization') ? undefined : AclScopedEndpointsFromJSON(json['organization']),
         'projects': !exists(json, 'projects') ? undefined : ((json['projects'] as Array<any>).map(AclScopedEndpointsFromJSON)),
     };
@@ -87,6 +100,7 @@ export function AclToJSON(value?: Acl | null): any {
     return {
         
         'global': value.global === undefined ? undefined : ((value.global as Array<any>).map(AclEndpointToJSON)),
+        'organizations': value.organizations === undefined ? undefined : ((value.organizations as Array<any>).map(AclOrganizationToJSON)),
         'organization': AclScopedEndpointsToJSON(value.organization),
         'projects': value.projects === undefined ? undefined : ((value.projects as Array<any>).map(AclScopedEndpointsToJSON)),
     };
