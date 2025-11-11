@@ -21,29 +21,29 @@ import {
 } from './AclEndpoint';
 
 /**
- * Resource scoped endpoint permissions.
+ * A project the subject is a member of.
  * @export
- * @interface AclScopedEndpoints
+ * @interface AclProject
  */
-export interface AclScopedEndpoints {
+export interface AclProject {
     /**
-     * The resource ID this scope applies to.
+     * The project ID.
      * @type {string}
-     * @memberof AclScopedEndpoints
+     * @memberof AclProject
      */
     id: string;
     /**
      * A list of access control scopes.
      * @type {Array<AclEndpoint>}
-     * @memberof AclScopedEndpoints
+     * @memberof AclProject
      */
     endpoints: Array<AclEndpoint>;
 }
 
 /**
- * Check if a given object implements the AclScopedEndpoints interface.
+ * Check if a given object implements the AclProject interface.
  */
-export function instanceOfAclScopedEndpoints(value: object): boolean {
+export function instanceOfAclProject(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "id" in value;
     isInstance = isInstance && "endpoints" in value;
@@ -51,11 +51,11 @@ export function instanceOfAclScopedEndpoints(value: object): boolean {
     return isInstance;
 }
 
-export function AclScopedEndpointsFromJSON(json: any): AclScopedEndpoints {
-    return AclScopedEndpointsFromJSONTyped(json, false);
+export function AclProjectFromJSON(json: any): AclProject {
+    return AclProjectFromJSONTyped(json, false);
 }
 
-export function AclScopedEndpointsFromJSONTyped(json: any, ignoreDiscriminator: boolean): AclScopedEndpoints {
+export function AclProjectFromJSONTyped(json: any, ignoreDiscriminator: boolean): AclProject {
     if ((json === undefined) || (json === null)) {
         return json;
     }
@@ -66,7 +66,7 @@ export function AclScopedEndpointsFromJSONTyped(json: any, ignoreDiscriminator: 
     };
 }
 
-export function AclScopedEndpointsToJSON(value?: AclScopedEndpoints | null): any {
+export function AclProjectToJSON(value?: AclProject | null): any {
     if (value === undefined) {
         return undefined;
     }

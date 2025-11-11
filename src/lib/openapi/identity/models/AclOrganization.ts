@@ -19,12 +19,6 @@ import {
     AclEndpointFromJSONTyped,
     AclEndpointToJSON,
 } from './AclEndpoint';
-import type { AclOrganization } from './AclOrganization';
-import {
-    AclOrganizationFromJSON,
-    AclOrganizationFromJSONTyped,
-    AclOrganizationToJSON,
-} from './AclOrganization';
 import type { AclProject } from './AclProject';
 import {
     AclProjectFromJSON,
@@ -33,64 +27,58 @@ import {
 } from './AclProject';
 
 /**
- * A list of access control scopes and permissions.
+ * An organization the subject is a member of.
  * @export
- * @interface Acl
+ * @interface AclOrganization
  */
-export interface Acl {
+export interface AclOrganization {
+    /**
+     * The organization ID.
+     * @type {string}
+     * @memberof AclOrganization
+     */
+    id: string;
     /**
      * A list of access control scopes.
      * @type {Array<AclEndpoint>}
-     * @memberof Acl
+     * @memberof AclOrganization
      */
-    global?: Array<AclEndpoint>;
-    /**
-     * A list of organizations the subject is a member of.
-     * @type {Array<AclOrganization>}
-     * @memberof Acl
-     */
-    organizations?: Array<AclOrganization>;
-    /**
-     * 
-     * @type {AclOrganization}
-     * @memberof Acl
-     */
-    organization?: AclOrganization;
+    endpoints?: Array<AclEndpoint>;
     /**
      * A list of projects the subject is a member of.
      * @type {Array<AclProject>}
-     * @memberof Acl
+     * @memberof AclOrganization
      */
     projects?: Array<AclProject>;
 }
 
 /**
- * Check if a given object implements the Acl interface.
+ * Check if a given object implements the AclOrganization interface.
  */
-export function instanceOfAcl(value: object): boolean {
+export function instanceOfAclOrganization(value: object): boolean {
     let isInstance = true;
+    isInstance = isInstance && "id" in value;
 
     return isInstance;
 }
 
-export function AclFromJSON(json: any): Acl {
-    return AclFromJSONTyped(json, false);
+export function AclOrganizationFromJSON(json: any): AclOrganization {
+    return AclOrganizationFromJSONTyped(json, false);
 }
 
-export function AclFromJSONTyped(json: any, ignoreDiscriminator: boolean): Acl {
+export function AclOrganizationFromJSONTyped(json: any, ignoreDiscriminator: boolean): AclOrganization {
     if ((json === undefined) || (json === null)) {
         return json;
     }
     return {
         
-        'global': !exists(json, 'global') ? undefined : ((json['global'] as Array<any>).map(AclEndpointFromJSON)),
-        'organizations': !exists(json, 'organizations') ? undefined : ((json['organizations'] as Array<any>).map(AclOrganizationFromJSON)),
-        'organization': !exists(json, 'organization') ? undefined : AclOrganizationFromJSON(json['organization']),
+        'id': json['id'],
+        'endpoints': !exists(json, 'endpoints') ? undefined : ((json['endpoints'] as Array<any>).map(AclEndpointFromJSON)),
         'projects': !exists(json, 'projects') ? undefined : ((json['projects'] as Array<any>).map(AclProjectFromJSON)),
     };
 }
 
-export function AclToJSON(value?: Acl | null): any {
+export function AclOrganizationToJSON(value?: AclOrganization | null): any {
     if (value === undefined) {
         return undefined;
     }
@@ -99,9 +87,8 @@ export function AclToJSON(value?: Acl | null): any {
     }
     return {
         
-        'global': value.global === undefined ? undefined : ((value.global as Array<any>).map(AclEndpointToJSON)),
-        'organizations': value.organizations === undefined ? undefined : ((value.organizations as Array<any>).map(AclOrganizationToJSON)),
-        'organization': AclOrganizationToJSON(value.organization),
+        'id': value.id,
+        'endpoints': value.endpoints === undefined ? undefined : ((value.endpoints as Array<any>).map(AclEndpointToJSON)),
         'projects': value.projects === undefined ? undefined : ((value.projects as Array<any>).map(AclProjectToJSON)),
     };
 }

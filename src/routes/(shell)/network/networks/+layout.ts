@@ -9,8 +9,8 @@ export const load: LayoutLoad = async ({ fetch, depends, parent }) => {
 
 	const { organizationID } = await parent();
 
-	const networks = Clients.region(fetch).apiV2OrganizationsOrganizationIDNetworksGet({
-		organizationID: organizationID
+	const networks = Clients.region(fetch).apiV2NetworksGet({
+		organizationID: [organizationID]
 	});
 
 	return {

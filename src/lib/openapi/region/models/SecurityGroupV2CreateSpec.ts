@@ -27,17 +27,17 @@ import {
  */
 export interface SecurityGroupV2CreateSpec {
     /**
-     * The network a security group belongs to.
-     * @type {string}
-     * @memberof SecurityGroupV2CreateSpec
-     */
-    networkId: string;
-    /**
      * A set of security group rules to apply.
      * @type {Array<SecurityGroupRule>}
      * @memberof SecurityGroupV2CreateSpec
      */
     rules: Array<SecurityGroupRule>;
+    /**
+     * The network a security group belongs to.
+     * @type {string}
+     * @memberof SecurityGroupV2CreateSpec
+     */
+    networkId: string;
 }
 
 /**
@@ -45,8 +45,8 @@ export interface SecurityGroupV2CreateSpec {
  */
 export function instanceOfSecurityGroupV2CreateSpec(value: object): boolean {
     let isInstance = true;
-    isInstance = isInstance && "networkId" in value;
     isInstance = isInstance && "rules" in value;
+    isInstance = isInstance && "networkId" in value;
 
     return isInstance;
 }
@@ -61,8 +61,8 @@ export function SecurityGroupV2CreateSpecFromJSONTyped(json: any, ignoreDiscrimi
     }
     return {
         
-        'networkId': json['networkId'],
         'rules': ((json['rules'] as Array<any>).map(SecurityGroupRuleFromJSON)),
+        'networkId': json['networkId'],
     };
 }
 
@@ -75,8 +75,8 @@ export function SecurityGroupV2CreateSpecToJSON(value?: SecurityGroupV2CreateSpe
     }
     return {
         
-        'networkId': value.networkId,
         'rules': ((value.rules as Array<any>).map(SecurityGroupRuleToJSON)),
+        'networkId': value.networkId,
     };
 }
 

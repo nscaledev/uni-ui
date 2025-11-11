@@ -13,6 +13,13 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { Subject } from './Subject';
+import {
+    SubjectFromJSON,
+    SubjectFromJSONTyped,
+    SubjectToJSON,
+} from './Subject';
+
 /**
  * A group.
  * @export
@@ -20,11 +27,17 @@ import { exists, mapValues } from '../runtime';
  */
 export interface GroupSpec {
     /**
+     * list of subjects that are assigned to this group
+     * @type {Array<Subject>}
+     * @memberof GroupSpec
+     */
+    subjects?: Array<Subject>;
+    /**
      * A list of strings.
      * @type {Array<string>}
      * @memberof GroupSpec
      */
-    userIDs: Array<string>;
+    userIDs?: Array<string>;
     /**
      * A list of strings.
      * @type {Array<string>}
@@ -44,7 +57,6 @@ export interface GroupSpec {
  */
 export function instanceOfGroupSpec(value: object): boolean {
     let isInstance = true;
-    isInstance = isInstance && "userIDs" in value;
     isInstance = isInstance && "serviceAccountIDs" in value;
     isInstance = isInstance && "roleIDs" in value;
 
@@ -61,7 +73,8 @@ export function GroupSpecFromJSONTyped(json: any, ignoreDiscriminator: boolean):
     }
     return {
         
-        'userIDs': json['userIDs'],
+        'subjects': !exists(json, 'subjects') ? undefined : ((json['subjects'] as Array<any>).map(SubjectFromJSON)),
+        'userIDs': !exists(json, 'userIDs') ? undefined : json['userIDs'],
         'serviceAccountIDs': json['serviceAccountIDs'],
         'roleIDs': json['roleIDs'],
     };
@@ -76,6 +89,7 @@ export function GroupSpecToJSON(value?: GroupSpec | null): any {
     }
     return {
         
+        'subjects': value.subjects === undefined ? undefined : ((value.subjects as Array<any>).map(SubjectToJSON)),
         'userIDs': value.userIDs,
         'serviceAccountIDs': value.serviceAccountIDs,
         'roleIDs': value.roleIDs,

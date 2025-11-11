@@ -20,6 +20,18 @@ import { exists, mapValues } from '../runtime';
  */
 export interface NetworkV2CreateSpec {
     /**
+     * The organization to provision the resource in.
+     * @type {string}
+     * @memberof NetworkV2CreateSpec
+     */
+    organizationId: string;
+    /**
+     * The project to provision the resource in.
+     * @type {string}
+     * @memberof NetworkV2CreateSpec
+     */
+    projectId: string;
+    /**
      * An IPv4 prefix for the network.
      * @type {string}
      * @memberof NetworkV2CreateSpec
@@ -44,6 +56,8 @@ export interface NetworkV2CreateSpec {
  */
 export function instanceOfNetworkV2CreateSpec(value: object): boolean {
     let isInstance = true;
+    isInstance = isInstance && "organizationId" in value;
+    isInstance = isInstance && "projectId" in value;
     isInstance = isInstance && "prefix" in value;
     isInstance = isInstance && "dnsNameservers" in value;
     isInstance = isInstance && "regionId" in value;
@@ -61,6 +75,8 @@ export function NetworkV2CreateSpecFromJSONTyped(json: any, ignoreDiscriminator:
     }
     return {
         
+        'organizationId': json['organizationId'],
+        'projectId': json['projectId'],
         'prefix': json['prefix'],
         'dnsNameservers': json['dnsNameservers'],
         'regionId': json['regionId'],
@@ -76,6 +92,8 @@ export function NetworkV2CreateSpecToJSON(value?: NetworkV2CreateSpec | null): a
     }
     return {
         
+        'organizationId': value.organizationId,
+        'projectId': value.projectId,
         'prefix': value.prefix,
         'dnsNameservers': value.dnsNameservers,
         'regionId': value.regionId,

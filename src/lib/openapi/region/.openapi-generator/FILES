@@ -68,6 +68,13 @@ models/ServerRead.ts
 models/ServerSecurityGroup.ts
 models/ServerSpec.ts
 models/ServerStatus.ts
+models/ServerV2Create.ts
+models/ServerV2CreateSpec.ts
+models/ServerV2Networking.ts
+models/ServerV2Read.ts
+models/ServerV2Spec.ts
+models/ServerV2Status.ts
+models/ServerV2Update.ts
 models/ServerWrite.ts
 models/StaticResourceMetadata.ts
 models/Tag.ts

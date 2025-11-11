@@ -4,7 +4,8 @@ index.ts
 models/Acl.ts
 models/AclEndpoint.ts
 models/AclOperation.ts
-models/AclScopedEndpoints.ts
+models/AclOrganization.ts
+models/AclProject.ts
 models/AllocationRead.ts
 models/AllocationSpec.ts
 models/AllocationWrite.ts
@@ -56,6 +57,7 @@ models/ServiceAccountStatus.ts
 models/ServiceAccountWrite.ts
 models/SigningAlgorithm.ts
 models/StaticResourceMetadata.ts
+models/Subject.ts
 models/SystemOauth2ProviderRead.ts
 models/Tag.ts
 models/Token.ts

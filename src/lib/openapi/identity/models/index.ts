@@ -3,7 +3,8 @@
 export * from './Acl';
 export * from './AclEndpoint';
 export * from './AclOperation';
-export * from './AclScopedEndpoints';
+export * from './AclOrganization';
+export * from './AclProject';
 export * from './AllocationRead';
 export * from './AllocationSpec';
 export * from './AllocationWrite';
@@ -55,6 +56,7 @@ export * from './ServiceAccountStatus';
 export * from './ServiceAccountWrite';
 export * from './SigningAlgorithm';
 export * from './StaticResourceMetadata';
+export * from './Subject';
 export * from './SystemOauth2ProviderRead';
 export * from './Tag';
 export * from './Token';

@@ -41,17 +41,12 @@
 	}
 
 	function confirm(resource: Region.SecurityGroupV2Read) {
-		const parameters: Region.ApiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsSecurityGroupIDDeleteRequest =
-			{
-				organizationID: resource.metadata.organizationId,
-				projectID: resource.metadata.projectId,
-				securityGroupID: resource.metadata.id
-			};
+		const parameters: Region.ApiV2SecuritygroupsSecurityGroupIDDeleteRequest = {
+			securityGroupID: resource.metadata.id
+		};
 
 		Clients.region()
-			.apiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsSecurityGroupIDDelete(
-				parameters
-			)
+			.apiV2SecuritygroupsSecurityGroupIDDelete(parameters)
 			.then(() => invalidate('layout:securitygroups'))
 			.catch((e: Error) => Clients.error(e));
 	}

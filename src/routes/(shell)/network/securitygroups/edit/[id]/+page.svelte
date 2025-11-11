@@ -58,16 +58,13 @@
 	}
 
 	function submit() {
-		const parameters: Region.ApiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsSecurityGroupIDPutRequest =
-			{
-				organizationID: resource.metadata.organizationId,
-				projectID: resource.metadata.projectId,
-				securityGroupID: resource.metadata.id,
-				securityGroupV2Update: resource
-			};
+		const parameters: Region.ApiV2SecuritygroupsSecurityGroupIDPutRequest = {
+			securityGroupID: resource.metadata.id,
+			securityGroupV2Update: resource
+		};
 
 		Clients.region()
-			.apiV2OrganizationsOrganizationIDProjectsProjectIDSecuritygroupsSecurityGroupIDPut(parameters)
+			.apiV2SecuritygroupsSecurityGroupIDPut(parameters)
 			.then(() => window.location.assign('/network/securitygroups'))
 			.catch((e: Error) => Clients.error(e));
 	}
