@@ -25,7 +25,14 @@ models/ImageOS.ts
 models/ImageSelector.ts
 models/ImageSpec.ts
 models/ImageVirtualization.ts
+models/InstanceCreate.ts
+models/InstanceCreateSpec.ts
 models/InstanceLifecyclePhase.ts
+models/InstanceNetworking.ts
+models/InstanceRead.ts
+models/InstanceSpec.ts
+models/InstanceStatus.ts
+models/InstanceUpdate.ts
 models/MachinePool.ts
 models/ModelError.ts
 models/OrganizationScopedResourceReadMetadata.ts

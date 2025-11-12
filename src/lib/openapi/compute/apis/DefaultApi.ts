@@ -22,6 +22,9 @@ import type {
   EvictionWrite,
   Flavor,
   Image,
+  InstanceCreate,
+  InstanceRead,
+  InstanceUpdate,
   ModelError,
   RegionRead,
 } from '../models/index';
@@ -40,6 +43,12 @@ import {
     FlavorToJSON,
     ImageFromJSON,
     ImageToJSON,
+    InstanceCreateFromJSON,
+    InstanceCreateToJSON,
+    InstanceReadFromJSON,
+    InstanceReadToJSON,
+    InstanceUpdateFromJSON,
+    InstanceUpdateToJSON,
     ModelErrorFromJSON,
     ModelErrorToJSON,
     RegionReadFromJSON,
@@ -138,6 +147,53 @@ export interface ApiV1OrganizationsOrganizationIDRegionsRegionIDFlavorsGetReques
 export interface ApiV1OrganizationsOrganizationIDRegionsRegionIDImagesGetRequest {
     organizationID: string;
     regionID: string;
+}
+
+export interface ApiV2InstancesGetRequest {
+    tag?: Array<string>;
+    organizationID?: Array<string>;
+    projectID?: Array<string>;
+    regionID?: Array<string>;
+    networkID?: Array<string>;
+}
+
+export interface ApiV2InstancesInstanceIDConsoleoutputGetRequest {
+    instanceID: string;
+    length?: number;
+}
+
+export interface ApiV2InstancesInstanceIDConsolesessionGetRequest {
+    instanceID: string;
+}
+
+export interface ApiV2InstancesInstanceIDDeleteRequest {
+    instanceID: string;
+}
+
+export interface ApiV2InstancesInstanceIDGetRequest {
+    instanceID: string;
+}
+
+export interface ApiV2InstancesInstanceIDPutRequest {
+    instanceID: string;
+    instanceUpdate: InstanceUpdate;
+}
+
+export interface ApiV2InstancesInstanceIDRebootPostRequest {
+    instanceID: string;
+    hard?: boolean;
+}
+
+export interface ApiV2InstancesInstanceIDStartPostRequest {
+    instanceID: string;
+}
+
+export interface ApiV2InstancesInstanceIDStopPostRequest {
+    instanceID: string;
+}
+
+export interface ApiV2InstancesPostRequest {
+    instanceCreate: InstanceCreate;
 }
 
 /**
@@ -805,6 +861,386 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async apiV1OrganizationsOrganizationIDRegionsRegionIDImagesGet(requestParameters: ApiV1OrganizationsOrganizationIDRegionsRegionIDImagesGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Image>> {
         const response = await this.apiV1OrganizationsOrganizationIDRegionsRegionIDImagesGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * List compute instances.
+     */
+    async apiV2InstancesGetRaw(requestParameters: ApiV2InstancesGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<InstanceRead>>> {
+        const queryParameters: any = {};
+
+        if (requestParameters.tag) {
+            queryParameters['tag'] = requestParameters.tag.join(runtime.COLLECTION_FORMATS["csv"]);
+        }
+
+        if (requestParameters.organizationID) {
+            queryParameters['organizationID'] = requestParameters.organizationID;
+        }
+
+        if (requestParameters.projectID) {
+            queryParameters['projectID'] = requestParameters.projectID;
+        }
+
+        if (requestParameters.regionID) {
+            queryParameters['regionID'] = requestParameters.regionID;
+        }
+
+        if (requestParameters.networkID) {
+            queryParameters['networkID'] = requestParameters.networkID;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/instances`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(InstanceReadFromJSON));
+    }
+
+    /**
+     * List compute instances.
+     */
+    async apiV2InstancesGet(requestParameters: ApiV2InstancesGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<InstanceRead>> {
+        const response = await this.apiV2InstancesGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Get the console output for an instance.
+     */
+    async apiV2InstancesInstanceIDConsoleoutputGetRaw(requestParameters: ApiV2InstancesInstanceIDConsoleoutputGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ConsoleOutput>> {
+        if (requestParameters.instanceID === null || requestParameters.instanceID === undefined) {
+            throw new runtime.RequiredError('instanceID','Required parameter requestParameters.instanceID was null or undefined when calling apiV2InstancesInstanceIDConsoleoutputGet.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.length !== undefined) {
+            queryParameters['length'] = requestParameters.length;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/instances/{instanceID}/consoleoutput`.replace(`{${"instanceID"}}`, encodeURIComponent(String(requestParameters.instanceID))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ConsoleOutputFromJSON(jsonValue));
+    }
+
+    /**
+     * Get the console output for an instance.
+     */
+    async apiV2InstancesInstanceIDConsoleoutputGet(requestParameters: ApiV2InstancesInstanceIDConsoleoutputGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ConsoleOutput> {
+        const response = await this.apiV2InstancesInstanceIDConsoleoutputGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Create a new console session for an instance.
+     */
+    async apiV2InstancesInstanceIDConsolesessionGetRaw(requestParameters: ApiV2InstancesInstanceIDConsolesessionGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ConsoleSession>> {
+        if (requestParameters.instanceID === null || requestParameters.instanceID === undefined) {
+            throw new runtime.RequiredError('instanceID','Required parameter requestParameters.instanceID was null or undefined when calling apiV2InstancesInstanceIDConsolesessionGet.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/instances/{instanceID}/consolesession`.replace(`{${"instanceID"}}`, encodeURIComponent(String(requestParameters.instanceID))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ConsoleSessionFromJSON(jsonValue));
+    }
+
+    /**
+     * Create a new console session for an instance.
+     */
+    async apiV2InstancesInstanceIDConsolesessionGet(requestParameters: ApiV2InstancesInstanceIDConsolesessionGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ConsoleSession> {
+        const response = await this.apiV2InstancesInstanceIDConsolesessionGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Delete an instance.
+     */
+    async apiV2InstancesInstanceIDDeleteRaw(requestParameters: ApiV2InstancesInstanceIDDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters.instanceID === null || requestParameters.instanceID === undefined) {
+            throw new runtime.RequiredError('instanceID','Required parameter requestParameters.instanceID was null or undefined when calling apiV2InstancesInstanceIDDelete.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/instances/{instanceID}`.replace(`{${"instanceID"}}`, encodeURIComponent(String(requestParameters.instanceID))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Delete an instance.
+     */
+    async apiV2InstancesInstanceIDDelete(requestParameters: ApiV2InstancesInstanceIDDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.apiV2InstancesInstanceIDDeleteRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     * Get an instance.
+     */
+    async apiV2InstancesInstanceIDGetRaw(requestParameters: ApiV2InstancesInstanceIDGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<InstanceRead>> {
+        if (requestParameters.instanceID === null || requestParameters.instanceID === undefined) {
+            throw new runtime.RequiredError('instanceID','Required parameter requestParameters.instanceID was null or undefined when calling apiV2InstancesInstanceIDGet.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/instances/{instanceID}`.replace(`{${"instanceID"}}`, encodeURIComponent(String(requestParameters.instanceID))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => InstanceReadFromJSON(jsonValue));
+    }
+
+    /**
+     * Get an instance.
+     */
+    async apiV2InstancesInstanceIDGet(requestParameters: ApiV2InstancesInstanceIDGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<InstanceRead> {
+        const response = await this.apiV2InstancesInstanceIDGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Update an instance.
+     */
+    async apiV2InstancesInstanceIDPutRaw(requestParameters: ApiV2InstancesInstanceIDPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<InstanceRead>> {
+        if (requestParameters.instanceID === null || requestParameters.instanceID === undefined) {
+            throw new runtime.RequiredError('instanceID','Required parameter requestParameters.instanceID was null or undefined when calling apiV2InstancesInstanceIDPut.');
+        }
+
+        if (requestParameters.instanceUpdate === null || requestParameters.instanceUpdate === undefined) {
+            throw new runtime.RequiredError('instanceUpdate','Required parameter requestParameters.instanceUpdate was null or undefined when calling apiV2InstancesInstanceIDPut.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/instances/{instanceID}`.replace(`{${"instanceID"}}`, encodeURIComponent(String(requestParameters.instanceID))),
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: InstanceUpdateToJSON(requestParameters.instanceUpdate),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => InstanceReadFromJSON(jsonValue));
+    }
+
+    /**
+     * Update an instance.
+     */
+    async apiV2InstancesInstanceIDPut(requestParameters: ApiV2InstancesInstanceIDPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<InstanceRead> {
+        const response = await this.apiV2InstancesInstanceIDPutRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Reboot an instance.  By default this will perform a software ACPI reboot. You can specifiy a hard power cycle as a query parameter.
+     */
+    async apiV2InstancesInstanceIDRebootPostRaw(requestParameters: ApiV2InstancesInstanceIDRebootPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters.instanceID === null || requestParameters.instanceID === undefined) {
+            throw new runtime.RequiredError('instanceID','Required parameter requestParameters.instanceID was null or undefined when calling apiV2InstancesInstanceIDRebootPost.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.hard !== undefined) {
+            queryParameters['hard'] = requestParameters.hard;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/instances/{instanceID}/reboot`.replace(`{${"instanceID"}}`, encodeURIComponent(String(requestParameters.instanceID))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Reboot an instance.  By default this will perform a software ACPI reboot. You can specifiy a hard power cycle as a query parameter.
+     */
+    async apiV2InstancesInstanceIDRebootPost(requestParameters: ApiV2InstancesInstanceIDRebootPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.apiV2InstancesInstanceIDRebootPostRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     * Start a stopped instance.
+     */
+    async apiV2InstancesInstanceIDStartPostRaw(requestParameters: ApiV2InstancesInstanceIDStartPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters.instanceID === null || requestParameters.instanceID === undefined) {
+            throw new runtime.RequiredError('instanceID','Required parameter requestParameters.instanceID was null or undefined when calling apiV2InstancesInstanceIDStartPost.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/instances/{instanceID}/start`.replace(`{${"instanceID"}}`, encodeURIComponent(String(requestParameters.instanceID))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Start a stopped instance.
+     */
+    async apiV2InstancesInstanceIDStartPost(requestParameters: ApiV2InstancesInstanceIDStartPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.apiV2InstancesInstanceIDStartPostRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     * Stop a running instnace.
+     */
+    async apiV2InstancesInstanceIDStopPostRaw(requestParameters: ApiV2InstancesInstanceIDStopPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters.instanceID === null || requestParameters.instanceID === undefined) {
+            throw new runtime.RequiredError('instanceID','Required parameter requestParameters.instanceID was null or undefined when calling apiV2InstancesInstanceIDStopPost.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/instances/{instanceID}/stop`.replace(`{${"instanceID"}}`, encodeURIComponent(String(requestParameters.instanceID))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Stop a running instnace.
+     */
+    async apiV2InstancesInstanceIDStopPost(requestParameters: ApiV2InstancesInstanceIDStopPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.apiV2InstancesInstanceIDStopPostRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     * Create an instance.
+     */
+    async apiV2InstancesPostRaw(requestParameters: ApiV2InstancesPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<InstanceRead>> {
+        if (requestParameters.instanceCreate === null || requestParameters.instanceCreate === undefined) {
+            throw new runtime.RequiredError('instanceCreate','Required parameter requestParameters.instanceCreate was null or undefined when calling apiV2InstancesPost.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/instances`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: InstanceCreateToJSON(requestParameters.instanceCreate),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => InstanceReadFromJSON(jsonValue));
+    }
+
+    /**
+     * Create an instance.
+     */
+    async apiV2InstancesPost(requestParameters: ApiV2InstancesPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<InstanceRead> {
+        const response = await this.apiV2InstancesPostRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

@@ -255,7 +255,7 @@
 				value={image}
 				onValueChange={(e) => (image = e.value)}
 				options={Object.keys(osVersions)}
-				label="Choose an image ."
+				label="Choose an image."
 				hint="Allows the selection of the pool's operating system image per pool."
 			>
 				{#snippet contents(id: string)}
