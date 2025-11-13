@@ -3,6 +3,7 @@
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
 	import { navigating } from '$app/state';
+	import { browser } from '$app/environment';
 
 	let { data }: { data: PageData } = $props();
 
@@ -19,8 +20,10 @@
 	import ShellListItemHeader from '$lib/layouts/ShellListItemHeader.svelte';
 	import ShellListItemBadges from '$lib/layouts/ShellListItemBadges.svelte';
 	import ShellListItemMetadata from '$lib/layouts/ShellListItemMetadata.svelte';
+	import ShellMetadataItem from '$lib/layouts/ShellMetadataItem.svelte';
 	import Badge from '$lib/layouts/Badge.svelte';
 	import PopupButton from '$lib/forms/PopupButton.svelte';
+	import SubtleButton from '$lib/forms/SubtleButton.svelte';
 	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
 	import Placeholder from '$lib/layouts/Placeholder.svelte';
 
@@ -55,6 +58,31 @@
 		Clients.compute()
 			.apiV2InstancesInstanceIDDelete(parameters)
 			.then(() => invalidate('layout:clusters'))
+			.catch((e: Error) => Clients.error(e));
+	}
+
+	function getSSHKey(resource: Compute.InstanceRead): void {
+		if (!browser) return;
+
+		const parameters = {
+			instanceID: resource.metadata.id
+		};
+
+		Clients.compute()
+			.apiV2InstancesInstanceIDSshkeyGet(parameters)
+			.then((key: Compute.SshKey) => {
+				const url = window.URL.createObjectURL(new Blob([key.privateKey]));
+
+				const a = document.createElement('a');
+				a.style.display = 'none';
+				a.href = url;
+				a.download = `id_${resource.metadata.name}`;
+
+				document.body.appendChild(a);
+				a.click();
+
+				window.URL.revokeObjectURL(url);
+			})
 			.catch((e: Error) => Clients.error(e));
 	}
 
@@ -168,7 +196,24 @@
 
 				<ShellListItemMetadata metadata={resource.metadata} />
 
+				{#if resource.status.privateIP}
+					<ShellMetadataItem
+						icon="mdi:local-area-network"
+						label="Private IP"
+						value={resource.status.privateIP}
+					/>
+				{/if}
+
+				{#if resource.status.publicIP}
+					<ShellMetadataItem
+						icon="mdi:local-area-network"
+						label="Public IP"
+						value={resource.status.publicIP}
+					/>
+				{/if}
+
 				{#snippet trail()}
+					<SubtleButton icon="mdi:connection" label="SSH Key" clicked={() => getSSHKey(resource)} />
 					<ModalIcon
 						icon={resource.status.powerState !== Compute.InstanceLifecyclePhase.Stopped
 							? 'mdi:stop'

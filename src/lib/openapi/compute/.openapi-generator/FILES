@@ -50,6 +50,7 @@ models/ResourceMetadata.ts
 models/ResourceProvisioningStatus.ts
 models/ResourceReadMetadata.ts
 models/ResourceWriteMetadata.ts
+models/SshKey.ts
 models/StaticResourceMetadata.ts
 models/Tag.ts
 models/Volume.ts
