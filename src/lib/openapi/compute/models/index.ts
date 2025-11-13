@@ -49,6 +49,7 @@ export * from './ResourceMetadata';
 export * from './ResourceProvisioningStatus';
 export * from './ResourceReadMetadata';
 export * from './ResourceWriteMetadata';
+export * from './SshKey';
 export * from './StaticResourceMetadata';
 export * from './Tag';
 export * from './Volume';

@@ -27,6 +27,7 @@ import type {
   InstanceUpdate,
   ModelError,
   RegionRead,
+  SshKey,
 } from '../models/index';
 import {
     ComputeClusterReadFromJSON,
@@ -53,6 +54,8 @@ import {
     ModelErrorToJSON,
     RegionReadFromJSON,
     RegionReadToJSON,
+    SshKeyFromJSON,
+    SshKeyToJSON,
 } from '../models/index';
 
 export interface ApiV1OrganizationsOrganizationIDClustersGetRequest {
@@ -182,6 +185,10 @@ export interface ApiV2InstancesInstanceIDPutRequest {
 export interface ApiV2InstancesInstanceIDRebootPostRequest {
     instanceID: string;
     hard?: boolean;
+}
+
+export interface ApiV2InstancesInstanceIDSshkeyGetRequest {
+    instanceID: string;
 }
 
 export interface ApiV2InstancesInstanceIDStartPostRequest {
@@ -1136,6 +1143,41 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async apiV2InstancesInstanceIDRebootPost(requestParameters: ApiV2InstancesInstanceIDRebootPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.apiV2InstancesInstanceIDRebootPostRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     * Retrieve the SSH key for an instance.
+     */
+    async apiV2InstancesInstanceIDSshkeyGetRaw(requestParameters: ApiV2InstancesInstanceIDSshkeyGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SshKey>> {
+        if (requestParameters.instanceID === null || requestParameters.instanceID === undefined) {
+            throw new runtime.RequiredError('instanceID','Required parameter requestParameters.instanceID was null or undefined when calling apiV2InstancesInstanceIDSshkeyGet.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/instances/{instanceID}/sshkey`.replace(`{${"instanceID"}}`, encodeURIComponent(String(requestParameters.instanceID))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SshKeyFromJSON(jsonValue));
+    }
+
+    /**
+     * Retrieve the SSH key for an instance.
+     */
+    async apiV2InstancesInstanceIDSshkeyGet(requestParameters: ApiV2InstancesInstanceIDSshkeyGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SshKey> {
+        const response = await this.apiV2InstancesInstanceIDSshkeyGetRaw(requestParameters, initOverrides);
+        return await response.value();
     }
 
     /**
