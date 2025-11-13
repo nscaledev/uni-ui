@@ -133,6 +133,10 @@
 				icon: 'mdi:computer',
 				items: [
 					{
+						label: 'Instances',
+						href: 'instances'
+					},
+					{
 						label: 'Clusters',
 						href: 'clusters'
 					}

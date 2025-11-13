@@ -25,7 +25,9 @@ export function statusIcon(s: Compute.InstanceLifecyclePhase): string {
 	return 'svg-spinners:ring-resize';
 }
 
-export function canStopOrStart(s: Compute.InstanceLifecyclePhase): boolean {
+export function canStopOrStart(s: Compute.InstanceLifecyclePhase | undefined): boolean {
+	if (!s) return false;
+
 	switch (s) {
 		case Compute.InstanceLifecyclePhase.Running:
 		case Compute.InstanceLifecyclePhase.Stopped:
@@ -34,6 +36,8 @@ export function canStopOrStart(s: Compute.InstanceLifecyclePhase): boolean {
 	return false;
 }
 
-export function canReboot(s: Compute.InstanceLifecyclePhase): boolean {
+export function canReboot(s: Compute.InstanceLifecyclePhase | undefined): boolean {
+	if (!s) return false;
+
 	return s === Compute.InstanceLifecyclePhase.Running;
 }
