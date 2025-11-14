@@ -76,6 +76,7 @@ models/ServerV2Spec.ts
 models/ServerV2Status.ts
 models/ServerV2Update.ts
 models/ServerWrite.ts
+models/SshKey.ts
 models/StaticResourceMetadata.ts
 models/Tag.ts
 models/index.ts
