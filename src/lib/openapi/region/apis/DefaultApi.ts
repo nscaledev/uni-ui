@@ -39,6 +39,7 @@ import type {
   ServerV2Read,
   ServerV2Update,
   ServerWrite,
+  SshKey,
 } from '../models/index';
 import {
     ConsoleOutputFromJSON,
@@ -89,6 +90,8 @@ import {
     ServerV2UpdateToJSON,
     ServerWriteFromJSON,
     ServerWriteToJSON,
+    SshKeyFromJSON,
+    SshKeyToJSON,
 } from '../models/index';
 
 export interface ApiV1OrganizationsOrganizationIDIdentitiesGetRequest {
@@ -356,6 +359,10 @@ export interface ApiV2ServersServerIDPutRequest {
 }
 
 export interface ApiV2ServersServerIDSoftrebootPostRequest {
+    serverID: string;
+}
+
+export interface ApiV2ServersServerIDSshkeyGetRequest {
     serverID: string;
 }
 
@@ -1825,7 +1832,7 @@ export class DefaultApi extends runtime.BaseAPI {
         }
 
         const response = await this.request({
-            path: `/api/v2//securitygroups`,
+            path: `/api/v2/securitygroups`,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -1858,7 +1865,7 @@ export class DefaultApi extends runtime.BaseAPI {
         }
 
         const response = await this.request({
-            path: `/api/v2//securitygroups`,
+            path: `/api/v2/securitygroups`,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -2229,7 +2236,7 @@ export class DefaultApi extends runtime.BaseAPI {
         }
 
         const response = await this.request({
-            path: `/api/v2//servers/{serverID}/hardreboot`.replace(`{${"serverID"}}`, encodeURIComponent(String(requestParameters.serverID))),
+            path: `/api/v2/servers/{serverID}/hardreboot`.replace(`{${"serverID"}}`, encodeURIComponent(String(requestParameters.serverID))),
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
@@ -2315,6 +2322,41 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async apiV2ServersServerIDSoftrebootPost(requestParameters: ApiV2ServersServerIDSoftrebootPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.apiV2ServersServerIDSoftrebootPostRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     * Retrieve the SSH key for a server.
+     */
+    async apiV2ServersServerIDSshkeyGetRaw(requestParameters: ApiV2ServersServerIDSshkeyGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SshKey>> {
+        if (requestParameters.serverID === null || requestParameters.serverID === undefined) {
+            throw new runtime.RequiredError('serverID','Required parameter requestParameters.serverID was null or undefined when calling apiV2ServersServerIDSshkeyGet.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/servers/{serverID}/sshkey`.replace(`{${"serverID"}}`, encodeURIComponent(String(requestParameters.serverID))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SshKeyFromJSON(jsonValue));
+    }
+
+    /**
+     * Retrieve the SSH key for a server.
+     */
+    async apiV2ServersServerIDSshkeyGet(requestParameters: ApiV2ServersServerIDSshkeyGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SshKey> {
+        const response = await this.apiV2ServersServerIDSshkeyGetRaw(requestParameters, initOverrides);
+        return await response.value();
     }
 
     /**
