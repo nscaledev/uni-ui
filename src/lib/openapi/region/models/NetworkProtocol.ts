@@ -14,12 +14,15 @@
 
 
 /**
- * The protocol to allow.
+ * The layer 3+ protocol to allow.
  * @export
  */
 export const NetworkProtocol = {
+    Any: 'any',
+    Icmp: 'icmp',
     Tcp: 'tcp',
-    Udp: 'udp'
+    Udp: 'udp',
+    Vrrp: 'vrrp'
 } as const;
 export type NetworkProtocol = typeof NetworkProtocol[keyof typeof NetworkProtocol];
 

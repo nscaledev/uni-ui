@@ -13,12 +13,12 @@
  */
 
 import { exists, mapValues } from '../runtime';
-import type { SecurityGroupRule } from './SecurityGroupRule';
+import type { SecurityGroupRuleV2 } from './SecurityGroupRuleV2';
 import {
-    SecurityGroupRuleFromJSON,
-    SecurityGroupRuleFromJSONTyped,
-    SecurityGroupRuleToJSON,
-} from './SecurityGroupRule';
+    SecurityGroupRuleV2FromJSON,
+    SecurityGroupRuleV2FromJSONTyped,
+    SecurityGroupRuleV2ToJSON,
+} from './SecurityGroupRuleV2';
 
 /**
  * A security group's specification.
@@ -28,10 +28,10 @@ import {
 export interface SecurityGroupV2CreateSpec {
     /**
      * A set of security group rules to apply.
-     * @type {Array<SecurityGroupRule>}
+     * @type {Array<SecurityGroupRuleV2>}
      * @memberof SecurityGroupV2CreateSpec
      */
-    rules: Array<SecurityGroupRule>;
+    rules: Array<SecurityGroupRuleV2>;
     /**
      * The network a security group belongs to.
      * @type {string}
@@ -61,7 +61,7 @@ export function SecurityGroupV2CreateSpecFromJSONTyped(json: any, ignoreDiscrimi
     }
     return {
         
-        'rules': ((json['rules'] as Array<any>).map(SecurityGroupRuleFromJSON)),
+        'rules': ((json['rules'] as Array<any>).map(SecurityGroupRuleV2FromJSON)),
         'networkId': json['networkId'],
     };
 }
@@ -75,7 +75,7 @@ export function SecurityGroupV2CreateSpecToJSON(value?: SecurityGroupV2CreateSpe
     }
     return {
         
-        'rules': ((value.rules as Array<any>).map(SecurityGroupRuleToJSON)),
+        'rules': ((value.rules as Array<any>).map(SecurityGroupRuleV2ToJSON)),
         'networkId': value.networkId,
     };
 }

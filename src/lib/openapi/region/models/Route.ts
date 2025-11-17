@@ -14,52 +14,52 @@
 
 import { exists, mapValues } from '../runtime';
 /**
- * Read only status about a network.
+ * A network route.
  * @export
- * @interface NetworkV2Status
+ * @interface Route
  */
-export interface NetworkV2Status {
+export interface Route {
     /**
-     * The region a network is provisioned in.
+     * An IPv4 prefix for the route.
      * @type {string}
-     * @memberof NetworkV2Status
-     */
-    regionId: string;
-    /**
-     * An IPv4 prefix for the network.
-     * @type {string}
-     * @memberof NetworkV2Status
+     * @memberof Route
      */
     prefix: string;
+    /**
+     * An IPv4 address for the route's next hop.
+     * @type {string}
+     * @memberof Route
+     */
+    nexthop: string;
 }
 
 /**
- * Check if a given object implements the NetworkV2Status interface.
+ * Check if a given object implements the Route interface.
  */
-export function instanceOfNetworkV2Status(value: object): boolean {
+export function instanceOfRoute(value: object): boolean {
     let isInstance = true;
-    isInstance = isInstance && "regionId" in value;
     isInstance = isInstance && "prefix" in value;
+    isInstance = isInstance && "nexthop" in value;
 
     return isInstance;
 }
 
-export function NetworkV2StatusFromJSON(json: any): NetworkV2Status {
-    return NetworkV2StatusFromJSONTyped(json, false);
+export function RouteFromJSON(json: any): Route {
+    return RouteFromJSONTyped(json, false);
 }
 
-export function NetworkV2StatusFromJSONTyped(json: any, ignoreDiscriminator: boolean): NetworkV2Status {
+export function RouteFromJSONTyped(json: any, ignoreDiscriminator: boolean): Route {
     if ((json === undefined) || (json === null)) {
         return json;
     }
     return {
         
-        'regionId': json['regionId'],
         'prefix': json['prefix'],
+        'nexthop': json['nexthop'],
     };
 }
 
-export function NetworkV2StatusToJSON(value?: NetworkV2Status | null): any {
+export function RouteToJSON(value?: Route | null): any {
     if (value === undefined) {
         return undefined;
     }
@@ -68,8 +68,8 @@ export function NetworkV2StatusToJSON(value?: NetworkV2Status | null): any {
     }
     return {
         
-        'regionId': value.regionId,
         'prefix': value.prefix,
+        'nexthop': value.nexthop,
     };
 }
 

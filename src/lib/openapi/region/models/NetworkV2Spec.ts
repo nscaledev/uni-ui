@@ -13,6 +13,13 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { Route } from './Route';
+import {
+    RouteFromJSON,
+    RouteFromJSONTyped,
+    RouteToJSON,
+} from './Route';
+
 /**
  * A network's specification.
  * @export
@@ -20,17 +27,17 @@ import { exists, mapValues } from '../runtime';
  */
 export interface NetworkV2Spec {
     /**
-     * An IPv4 prefix for the network.
-     * @type {string}
-     * @memberof NetworkV2Spec
-     */
-    prefix: string;
-    /**
      * A list of IPv4 addresses.
      * @type {Array<string>}
      * @memberof NetworkV2Spec
      */
     dnsNameservers: Array<string>;
+    /**
+     * A list of network routes.
+     * @type {Array<Route>}
+     * @memberof NetworkV2Spec
+     */
+    routes?: Array<Route>;
 }
 
 /**
@@ -38,7 +45,6 @@ export interface NetworkV2Spec {
  */
 export function instanceOfNetworkV2Spec(value: object): boolean {
     let isInstance = true;
-    isInstance = isInstance && "prefix" in value;
     isInstance = isInstance && "dnsNameservers" in value;
 
     return isInstance;
@@ -54,8 +60,8 @@ export function NetworkV2SpecFromJSONTyped(json: any, ignoreDiscriminator: boole
     }
     return {
         
-        'prefix': json['prefix'],
         'dnsNameservers': json['dnsNameservers'],
+        'routes': !exists(json, 'routes') ? undefined : ((json['routes'] as Array<any>).map(RouteFromJSON)),
     };
 }
 
@@ -68,8 +74,8 @@ export function NetworkV2SpecToJSON(value?: NetworkV2Spec | null): any {
     }
     return {
         
-        'prefix': value.prefix,
         'dnsNameservers': value.dnsNameservers,
+        'routes': value.routes === undefined ? undefined : ((value.routes as Array<any>).map(RouteToJSON)),
     };
 }
 

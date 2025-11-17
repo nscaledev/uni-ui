@@ -13,12 +13,31 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { Route } from './Route';
+import {
+    RouteFromJSON,
+    RouteFromJSONTyped,
+    RouteToJSON,
+} from './Route';
+
 /**
  * A network's specification.
  * @export
  * @interface NetworkV2CreateSpec
  */
 export interface NetworkV2CreateSpec {
+    /**
+     * A list of IPv4 addresses.
+     * @type {Array<string>}
+     * @memberof NetworkV2CreateSpec
+     */
+    dnsNameservers: Array<string>;
+    /**
+     * A list of network routes.
+     * @type {Array<Route>}
+     * @memberof NetworkV2CreateSpec
+     */
+    routes?: Array<Route>;
     /**
      * The organization to provision the resource in.
      * @type {string}
@@ -32,23 +51,17 @@ export interface NetworkV2CreateSpec {
      */
     projectId: string;
     /**
-     * An IPv4 prefix for the network.
-     * @type {string}
-     * @memberof NetworkV2CreateSpec
-     */
-    prefix: string;
-    /**
-     * A list of IPv4 addresses.
-     * @type {Array<string>}
-     * @memberof NetworkV2CreateSpec
-     */
-    dnsNameservers: Array<string>;
-    /**
      * The region a network is to be provisioned in.
      * @type {string}
      * @memberof NetworkV2CreateSpec
      */
     regionId: string;
+    /**
+     * An IPv4 prefix for the network.
+     * @type {string}
+     * @memberof NetworkV2CreateSpec
+     */
+    prefix: string;
 }
 
 /**
@@ -56,11 +69,11 @@ export interface NetworkV2CreateSpec {
  */
 export function instanceOfNetworkV2CreateSpec(value: object): boolean {
     let isInstance = true;
+    isInstance = isInstance && "dnsNameservers" in value;
     isInstance = isInstance && "organizationId" in value;
     isInstance = isInstance && "projectId" in value;
-    isInstance = isInstance && "prefix" in value;
-    isInstance = isInstance && "dnsNameservers" in value;
     isInstance = isInstance && "regionId" in value;
+    isInstance = isInstance && "prefix" in value;
 
     return isInstance;
 }
@@ -75,11 +88,12 @@ export function NetworkV2CreateSpecFromJSONTyped(json: any, ignoreDiscriminator:
     }
     return {
         
+        'dnsNameservers': json['dnsNameservers'],
+        'routes': !exists(json, 'routes') ? undefined : ((json['routes'] as Array<any>).map(RouteFromJSON)),
         'organizationId': json['organizationId'],
         'projectId': json['projectId'],
-        'prefix': json['prefix'],
-        'dnsNameservers': json['dnsNameservers'],
         'regionId': json['regionId'],
+        'prefix': json['prefix'],
     };
 }
 
@@ -92,11 +106,12 @@ export function NetworkV2CreateSpecToJSON(value?: NetworkV2CreateSpec | null): a
     }
     return {
         
+        'dnsNameservers': value.dnsNameservers,
+        'routes': value.routes === undefined ? undefined : ((value.routes as Array<any>).map(RouteToJSON)),
         'organizationId': value.organizationId,
         'projectId': value.projectId,
-        'prefix': value.prefix,
-        'dnsNameservers': value.dnsNameservers,
         'regionId': value.regionId,
+        'prefix': value.prefix,
     };
 }
 

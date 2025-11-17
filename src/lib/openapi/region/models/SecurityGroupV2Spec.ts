@@ -13,12 +13,12 @@
  */
 
 import { exists, mapValues } from '../runtime';
-import type { SecurityGroupRule } from './SecurityGroupRule';
+import type { SecurityGroupRuleV2 } from './SecurityGroupRuleV2';
 import {
-    SecurityGroupRuleFromJSON,
-    SecurityGroupRuleFromJSONTyped,
-    SecurityGroupRuleToJSON,
-} from './SecurityGroupRule';
+    SecurityGroupRuleV2FromJSON,
+    SecurityGroupRuleV2FromJSONTyped,
+    SecurityGroupRuleV2ToJSON,
+} from './SecurityGroupRuleV2';
 
 /**
  * A security group's specification.
@@ -28,10 +28,10 @@ import {
 export interface SecurityGroupV2Spec {
     /**
      * A set of security group rules to apply.
-     * @type {Array<SecurityGroupRule>}
+     * @type {Array<SecurityGroupRuleV2>}
      * @memberof SecurityGroupV2Spec
      */
-    rules: Array<SecurityGroupRule>;
+    rules: Array<SecurityGroupRuleV2>;
 }
 
 /**
@@ -54,7 +54,7 @@ export function SecurityGroupV2SpecFromJSONTyped(json: any, ignoreDiscriminator:
     }
     return {
         
-        'rules': ((json['rules'] as Array<any>).map(SecurityGroupRuleFromJSON)),
+        'rules': ((json['rules'] as Array<any>).map(SecurityGroupRuleV2FromJSON)),
     };
 }
 
@@ -67,7 +67,7 @@ export function SecurityGroupV2SpecToJSON(value?: SecurityGroupV2Spec | null): a
     }
     return {
         
-        'rules': ((value.rules as Array<any>).map(SecurityGroupRuleToJSON)),
+        'rules': ((value.rules as Array<any>).map(SecurityGroupRuleV2ToJSON)),
     };
 }
 

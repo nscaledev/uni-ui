@@ -11,7 +11,7 @@
 	import ShellMetadataSection from '$lib/layouts/ShellMetadataSection.svelte';
 	import ResourceList from '$lib/layouts/ResourceList.svelte';
 	import Button from '$lib/forms/Button.svelte';
-	import SecurityGroupRule from '$lib/SecurityGroupRule.svelte';
+	import SecurityGroupRuleV2 from '$lib/SecurityGroupRuleV2.svelte';
 
 	const settings: ShellPageSettings = {
 		feature: 'Security Groups',
@@ -29,7 +29,7 @@
 
 	let names: Array<string> = [];
 
-	let rules: Array<Region.SecurityGroupRule> = $derived.by(() => {
+	let rules: Array<Region.SecurityGroupRuleV2> = $derived.by(() => {
 		let rules = $state(resource.spec.rules);
 		return rules;
 	});
@@ -43,11 +43,7 @@
 	function ruleAdd(): number {
 		rules.push({
 			direction: Region.NetworkDirection.Ingress,
-			protocol: Region.NetworkProtocol.Tcp,
-			port: {
-				number: 22
-			},
-			cidr: '0.0.0.0/0'
+			protocol: Region.NetworkProtocol.Tcp
 		});
 
 		return rules.length - 1;
@@ -68,6 +64,27 @@
 			.then(() => window.location.assign('/network/securitygroups'))
 			.catch((e: Error) => Clients.error(e));
 	}
+
+	function printPortRange(rule: Region.SecurityGroupRuleV2): string {
+		if (
+			rule.protocol != Region.NetworkProtocol.Tcp &&
+			rule.protocol != Region.NetworkProtocol.Udp
+		) {
+			return '';
+		}
+
+		if (!rule.port) return 'any';
+
+		if (!rule.portMax) return rule.port.toString();
+
+		return rule.port.toString() + '-' + rule.portMax.toString();
+	}
+
+	function printPrefix(rule: Region.SecurityGroupRuleV2): string {
+		if (!rule.prefix) return 'any';
+
+		return rule.prefix;
+	}
 </script>
 
 <ShellPageHeader {settings} />
@@ -85,7 +102,7 @@
 	remove={ruleRemove}
 >
 	<!-- eslint-disable @typescript-eslint/no-unused-vars -->
-	{#snippet normal(rule: Region.SecurityGroupRule, index: number)}
+	{#snippet normal(rule: Region.SecurityGroupRuleV2, index: number)}
 		<div class="flex gap-2 items-center">
 			<iconify-icon icon="tabler:arrows-down-up" class="text-2xl"></iconify-icon>
 			{rule.direction}
@@ -96,23 +113,19 @@
 		</div>
 		<div class="flex gap-2 items-center">
 			<iconify-icon icon="fluent:usb-port-24-regular" class="text-2xl"></iconify-icon>
-			{rule.port.number
-				? rule.port.number.toString()
-				: rule.port.range
-					? rule.port.range.start.toString() + '-' + rule.port.range.end.toString()
-					: ''}
+			{printPortRange(rule)}
 		</div>
 		<div class="flex gap-2 items-center">
 			<iconify-icon icon="mdi:check-network-outline" class="text-2xl"></iconify-icon>
 
-			{rule.cidr}
+			{printPrefix(rule)}
 		</div>
 	{/snippet}
 
 	<!-- eslint-disable @typescript-eslint/no-unused-vars -->
-	{#snippet expanded(rule: Region.SecurityGroupRule, index: number)}
+	{#snippet expanded(rule: Region.SecurityGroupRuleV2, index: number)}
 		<div class="flex flex-col gap-4">
-			<SecurityGroupRule bind:rule={rules[index]} bind:valid={ruleValid} />
+			<SecurityGroupRuleV2 bind:rule={rules[index]} bind:valid={ruleValid} />
 		</div>
 	{/snippet}
 </ResourceList>
