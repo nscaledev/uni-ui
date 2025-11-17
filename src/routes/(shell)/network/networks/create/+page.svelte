@@ -23,7 +23,7 @@
 		icon: 'mdi:network-outline'
 	};
 
-	let resource: Region.NetworkV2Write = $state({
+	let resource: Region.NetworkV2Create = $state({
 		metadata: {
 			name: uniqueNamesGenerator({
 				dictionaries: [adjectives, animals],
@@ -48,7 +48,7 @@
 
 	function submit() {
 		const parameters = {
-			networkV2Write: resource
+			networkV2Create: resource
 		};
 
 		Clients.region()

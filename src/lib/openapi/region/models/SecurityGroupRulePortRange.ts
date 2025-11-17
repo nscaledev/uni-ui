@@ -14,7 +14,7 @@
 
 import { exists, mapValues } from '../runtime';
 /**
- * The port range to allow traffic.
+ * The port range to allow traffic, valid for layer 4 protocols only e.g. TCP, UDP.
  * @export
  * @interface SecurityGroupRulePortRange
  */
