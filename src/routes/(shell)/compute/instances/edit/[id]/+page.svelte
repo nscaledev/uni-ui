@@ -3,8 +3,6 @@
 
 	let { data }: { data: PageData } = $props();
 
-	import { uniqueNamesGenerator, adjectives, animals } from 'unique-names-generator';
-
 	import * as Clients from '$lib/clients';
 	import * as Compute from '$lib/openapi/compute';
 
@@ -22,34 +20,21 @@
 
 	const settings: ShellPageSettings = {
 		feature: 'Infrastructure',
-		name: 'Create Compute Instance',
-		description: 'Create and deploy a new compute instance.',
+		name: 'Update Compute Instance',
+		description: 'Update a compute instance.',
 		icon: 'mdi:server-network-outline'
 	};
 
-	let instances = $derived(data.instances.filter((x) => x.status.networkId == data.networkID));
-	let names = $derived((instances || []).map((x) => x.metadata.name));
-
-	let resource: Compute.InstanceCreate = $state({
-		metadata: {
-			name: uniqueNamesGenerator({
-				dictionaries: [adjectives, animals],
-				separator: '-',
-				length: 2
-			})
-		},
-		spec: {
-			organizationId: data.organizationID,
-			projectId: data.projectID,
-			networkId: data.networkID,
-			flavorId: '',
-			imageId: ''
-		}
+	let resource = $derived.by(() => {
+		let instance = $state(data.instance);
+		return instance;
 	});
 
-	let securityGroups: Array<string> = $state([]);
-	let publicIP: boolean = $state(true);
-	let allowedSourceAddresses: Array<string> = $state([]);
+	let securityGroups: Array<string> = $state(data.instance.spec.networking?.securityGroups || []);
+	let publicIP: boolean = $state(data.instance.spec.networking?.publicIP || false);
+	let allowedSourceAddresses: Array<string> = $state(
+		data.instance.spec.networking?.allowedSourceAddresses || []
+	);
 
 	// A flavor can only be used if there is a compatible image.
 	let flavors = $derived(
@@ -101,11 +86,12 @@
 		}
 
 		const parameters = {
-			instanceCreate: resource
+			instanceID: resource.metadata.id,
+			instanceUpdate: resource
 		};
 
 		Clients.compute()
-			.apiV2InstancesPost(parameters)
+			.apiV2InstancesInstanceIDPut(parameters)
 			.then(() => window.location.assign('/compute/instances'))
 			.catch((e: Error) => Clients.error(e));
 	}
@@ -114,7 +100,7 @@
 <ShellPageHeader {settings} />
 <h2 class="h2">Basic Configuration</h2>
 
-<ShellMetadataSection metadata={resource.metadata} {names} bind:valid={metadataValid} />
+<ShellMetadataSection metadata={resource.metadata} names={data.names} bind:valid={metadataValid} />
 
 <ShellSection title="Topology">
 	<SelectNew
@@ -181,7 +167,7 @@
 	/>
 	<Button
 		icon="mdi:tick"
-		label="Create"
+		label="Update"
 		class="preset-filled-primary-500"
 		clicked={submit}
 		disabled={!metadataValid || !resource.spec.flavorId || !resource.spec.imageId}
