@@ -125,7 +125,11 @@
 			<ShellListItemMetadata metadata={resource.metadata} />
 
 			<ShellListItemMetadata>
-				<ShellMetadataItem icon="mdi:network-outline" label="Prefix" value={resource.spec.prefix} />
+				<ShellMetadataItem
+					icon="mdi:network-outline"
+					label="Prefix"
+					value={resource.status.prefix}
+				/>
 				<ShellMetadataItem
 					icon="mdi:dns-outline"
 					label="DNS Nameservers"

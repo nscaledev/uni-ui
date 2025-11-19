@@ -25,52 +25,50 @@ import {
     NetworkProtocolFromJSONTyped,
     NetworkProtocolToJSON,
 } from './NetworkProtocol';
-import type { SecurityGroupRulePort } from './SecurityGroupRulePort';
-import {
-    SecurityGroupRulePortFromJSON,
-    SecurityGroupRulePortFromJSONTyped,
-    SecurityGroupRulePortToJSON,
-} from './SecurityGroupRulePort';
 
 /**
  * A security group rule's specification, this operates at OSI layer 3 and above.
- * If omitted the CIDR prefix defaults to 0.0.0.0/0 e.g. allow from anywhere.
- * The port can only be specified for layer 4 protocols e.g. TCP or UDP, and if
- * omitted this default to all ports.
+ * If omitted the prefix defaults to 0.0.0.0/0 e.g. allow from anywhere.
  * @export
- * @interface SecurityGroupRule
+ * @interface SecurityGroupRuleV2
  */
-export interface SecurityGroupRule {
+export interface SecurityGroupRuleV2 {
     /**
      * 
      * @type {NetworkDirection}
-     * @memberof SecurityGroupRule
+     * @memberof SecurityGroupRuleV2
      */
     direction: NetworkDirection;
     /**
      * 
      * @type {NetworkProtocol}
-     * @memberof SecurityGroupRule
+     * @memberof SecurityGroupRuleV2
      */
     protocol: NetworkProtocol;
     /**
-     * 
-     * @type {SecurityGroupRulePort}
-     * @memberof SecurityGroupRule
+     * Port number for layer 4 protocols, if not specified matches all ports.
+     * @type {number}
+     * @memberof SecurityGroupRuleV2
      */
-    port?: SecurityGroupRulePort;
+    port?: number;
+    /**
+     * maxumum port number for layer 4 protocols to include a range.
+     * @type {number}
+     * @memberof SecurityGroupRuleV2
+     */
+    portMax?: number;
     /**
      * An IPv4 address.
      * @type {string}
-     * @memberof SecurityGroupRule
+     * @memberof SecurityGroupRuleV2
      */
-    cidr?: string;
+    prefix?: string;
 }
 
 /**
- * Check if a given object implements the SecurityGroupRule interface.
+ * Check if a given object implements the SecurityGroupRuleV2 interface.
  */
-export function instanceOfSecurityGroupRule(value: object): boolean {
+export function instanceOfSecurityGroupRuleV2(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "direction" in value;
     isInstance = isInstance && "protocol" in value;
@@ -78,11 +76,11 @@ export function instanceOfSecurityGroupRule(value: object): boolean {
     return isInstance;
 }
 
-export function SecurityGroupRuleFromJSON(json: any): SecurityGroupRule {
-    return SecurityGroupRuleFromJSONTyped(json, false);
+export function SecurityGroupRuleV2FromJSON(json: any): SecurityGroupRuleV2 {
+    return SecurityGroupRuleV2FromJSONTyped(json, false);
 }
 
-export function SecurityGroupRuleFromJSONTyped(json: any, ignoreDiscriminator: boolean): SecurityGroupRule {
+export function SecurityGroupRuleV2FromJSONTyped(json: any, ignoreDiscriminator: boolean): SecurityGroupRuleV2 {
     if ((json === undefined) || (json === null)) {
         return json;
     }
@@ -90,12 +88,13 @@ export function SecurityGroupRuleFromJSONTyped(json: any, ignoreDiscriminator: b
         
         'direction': NetworkDirectionFromJSON(json['direction']),
         'protocol': NetworkProtocolFromJSON(json['protocol']),
-        'port': !exists(json, 'port') ? undefined : SecurityGroupRulePortFromJSON(json['port']),
-        'cidr': !exists(json, 'cidr') ? undefined : json['cidr'],
+        'port': !exists(json, 'port') ? undefined : json['port'],
+        'portMax': !exists(json, 'portMax') ? undefined : json['portMax'],
+        'prefix': !exists(json, 'prefix') ? undefined : json['prefix'],
     };
 }
 
-export function SecurityGroupRuleToJSON(value?: SecurityGroupRule | null): any {
+export function SecurityGroupRuleV2ToJSON(value?: SecurityGroupRuleV2 | null): any {
     if (value === undefined) {
         return undefined;
     }
@@ -106,8 +105,9 @@ export function SecurityGroupRuleToJSON(value?: SecurityGroupRule | null): any {
         
         'direction': NetworkDirectionToJSON(value.direction),
         'protocol': NetworkProtocolToJSON(value.protocol),
-        'port': SecurityGroupRulePortToJSON(value.port),
-        'cidr': value.cidr,
+        'port': value.port,
+        'portMax': value.portMax,
+        'prefix': value.prefix,
     };
 }
 

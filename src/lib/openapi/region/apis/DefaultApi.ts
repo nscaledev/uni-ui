@@ -24,8 +24,9 @@ import type {
   Image,
   ModelError,
   NetworkRead,
+  NetworkV2Create,
   NetworkV2Read,
-  NetworkV2Write,
+  NetworkV2Update,
   NetworkWrite,
   RegionDetailRead,
   RegionRead,
@@ -40,6 +41,9 @@ import type {
   ServerV2Update,
   ServerWrite,
   SshKey,
+  StorageV2Create,
+  StorageV2Read,
+  StorageV2Update,
 } from '../models/index';
 import {
     ConsoleOutputFromJSON,
@@ -60,10 +64,12 @@ import {
     ModelErrorToJSON,
     NetworkReadFromJSON,
     NetworkReadToJSON,
+    NetworkV2CreateFromJSON,
+    NetworkV2CreateToJSON,
     NetworkV2ReadFromJSON,
     NetworkV2ReadToJSON,
-    NetworkV2WriteFromJSON,
-    NetworkV2WriteToJSON,
+    NetworkV2UpdateFromJSON,
+    NetworkV2UpdateToJSON,
     NetworkWriteFromJSON,
     NetworkWriteToJSON,
     RegionDetailReadFromJSON,
@@ -92,6 +98,12 @@ import {
     ServerWriteToJSON,
     SshKeyFromJSON,
     SshKeyToJSON,
+    StorageV2CreateFromJSON,
+    StorageV2CreateToJSON,
+    StorageV2ReadFromJSON,
+    StorageV2ReadToJSON,
+    StorageV2UpdateFromJSON,
+    StorageV2UpdateToJSON,
 } from '../models/index';
 
 export interface ApiV1OrganizationsOrganizationIDIdentitiesGetRequest {
@@ -276,6 +288,17 @@ export interface ApiV1OrganizationsOrganizationIDServersGetRequest {
     tag?: Array<string>;
 }
 
+export interface ApiV2FilestorageGetRequest {
+    tag?: Array<string>;
+    organizationID?: Array<string>;
+    projectID?: Array<string>;
+    regionID?: Array<string>;
+}
+
+export interface ApiV2FilestoragePostRequest {
+    storageV2Create?: StorageV2Create;
+}
+
 export interface ApiV2NetworksGetRequest {
     tag?: Array<string>;
     organizationID?: Array<string>;
@@ -291,8 +314,13 @@ export interface ApiV2NetworksNetworkIDGetRequest {
     networkID: string;
 }
 
+export interface ApiV2NetworksNetworkIDPutRequest {
+    networkID: string;
+    networkV2Update?: NetworkV2Update;
+}
+
 export interface ApiV2NetworksPostRequest {
-    networkV2Write?: NetworkV2Write;
+    networkV2Create?: NetworkV2Create;
 }
 
 export interface ApiV2SecuritygroupsGetRequest {
@@ -372,6 +400,19 @@ export interface ApiV2ServersServerIDStartPostRequest {
 
 export interface ApiV2ServersServerIDStopPostRequest {
     serverID: string;
+}
+
+export interface ApiV2StorageFilestorageFilestorageIDDeleteRequest {
+    filestorageID: string;
+}
+
+export interface ApiV2StorageFilestorageFilestorageIDGetRequest {
+    filestorageID: string;
+}
+
+export interface ApiV2StorageFilestorageFilestorageIDPutRequest {
+    filestorageID: string;
+    storageV2Update?: StorageV2Update;
 }
 
 /**
@@ -1649,6 +1690,87 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
+     * List storage for project.
+     */
+    async apiV2FilestorageGetRaw(requestParameters: ApiV2FilestorageGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StorageV2Read>> {
+        const queryParameters: any = {};
+
+        if (requestParameters.tag) {
+            queryParameters['tag'] = requestParameters.tag.join(runtime.COLLECTION_FORMATS["csv"]);
+        }
+
+        if (requestParameters.organizationID) {
+            queryParameters['organizationID'] = requestParameters.organizationID;
+        }
+
+        if (requestParameters.projectID) {
+            queryParameters['projectID'] = requestParameters.projectID;
+        }
+
+        if (requestParameters.regionID) {
+            queryParameters['regionID'] = requestParameters.regionID;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/filestorage`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => StorageV2ReadFromJSON(jsonValue));
+    }
+
+    /**
+     * List storage for project.
+     */
+    async apiV2FilestorageGet(requestParameters: ApiV2FilestorageGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<StorageV2Read> {
+        const response = await this.apiV2FilestorageGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Create a new storage.
+     */
+    async apiV2FilestoragePostRaw(requestParameters: ApiV2FilestoragePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StorageV2Read>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/filestorage`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: StorageV2CreateToJSON(requestParameters.storageV2Create),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => StorageV2ReadFromJSON(jsonValue));
+    }
+
+    /**
+     * Create a new storage.
+     */
+    async apiV2FilestoragePost(requestParameters: ApiV2FilestoragePostRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<StorageV2Read> {
+        const response = await this.apiV2FilestoragePostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
      * List networks.
      */
     async apiV2NetworksGetRaw(requestParameters: ApiV2NetworksGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<NetworkV2Read>>> {
@@ -1765,6 +1887,44 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
+     * Update a network.
+     */
+    async apiV2NetworksNetworkIDPutRaw(requestParameters: ApiV2NetworksNetworkIDPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<NetworkV2Read>> {
+        if (requestParameters.networkID === null || requestParameters.networkID === undefined) {
+            throw new runtime.RequiredError('networkID','Required parameter requestParameters.networkID was null or undefined when calling apiV2NetworksNetworkIDPut.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/networks/{networkID}`.replace(`{${"networkID"}}`, encodeURIComponent(String(requestParameters.networkID))),
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: NetworkV2UpdateToJSON(requestParameters.networkV2Update),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => NetworkV2ReadFromJSON(jsonValue));
+    }
+
+    /**
+     * Update a network.
+     */
+    async apiV2NetworksNetworkIDPut(requestParameters: ApiV2NetworksNetworkIDPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<NetworkV2Read> {
+        const response = await this.apiV2NetworksNetworkIDPutRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Create a new network.
      */
     async apiV2NetworksPostRaw(requestParameters: ApiV2NetworksPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<NetworkV2Read>> {
@@ -1784,7 +1944,7 @@ export class DefaultApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: NetworkV2WriteToJSON(requestParameters.networkV2Write),
+            body: NetworkV2CreateToJSON(requestParameters.networkV2Create),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => NetworkV2ReadFromJSON(jsonValue));
@@ -2425,6 +2585,113 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async apiV2ServersServerIDStopPost(requestParameters: ApiV2ServersServerIDStopPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.apiV2ServersServerIDStopPostRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     * Delete a storage.
+     */
+    async apiV2StorageFilestorageFilestorageIDDeleteRaw(requestParameters: ApiV2StorageFilestorageFilestorageIDDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters.filestorageID === null || requestParameters.filestorageID === undefined) {
+            throw new runtime.RequiredError('filestorageID','Required parameter requestParameters.filestorageID was null or undefined when calling apiV2StorageFilestorageFilestorageIDDelete.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/storage/filestorage/{filestorageID}`.replace(`{${"filestorageID"}}`, encodeURIComponent(String(requestParameters.filestorageID))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Delete a storage.
+     */
+    async apiV2StorageFilestorageFilestorageIDDelete(requestParameters: ApiV2StorageFilestorageFilestorageIDDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.apiV2StorageFilestorageFilestorageIDDeleteRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     * Get all storage information this ID.
+     */
+    async apiV2StorageFilestorageFilestorageIDGetRaw(requestParameters: ApiV2StorageFilestorageFilestorageIDGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StorageV2Read>> {
+        if (requestParameters.filestorageID === null || requestParameters.filestorageID === undefined) {
+            throw new runtime.RequiredError('filestorageID','Required parameter requestParameters.filestorageID was null or undefined when calling apiV2StorageFilestorageFilestorageIDGet.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/storage/filestorage/{filestorageID}`.replace(`{${"filestorageID"}}`, encodeURIComponent(String(requestParameters.filestorageID))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => StorageV2ReadFromJSON(jsonValue));
+    }
+
+    /**
+     * Get all storage information this ID.
+     */
+    async apiV2StorageFilestorageFilestorageIDGet(requestParameters: ApiV2StorageFilestorageFilestorageIDGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<StorageV2Read> {
+        const response = await this.apiV2StorageFilestorageFilestorageIDGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Update this storage.
+     */
+    async apiV2StorageFilestorageFilestorageIDPutRaw(requestParameters: ApiV2StorageFilestorageFilestorageIDPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StorageV2Read>> {
+        if (requestParameters.filestorageID === null || requestParameters.filestorageID === undefined) {
+            throw new runtime.RequiredError('filestorageID','Required parameter requestParameters.filestorageID was null or undefined when calling apiV2StorageFilestorageFilestorageIDPut.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/storage/filestorage/{filestorageID}`.replace(`{${"filestorageID"}}`, encodeURIComponent(String(requestParameters.filestorageID))),
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: StorageV2UpdateToJSON(requestParameters.storageV2Update),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => StorageV2ReadFromJSON(jsonValue));
+    }
+
+    /**
+     * Update this storage.
+     */
+    async apiV2StorageFilestorageFilestorageIDPut(requestParameters: ApiV2StorageFilestorageFilestorageIDPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<StorageV2Read> {
+        const response = await this.apiV2StorageFilestorageFilestorageIDPutRaw(requestParameters, initOverrides);
+        return await response.value();
     }
 
 }
