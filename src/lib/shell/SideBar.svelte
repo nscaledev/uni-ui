@@ -156,6 +156,16 @@
 					},
 					{
 						label: 'Clusters',
+						href: 'clusters2',
+						rbac: [
+							{
+								endpoint: 'compute:clusters',
+								operations: [Identity.AclOperation.Read]
+							}
+						]
+					},
+					{
+						label: 'Clusters (Legacy)',
 						href: 'clusters',
 						rbac: [
 							{

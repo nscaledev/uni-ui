@@ -2,6 +2,12 @@ apis/DefaultApi.ts
 apis/index.ts
 index.ts
 models/AllowedAddressPair.ts
+models/ClusterV2Create.ts
+models/ClusterV2CreateSpec.ts
+models/ClusterV2Read.ts
+models/ClusterV2Spec.ts
+models/ClusterV2Status.ts
+models/ClusterV2Update.ts
 models/ComputeClusterMachineStatus.ts
 models/ComputeClusterNetwork.ts
 models/ComputeClusterRead.ts
@@ -39,6 +45,8 @@ models/OrganizationScopedResourceReadMetadata.ts
 models/OsDistro.ts
 models/OsFamily.ts
 models/OsKernel.ts
+models/PoolV2.ts
+models/PoolV2Status.ts
 models/ProjectScopedResourceReadMetadata.ts
 models/PublicIPAllocation.ts
 models/RegionFeatures.ts

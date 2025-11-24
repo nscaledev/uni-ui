@@ -15,6 +15,9 @@
 
 import * as runtime from '../runtime';
 import type {
+  ClusterV2Create,
+  ClusterV2Read,
+  ClusterV2Update,
   ComputeClusterRead,
   ComputeClusterWrite,
   ConsoleOutput,
@@ -30,6 +33,12 @@ import type {
   SshKey,
 } from '../models/index';
 import {
+    ClusterV2CreateFromJSON,
+    ClusterV2CreateToJSON,
+    ClusterV2ReadFromJSON,
+    ClusterV2ReadToJSON,
+    ClusterV2UpdateFromJSON,
+    ClusterV2UpdateToJSON,
     ComputeClusterReadFromJSON,
     ComputeClusterReadToJSON,
     ComputeClusterWriteFromJSON,
@@ -150,6 +159,31 @@ export interface ApiV1OrganizationsOrganizationIDRegionsRegionIDFlavorsGetReques
 export interface ApiV1OrganizationsOrganizationIDRegionsRegionIDImagesGetRequest {
     organizationID: string;
     regionID: string;
+}
+
+export interface ApiV2ClustersClusterIDDeleteRequest {
+    clusterID: string;
+}
+
+export interface ApiV2ClustersClusterIDGetRequest {
+    clusterID: string;
+}
+
+export interface ApiV2ClustersClusterIDPutRequest {
+    clusterID: string;
+    clusterV2Update: ClusterV2Update;
+}
+
+export interface ApiV2ClustersGetRequest {
+    tag?: Array<string>;
+    organizationID?: Array<string>;
+    projectID?: Array<string>;
+    regionID?: Array<string>;
+    networkID?: Array<string>;
+}
+
+export interface ApiV2ClustersPostRequest {
+    clusterV2Create: ClusterV2Create;
 }
 
 export interface ApiV2InstancesGetRequest {
@@ -868,6 +902,206 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async apiV1OrganizationsOrganizationIDRegionsRegionIDImagesGet(requestParameters: ApiV1OrganizationsOrganizationIDRegionsRegionIDImagesGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Image>> {
         const response = await this.apiV1OrganizationsOrganizationIDRegionsRegionIDImagesGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Delete a cluster.
+     */
+    async apiV2ClustersClusterIDDeleteRaw(requestParameters: ApiV2ClustersClusterIDDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters.clusterID === null || requestParameters.clusterID === undefined) {
+            throw new runtime.RequiredError('clusterID','Required parameter requestParameters.clusterID was null or undefined when calling apiV2ClustersClusterIDDelete.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/clusters/{clusterID}`.replace(`{${"clusterID"}}`, encodeURIComponent(String(requestParameters.clusterID))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Delete a cluster.
+     */
+    async apiV2ClustersClusterIDDelete(requestParameters: ApiV2ClustersClusterIDDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.apiV2ClustersClusterIDDeleteRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     * Get a cluster.
+     */
+    async apiV2ClustersClusterIDGetRaw(requestParameters: ApiV2ClustersClusterIDGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ClusterV2Read>> {
+        if (requestParameters.clusterID === null || requestParameters.clusterID === undefined) {
+            throw new runtime.RequiredError('clusterID','Required parameter requestParameters.clusterID was null or undefined when calling apiV2ClustersClusterIDGet.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/clusters/{clusterID}`.replace(`{${"clusterID"}}`, encodeURIComponent(String(requestParameters.clusterID))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ClusterV2ReadFromJSON(jsonValue));
+    }
+
+    /**
+     * Get a cluster.
+     */
+    async apiV2ClustersClusterIDGet(requestParameters: ApiV2ClustersClusterIDGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ClusterV2Read> {
+        const response = await this.apiV2ClustersClusterIDGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Update a cluster.
+     */
+    async apiV2ClustersClusterIDPutRaw(requestParameters: ApiV2ClustersClusterIDPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ClusterV2Read>> {
+        if (requestParameters.clusterID === null || requestParameters.clusterID === undefined) {
+            throw new runtime.RequiredError('clusterID','Required parameter requestParameters.clusterID was null or undefined when calling apiV2ClustersClusterIDPut.');
+        }
+
+        if (requestParameters.clusterV2Update === null || requestParameters.clusterV2Update === undefined) {
+            throw new runtime.RequiredError('clusterV2Update','Required parameter requestParameters.clusterV2Update was null or undefined when calling apiV2ClustersClusterIDPut.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/clusters/{clusterID}`.replace(`{${"clusterID"}}`, encodeURIComponent(String(requestParameters.clusterID))),
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: ClusterV2UpdateToJSON(requestParameters.clusterV2Update),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ClusterV2ReadFromJSON(jsonValue));
+    }
+
+    /**
+     * Update a cluster.
+     */
+    async apiV2ClustersClusterIDPut(requestParameters: ApiV2ClustersClusterIDPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ClusterV2Read> {
+        const response = await this.apiV2ClustersClusterIDPutRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * List compute clusters.
+     */
+    async apiV2ClustersGetRaw(requestParameters: ApiV2ClustersGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<ClusterV2Read>>> {
+        const queryParameters: any = {};
+
+        if (requestParameters.tag) {
+            queryParameters['tag'] = requestParameters.tag.join(runtime.COLLECTION_FORMATS["csv"]);
+        }
+
+        if (requestParameters.organizationID) {
+            queryParameters['organizationID'] = requestParameters.organizationID;
+        }
+
+        if (requestParameters.projectID) {
+            queryParameters['projectID'] = requestParameters.projectID;
+        }
+
+        if (requestParameters.regionID) {
+            queryParameters['regionID'] = requestParameters.regionID;
+        }
+
+        if (requestParameters.networkID) {
+            queryParameters['networkID'] = requestParameters.networkID;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/clusters`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(ClusterV2ReadFromJSON));
+    }
+
+    /**
+     * List compute clusters.
+     */
+    async apiV2ClustersGet(requestParameters: ApiV2ClustersGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<ClusterV2Read>> {
+        const response = await this.apiV2ClustersGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Create a cluster.
+     */
+    async apiV2ClustersPostRaw(requestParameters: ApiV2ClustersPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ClusterV2Read>> {
+        if (requestParameters.clusterV2Create === null || requestParameters.clusterV2Create === undefined) {
+            throw new runtime.RequiredError('clusterV2Create','Required parameter requestParameters.clusterV2Create was null or undefined when calling apiV2ClustersPost.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/clusters`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: ClusterV2CreateToJSON(requestParameters.clusterV2Create),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ClusterV2ReadFromJSON(jsonValue));
+    }
+
+    /**
+     * Create a cluster.
+     */
+    async apiV2ClustersPost(requestParameters: ApiV2ClustersPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ClusterV2Read> {
+        const response = await this.apiV2ClustersPostRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
