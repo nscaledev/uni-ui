@@ -119,11 +119,23 @@
 				items: [
 					{
 						label: 'Networks',
-						href: 'networks'
+						href: 'networks',
+						rbac: [
+							{
+								endpoint: 'region:networks:v2',
+								operations: [Identity.AclOperation.Read]
+							}
+						]
 					},
 					{
 						label: 'Security Groups',
-						href: 'securitygroups'
+						href: 'securitygroups',
+						rbac: [
+							{
+								endpoint: 'region:securitygroups:v2',
+								operations: [Identity.AclOperation.Read]
+							}
+						]
 					}
 				]
 			},
@@ -134,11 +146,23 @@
 				items: [
 					{
 						label: 'Instances',
-						href: 'instances'
+						href: 'instances',
+						rbac: [
+							{
+								endpoint: 'compute:instances',
+								operations: [Identity.AclOperation.Read]
+							}
+						]
 					},
 					{
 						label: 'Clusters',
-						href: 'clusters'
+						href: 'clusters',
+						rbac: [
+							{
+								endpoint: 'compute:clusters',
+								operations: [Identity.AclOperation.Read]
+							}
+						]
 					}
 				]
 			},
@@ -149,11 +173,23 @@
 				items: [
 					{
 						label: 'Virtual clusters',
-						href: 'virtualclusters'
+						href: 'virtualclusters',
+						rbac: [
+							{
+								endpoint: 'kubernetes:virtualclusters',
+								operations: [Identity.AclOperation.Read]
+							}
+						]
 					},
 					{
 						label: 'Clusters',
-						href: 'clusters'
+						href: 'clusters',
+						rbac: [
+							{
+								endpoint: 'kubernetes:clusters',
+								operations: [Identity.AclOperation.Read]
+							}
+						]
 					},
 					{
 						label: 'Cluster Managers',
