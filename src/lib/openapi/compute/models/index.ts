@@ -1,6 +1,12 @@
 /* tslint:disable */
 /* eslint-disable */
 export * from './AllowedAddressPair';
+export * from './ClusterV2Create';
+export * from './ClusterV2CreateSpec';
+export * from './ClusterV2Read';
+export * from './ClusterV2Spec';
+export * from './ClusterV2Status';
+export * from './ClusterV2Update';
 export * from './ComputeClusterMachineStatus';
 export * from './ComputeClusterNetwork';
 export * from './ComputeClusterRead';
@@ -38,6 +44,8 @@ export * from './OrganizationScopedResourceReadMetadata';
 export * from './OsDistro';
 export * from './OsFamily';
 export * from './OsKernel';
+export * from './PoolV2';
+export * from './PoolV2Status';
 export * from './ProjectScopedResourceReadMetadata';
 export * from './PublicIPAllocation';
 export * from './RegionFeatures';
