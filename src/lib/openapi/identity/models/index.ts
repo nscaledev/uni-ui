@@ -19,6 +19,7 @@ export * from './GroupWrite';
 export * from './JsonWebKeySet';
 export * from './LoginRequestOptions';
 export * from './ModelError';
+export * from './Oauth2Error';
 export * from './Oauth2ProviderRead';
 export * from './Oauth2ProviderSpec';
 export * from './Oauth2ProviderType';

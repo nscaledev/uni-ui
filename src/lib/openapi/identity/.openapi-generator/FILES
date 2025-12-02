@@ -20,6 +20,7 @@ models/GroupWrite.ts
 models/JsonWebKeySet.ts
 models/LoginRequestOptions.ts
 models/ModelError.ts
+models/Oauth2Error.ts
 models/Oauth2ProviderRead.ts
 models/Oauth2ProviderSpec.ts
 models/Oauth2ProviderType.ts
