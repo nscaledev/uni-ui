@@ -39,19 +39,13 @@ export interface ModelError {
  */
 export const ModelErrorErrorEnum = {
     InvalidRequest: 'invalid_request',
-    UnauthorizedClient: 'unauthorized_client',
-    AccessDenied: 'access_denied',
-    UnsupportedResponseType: 'unsupported_response_type',
-    InvalidScope: 'invalid_scope',
     ServerError: 'server_error',
-    TemporarilyUnavailable: 'temporarily_unavailable',
-    InvalidClient: 'invalid_client',
-    InvalidGrant: 'invalid_grant',
-    UnsupportedGrantType: 'unsupported_grant_type',
+    AccessDenied: 'access_denied',
     NotFound: 'not_found',
     Conflict: 'conflict',
     MethodNotAllowed: 'method_not_allowed',
     UnsupportedMediaType: 'unsupported_media_type',
+    RequestEntityTooLarge: 'request_entity_too_large',
     Forbidden: 'forbidden'
 } as const;
 export type ModelErrorErrorEnum = typeof ModelErrorErrorEnum[keyof typeof ModelErrorErrorEnum];

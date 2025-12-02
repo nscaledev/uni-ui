@@ -16,19 +16,19 @@ import { exists, mapValues } from '../runtime';
 /**
  * Generic error message, compatible with oauth2.
  * @export
- * @interface ModelError
+ * @interface Oauth2Error
  */
-export interface ModelError {
+export interface Oauth2Error {
     /**
      * A terse error string expanding on the HTTP error code. Errors are based on the OAuth 2.02 specification, but are expanded with proprietary status codes for APIs other than those specified by OAuth 2.02.
      * @type {string}
-     * @memberof ModelError
+     * @memberof Oauth2Error
      */
-    error: ModelErrorErrorEnum;
+    error: Oauth2ErrorErrorEnum;
     /**
      * Verbose message describing the error.
      * @type {string}
-     * @memberof ModelError
+     * @memberof Oauth2Error
      */
     errorDescription: string;
 }
@@ -37,24 +37,25 @@ export interface ModelError {
 /**
  * @export
  */
-export const ModelErrorErrorEnum = {
+export const Oauth2ErrorErrorEnum = {
     InvalidRequest: 'invalid_request',
-    ServerError: 'server_error',
+    UnauthorizedClient: 'unauthorized_client',
     AccessDenied: 'access_denied',
-    NotFound: 'not_found',
-    Conflict: 'conflict',
-    MethodNotAllowed: 'method_not_allowed',
-    UnsupportedMediaType: 'unsupported_media_type',
-    RequestEntityTooLarge: 'request_entity_too_large',
-    Forbidden: 'forbidden'
+    UnsupportedResponseType: 'unsupported_response_type',
+    InvalidScope: 'invalid_scope',
+    ServerError: 'server_error',
+    TemporarilyUnavailable: 'temporarily_unavailable',
+    InvalidClient: 'invalid_client',
+    InvalidGrant: 'invalid_grant',
+    UnsupportedGrantType: 'unsupported_grant_type'
 } as const;
-export type ModelErrorErrorEnum = typeof ModelErrorErrorEnum[keyof typeof ModelErrorErrorEnum];
+export type Oauth2ErrorErrorEnum = typeof Oauth2ErrorErrorEnum[keyof typeof Oauth2ErrorErrorEnum];
 
 
 /**
- * Check if a given object implements the ModelError interface.
+ * Check if a given object implements the Oauth2Error interface.
  */
-export function instanceOfModelError(value: object): boolean {
+export function instanceOfOauth2Error(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "error" in value;
     isInstance = isInstance && "errorDescription" in value;
@@ -62,11 +63,11 @@ export function instanceOfModelError(value: object): boolean {
     return isInstance;
 }
 
-export function ModelErrorFromJSON(json: any): ModelError {
-    return ModelErrorFromJSONTyped(json, false);
+export function Oauth2ErrorFromJSON(json: any): Oauth2Error {
+    return Oauth2ErrorFromJSONTyped(json, false);
 }
 
-export function ModelErrorFromJSONTyped(json: any, ignoreDiscriminator: boolean): ModelError {
+export function Oauth2ErrorFromJSONTyped(json: any, ignoreDiscriminator: boolean): Oauth2Error {
     if ((json === undefined) || (json === null)) {
         return json;
     }
@@ -77,7 +78,7 @@ export function ModelErrorFromJSONTyped(json: any, ignoreDiscriminator: boolean)
     };
 }
 
-export function ModelErrorToJSON(value?: ModelError | null): any {
+export function Oauth2ErrorToJSON(value?: Oauth2Error | null): any {
     if (value === undefined) {
         return undefined;
     }
