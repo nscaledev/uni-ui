@@ -19,7 +19,7 @@
 
 <ShellPageHeader {settings}></ShellPageHeader>
 <ShellSection title="Resource Utilization">
-	<div class="flex flex-col lg:flex-row lg:flex-wrap gap-4">
+	<div class="flex flex-col lg:grid lg:grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-4">
 		{#each data.quotas.quotas as quota}
 			<div
 				class="flex flex-col gap-4 card bg-surface-50-950 border border-surface-200-800 shadow p-4"
