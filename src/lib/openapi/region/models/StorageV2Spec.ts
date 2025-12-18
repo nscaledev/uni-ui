@@ -33,11 +33,11 @@ import {
  */
 export interface StorageV2Spec {
     /**
-     * Size of the storage
-     * @type {string}
+     * size in GiB of the storage
+     * @type {number}
      * @memberof StorageV2Spec
      */
-    size: string;
+    sizeGiB: number;
     /**
      * 
      * @type {StorageTypeV2Spec}
@@ -57,7 +57,7 @@ export interface StorageV2Spec {
  */
 export function instanceOfStorageV2Spec(value: object): boolean {
     let isInstance = true;
-    isInstance = isInstance && "size" in value;
+    isInstance = isInstance && "sizeGiB" in value;
     isInstance = isInstance && "storageType" in value;
 
     return isInstance;
@@ -73,7 +73,7 @@ export function StorageV2SpecFromJSONTyped(json: any, ignoreDiscriminator: boole
     }
     return {
         
-        'size': json['size'],
+        'sizeGiB': json['sizeGiB'],
         'storageType': StorageTypeV2SpecFromJSON(json['storageType']),
         'attachments': !exists(json, 'attachments') ? undefined : StorageAttachmentV2SpecFromJSON(json['attachments']),
     };
@@ -88,7 +88,7 @@ export function StorageV2SpecToJSON(value?: StorageV2Spec | null): any {
     }
     return {
         
-        'size': value.size,
+        'sizeGiB': value.sizeGiB,
         'storageType': StorageTypeV2SpecToJSON(value.storageType),
         'attachments': StorageAttachmentV2SpecToJSON(value.attachments),
     };

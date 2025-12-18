@@ -13,12 +13,12 @@
  */
 
 import { exists, mapValues } from '../runtime';
-import type { StorageAttachmentV2StatusNetworkIdsInner } from './StorageAttachmentV2StatusNetworkIdsInner';
+import type { ResourceProvisioningStatus } from './ResourceProvisioningStatus';
 import {
-    StorageAttachmentV2StatusNetworkIdsInnerFromJSON,
-    StorageAttachmentV2StatusNetworkIdsInnerFromJSONTyped,
-    StorageAttachmentV2StatusNetworkIdsInnerToJSON,
-} from './StorageAttachmentV2StatusNetworkIdsInner';
+    ResourceProvisioningStatusFromJSON,
+    ResourceProvisioningStatusFromJSONTyped,
+    ResourceProvisioningStatusToJSON,
+} from './ResourceProvisioningStatus';
 
 /**
  * Describes the network attachment for storage
@@ -27,11 +27,23 @@ import {
  */
 export interface StorageAttachmentV2Status {
     /**
-     * 
-     * @type {Array<StorageAttachmentV2StatusNetworkIdsInner>}
+     * The network ID
+     * @type {string}
      * @memberof StorageAttachmentV2Status
      */
-    networkIds: Array<StorageAttachmentV2StatusNetworkIdsInner>;
+    networkId: string;
+    /**
+     * The mount source for the attached storage in the format <host>:<path>.
+     * @type {string}
+     * @memberof StorageAttachmentV2Status
+     */
+    mountSource?: string;
+    /**
+     * 
+     * @type {ResourceProvisioningStatus}
+     * @memberof StorageAttachmentV2Status
+     */
+    provisioningStatus?: ResourceProvisioningStatus;
 }
 
 /**
@@ -39,7 +51,7 @@ export interface StorageAttachmentV2Status {
  */
 export function instanceOfStorageAttachmentV2Status(value: object): boolean {
     let isInstance = true;
-    isInstance = isInstance && "networkIds" in value;
+    isInstance = isInstance && "networkId" in value;
 
     return isInstance;
 }
@@ -54,7 +66,9 @@ export function StorageAttachmentV2StatusFromJSONTyped(json: any, ignoreDiscrimi
     }
     return {
         
-        'networkIds': ((json['networkIds'] as Array<any>).map(StorageAttachmentV2StatusNetworkIdsInnerFromJSON)),
+        'networkId': json['networkId'],
+        'mountSource': !exists(json, 'mountSource') ? undefined : json['mountSource'],
+        'provisioningStatus': !exists(json, 'provisioningStatus') ? undefined : ResourceProvisioningStatusFromJSON(json['provisioningStatus']),
     };
 }
 
@@ -67,7 +81,9 @@ export function StorageAttachmentV2StatusToJSON(value?: StorageAttachmentV2Statu
     }
     return {
         
-        'networkIds': ((value.networkIds as Array<any>).map(StorageAttachmentV2StatusNetworkIdsInnerToJSON)),
+        'networkId': value.networkId,
+        'mountSource': value.mountSource,
+        'provisioningStatus': ResourceProvisioningStatusToJSON(value.provisioningStatus),
     };
 }
 

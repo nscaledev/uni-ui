@@ -85,7 +85,6 @@ export * from './SshKey';
 export * from './StaticResourceMetadata';
 export * from './StorageAttachmentV2Spec';
 export * from './StorageAttachmentV2Status';
-export * from './StorageAttachmentV2StatusNetworkIdsInner';
 export * from './StorageClassProtocolType';
 export * from './StorageClassV2Read';
 export * from './StorageClassV2Spec';
