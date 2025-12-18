@@ -33,11 +33,11 @@ import {
  */
 export interface StorageV2CreateSpec {
     /**
-     * Size of the storage
-     * @type {string}
+     * size in GiB of the storage
+     * @type {number}
      * @memberof StorageV2CreateSpec
      */
-    size: string;
+    sizeGiB: number;
     /**
      * 
      * @type {StorageTypeV2Spec}
@@ -81,7 +81,7 @@ export interface StorageV2CreateSpec {
  */
 export function instanceOfStorageV2CreateSpec(value: object): boolean {
     let isInstance = true;
-    isInstance = isInstance && "size" in value;
+    isInstance = isInstance && "sizeGiB" in value;
     isInstance = isInstance && "storageType" in value;
     isInstance = isInstance && "storageClassId" in value;
     isInstance = isInstance && "organizationId" in value;
@@ -101,7 +101,7 @@ export function StorageV2CreateSpecFromJSONTyped(json: any, ignoreDiscriminator:
     }
     return {
         
-        'size': json['size'],
+        'sizeGiB': json['sizeGiB'],
         'storageType': StorageTypeV2SpecFromJSON(json['storageType']),
         'attachments': !exists(json, 'attachments') ? undefined : StorageAttachmentV2SpecFromJSON(json['attachments']),
         'storageClassId': json['storageClassId'],
@@ -120,7 +120,7 @@ export function StorageV2CreateSpecToJSON(value?: StorageV2CreateSpec | null): a
     }
     return {
         
-        'size': value.size,
+        'sizeGiB': value.sizeGiB,
         'storageType': StorageTypeV2SpecToJSON(value.storageType),
         'attachments': StorageAttachmentV2SpecToJSON(value.attachments),
         'storageClassId': value.storageClassId,

@@ -51,11 +51,11 @@ export interface StorageV2Status {
      */
     usage: StorageUsageV2Spec;
     /**
-     * 
-     * @type {StorageAttachmentV2Status}
+     * Describes the network attachments for storage
+     * @type {Array<StorageAttachmentV2Status>}
      * @memberof StorageV2Status
      */
-    attachments?: StorageAttachmentV2Status;
+    attachments?: Array<StorageAttachmentV2Status>;
 }
 
 /**
@@ -83,7 +83,7 @@ export function StorageV2StatusFromJSONTyped(json: any, ignoreDiscriminator: boo
         'storageClassId': json['storageClassId'],
         'regionId': json['regionId'],
         'usage': StorageUsageV2SpecFromJSON(json['usage']),
-        'attachments': !exists(json, 'attachments') ? undefined : StorageAttachmentV2StatusFromJSON(json['attachments']),
+        'attachments': !exists(json, 'attachments') ? undefined : ((json['attachments'] as Array<any>).map(StorageAttachmentV2StatusFromJSON)),
     };
 }
 
@@ -99,7 +99,7 @@ export function StorageV2StatusToJSON(value?: StorageV2Status | null): any {
         'storageClassId': value.storageClassId,
         'regionId': value.regionId,
         'usage': StorageUsageV2SpecToJSON(value.usage),
-        'attachments': StorageAttachmentV2StatusToJSON(value.attachments),
+        'attachments': value.attachments === undefined ? undefined : ((value.attachments as Array<any>).map(StorageAttachmentV2StatusToJSON)),
     };
 }
 
