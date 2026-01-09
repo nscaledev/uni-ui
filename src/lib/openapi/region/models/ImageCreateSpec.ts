@@ -13,6 +13,12 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { Architecture } from './Architecture';
+import {
+    ArchitectureFromJSON,
+    ArchitectureFromJSONTyped,
+    ArchitectureToJSON,
+} from './Architecture';
 import type { ImageGpu } from './ImageGpu';
 import {
     ImageGpuFromJSON,
@@ -51,6 +57,12 @@ export interface ImageCreateSpec {
      * @memberof ImageCreateSpec
      */
     sourceURL: string;
+    /**
+     * 
+     * @type {Architecture}
+     * @memberof ImageCreateSpec
+     */
+    architecture: Architecture;
     /**
      * 
      * @type {ImageVirtualization}
@@ -94,6 +106,7 @@ export type ImageCreateSpecSourceFormatEnum = typeof ImageCreateSpecSourceFormat
 export function instanceOfImageCreateSpec(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "sourceURL" in value;
+    isInstance = isInstance && "architecture" in value;
     isInstance = isInstance && "virtualization" in value;
     isInstance = isInstance && "os" in value;
 
@@ -112,6 +125,7 @@ export function ImageCreateSpecFromJSONTyped(json: any, ignoreDiscriminator: boo
         
         'sourceFormat': !exists(json, 'sourceFormat') ? undefined : json['sourceFormat'],
         'sourceURL': json['sourceURL'],
+        'architecture': ArchitectureFromJSON(json['architecture']),
         'virtualization': ImageVirtualizationFromJSON(json['virtualization']),
         'os': ImageOSFromJSON(json['os']),
         'softwareVersions': !exists(json, 'softwareVersions') ? undefined : json['softwareVersions'],
@@ -130,6 +144,7 @@ export function ImageCreateSpecToJSON(value?: ImageCreateSpec | null): any {
         
         'sourceFormat': value.sourceFormat,
         'sourceURL': value.sourceURL,
+        'architecture': ArchitectureToJSON(value.architecture),
         'virtualization': ImageVirtualizationToJSON(value.virtualization),
         'os': ImageOSToJSON(value.os),
         'softwareVersions': value.softwareVersions,

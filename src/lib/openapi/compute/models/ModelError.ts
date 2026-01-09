@@ -46,6 +46,7 @@ export const ModelErrorErrorEnum = {
     MethodNotAllowed: 'method_not_allowed',
     UnsupportedMediaType: 'unsupported_media_type',
     RequestEntityTooLarge: 'request_entity_too_large',
+    UnprocessableContent: 'unprocessable_content',
     Forbidden: 'forbidden'
 } as const;
 export type ModelErrorErrorEnum = typeof ModelErrorErrorEnum[keyof typeof ModelErrorErrorEnum];

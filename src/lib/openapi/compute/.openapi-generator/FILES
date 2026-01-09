@@ -2,6 +2,7 @@ apis/DefaultApi.ts
 apis/index.ts
 index.ts
 models/AllowedAddressPair.ts
+models/Architecture.ts
 models/ClusterV2Create.ts
 models/ClusterV2CreateSpec.ts
 models/ClusterV2Read.ts
@@ -30,6 +31,8 @@ models/ImageGpu.ts
 models/ImageOS.ts
 models/ImageSelector.ts
 models/ImageSpec.ts
+models/ImageState.ts
+models/ImageStatus.ts
 models/ImageVirtualization.ts
 models/InstanceCreate.ts
 models/InstanceCreateSpec.ts

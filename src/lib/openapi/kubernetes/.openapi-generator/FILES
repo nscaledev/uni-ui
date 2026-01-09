@@ -1,6 +1,7 @@
 apis/DefaultApi.ts
 apis/index.ts
 index.ts
+models/Architecture.ts
 models/ClusterManagerRead.ts
 models/ClusterManagerWrite.ts
 models/Flavor.ts
@@ -11,6 +12,8 @@ models/Image.ts
 models/ImageGpu.ts
 models/ImageOS.ts
 models/ImageSpec.ts
+models/ImageState.ts
+models/ImageStatus.ts
 models/ImageVirtualization.ts
 models/KubernetesClusterAPI.ts
 models/KubernetesClusterAutoUpgrade.ts
