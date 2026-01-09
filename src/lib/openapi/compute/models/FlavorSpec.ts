@@ -13,6 +13,12 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { Architecture } from './Architecture';
+import {
+    ArchitectureFromJSON,
+    ArchitectureFromJSONTyped,
+    ArchitectureToJSON,
+} from './Architecture';
 import type { GpuSpec } from './GpuSpec';
 import {
     GpuSpecFromJSON,
@@ -58,6 +64,12 @@ export interface FlavorSpec {
     disk: number;
     /**
      * 
+     * @type {Architecture}
+     * @memberof FlavorSpec
+     */
+    architecture: Architecture;
+    /**
+     * 
      * @type {GpuSpec}
      * @memberof FlavorSpec
      */
@@ -72,6 +84,7 @@ export function instanceOfFlavorSpec(value: object): boolean {
     isInstance = isInstance && "cpus" in value;
     isInstance = isInstance && "memory" in value;
     isInstance = isInstance && "disk" in value;
+    isInstance = isInstance && "architecture" in value;
 
     return isInstance;
 }
@@ -91,6 +104,7 @@ export function FlavorSpecFromJSONTyped(json: any, ignoreDiscriminator: boolean)
         'cpuFamily': !exists(json, 'cpuFamily') ? undefined : json['cpuFamily'],
         'memory': json['memory'],
         'disk': json['disk'],
+        'architecture': ArchitectureFromJSON(json['architecture']),
         'gpu': !exists(json, 'gpu') ? undefined : GpuSpecFromJSON(json['gpu']),
     };
 }
@@ -109,6 +123,7 @@ export function FlavorSpecToJSON(value?: FlavorSpec | null): any {
         'cpuFamily': value.cpuFamily,
         'memory': value.memory,
         'disk': value.disk,
+        'architecture': ArchitectureToJSON(value.architecture),
         'gpu': GpuSpecToJSON(value.gpu),
     };
 }

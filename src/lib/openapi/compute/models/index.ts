@@ -1,6 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export * from './AllowedAddressPair';
+export * from './Architecture';
 export * from './ClusterV2Create';
 export * from './ClusterV2CreateSpec';
 export * from './ClusterV2Read';
@@ -29,6 +30,8 @@ export * from './ImageGpu';
 export * from './ImageOS';
 export * from './ImageSelector';
 export * from './ImageSpec';
+export * from './ImageState';
+export * from './ImageStatus';
 export * from './ImageVirtualization';
 export * from './InstanceCreate';
 export * from './InstanceCreateSpec';

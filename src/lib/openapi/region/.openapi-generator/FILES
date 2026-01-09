@@ -1,6 +1,7 @@
 apis/DefaultApi.ts
 apis/index.ts
 index.ts
+models/Architecture.ts
 models/ConsoleOutput.ts
 models/ConsoleSession.ts
 models/ExternalNetwork.ts
@@ -19,6 +20,8 @@ models/ImageCreateSpec.ts
 models/ImageGpu.ts
 models/ImageOS.ts
 models/ImageSpec.ts
+models/ImageState.ts
+models/ImageStatus.ts
 models/ImageVirtualization.ts
 models/InstanceLifecyclePhase.ts
 models/ModelError.ts
@@ -90,7 +93,7 @@ models/StorageClassProtocolType.ts
 models/StorageClassV2Read.ts
 models/StorageClassV2Spec.ts
 models/StorageTypeV2Spec.ts
-models/StorageUsageV2Spec.ts
+models/StorageUsageV2Status.ts
 models/StorageV2Create.ts
 models/StorageV2CreateSpec.ts
 models/StorageV2Read.ts

@@ -43,7 +43,7 @@ export interface StorageAttachmentV2Status {
      * @type {ResourceProvisioningStatus}
      * @memberof StorageAttachmentV2Status
      */
-    provisioningStatus?: ResourceProvisioningStatus;
+    provisioningStatus: ResourceProvisioningStatus;
 }
 
 /**
@@ -52,6 +52,7 @@ export interface StorageAttachmentV2Status {
 export function instanceOfStorageAttachmentV2Status(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "networkId" in value;
+    isInstance = isInstance && "provisioningStatus" in value;
 
     return isInstance;
 }
@@ -68,7 +69,7 @@ export function StorageAttachmentV2StatusFromJSONTyped(json: any, ignoreDiscrimi
         
         'networkId': json['networkId'],
         'mountSource': !exists(json, 'mountSource') ? undefined : json['mountSource'],
-        'provisioningStatus': !exists(json, 'provisioningStatus') ? undefined : ResourceProvisioningStatusFromJSON(json['provisioningStatus']),
+        'provisioningStatus': ResourceProvisioningStatusFromJSON(json['provisioningStatus']),
     };
 }
 

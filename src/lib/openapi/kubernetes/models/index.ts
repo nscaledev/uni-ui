@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+export * from './Architecture';
 export * from './ClusterManagerRead';
 export * from './ClusterManagerWrite';
 export * from './Flavor';
@@ -10,6 +11,8 @@ export * from './Image';
 export * from './ImageGpu';
 export * from './ImageOS';
 export * from './ImageSpec';
+export * from './ImageState';
+export * from './ImageStatus';
 export * from './ImageVirtualization';
 export * from './KubernetesClusterAPI';
 export * from './KubernetesClusterAutoUpgrade';

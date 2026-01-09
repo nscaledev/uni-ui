@@ -19,12 +19,12 @@ import {
     StorageAttachmentV2StatusFromJSONTyped,
     StorageAttachmentV2StatusToJSON,
 } from './StorageAttachmentV2Status';
-import type { StorageUsageV2Spec } from './StorageUsageV2Spec';
+import type { StorageUsageV2Status } from './StorageUsageV2Status';
 import {
-    StorageUsageV2SpecFromJSON,
-    StorageUsageV2SpecFromJSONTyped,
-    StorageUsageV2SpecToJSON,
-} from './StorageUsageV2Spec';
+    StorageUsageV2StatusFromJSON,
+    StorageUsageV2StatusFromJSONTyped,
+    StorageUsageV2StatusToJSON,
+} from './StorageUsageV2Status';
 
 /**
  * Read only status about storage
@@ -46,10 +46,10 @@ export interface StorageV2Status {
     regionId: string;
     /**
      * 
-     * @type {StorageUsageV2Spec}
+     * @type {StorageUsageV2Status}
      * @memberof StorageV2Status
      */
-    usage: StorageUsageV2Spec;
+    usage?: StorageUsageV2Status;
     /**
      * Describes the network attachments for storage
      * @type {Array<StorageAttachmentV2Status>}
@@ -65,7 +65,6 @@ export function instanceOfStorageV2Status(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "storageClassId" in value;
     isInstance = isInstance && "regionId" in value;
-    isInstance = isInstance && "usage" in value;
 
     return isInstance;
 }
@@ -82,7 +81,7 @@ export function StorageV2StatusFromJSONTyped(json: any, ignoreDiscriminator: boo
         
         'storageClassId': json['storageClassId'],
         'regionId': json['regionId'],
-        'usage': StorageUsageV2SpecFromJSON(json['usage']),
+        'usage': !exists(json, 'usage') ? undefined : StorageUsageV2StatusFromJSON(json['usage']),
         'attachments': !exists(json, 'attachments') ? undefined : ((json['attachments'] as Array<any>).map(StorageAttachmentV2StatusFromJSON)),
     };
 }
@@ -98,7 +97,7 @@ export function StorageV2StatusToJSON(value?: StorageV2Status | null): any {
         
         'storageClassId': value.storageClassId,
         'regionId': value.regionId,
-        'usage': StorageUsageV2SpecToJSON(value.usage),
+        'usage': StorageUsageV2StatusToJSON(value.usage),
         'attachments': value.attachments === undefined ? undefined : ((value.attachments as Array<any>).map(StorageAttachmentV2StatusToJSON)),
     };
 }

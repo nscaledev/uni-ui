@@ -13,6 +13,12 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { Architecture } from './Architecture';
+import {
+    ArchitectureFromJSON,
+    ArchitectureFromJSONTyped,
+    ArchitectureToJSON,
+} from './Architecture';
 import type { ImageGpu } from './ImageGpu';
 import {
     ImageGpuFromJSON,
@@ -38,6 +44,12 @@ import {
  * @interface ImageSpec
  */
 export interface ImageSpec {
+    /**
+     * 
+     * @type {Architecture}
+     * @memberof ImageSpec
+     */
+    architecture: Architecture;
     /**
      * Minimum disk size required to use the image in GiB.
      * @type {number}
@@ -75,6 +87,7 @@ export interface ImageSpec {
  */
 export function instanceOfImageSpec(value: object): boolean {
     let isInstance = true;
+    isInstance = isInstance && "architecture" in value;
     isInstance = isInstance && "sizeGiB" in value;
     isInstance = isInstance && "virtualization" in value;
     isInstance = isInstance && "os" in value;
@@ -92,6 +105,7 @@ export function ImageSpecFromJSONTyped(json: any, ignoreDiscriminator: boolean):
     }
     return {
         
+        'architecture': ArchitectureFromJSON(json['architecture']),
         'sizeGiB': json['sizeGiB'],
         'virtualization': ImageVirtualizationFromJSON(json['virtualization']),
         'os': ImageOSFromJSON(json['os']),
@@ -109,6 +123,7 @@ export function ImageSpecToJSON(value?: ImageSpec | null): any {
     }
     return {
         
+        'architecture': ArchitectureToJSON(value.architecture),
         'sizeGiB': value.sizeGiB,
         'virtualization': ImageVirtualizationToJSON(value.virtualization),
         'os': ImageOSToJSON(value.os),

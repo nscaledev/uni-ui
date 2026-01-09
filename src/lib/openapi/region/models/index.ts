@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+export * from './Architecture';
 export * from './ConsoleOutput';
 export * from './ConsoleSession';
 export * from './ExternalNetwork';
@@ -18,6 +19,8 @@ export * from './ImageCreateSpec';
 export * from './ImageGpu';
 export * from './ImageOS';
 export * from './ImageSpec';
+export * from './ImageState';
+export * from './ImageStatus';
 export * from './ImageVirtualization';
 export * from './InstanceLifecyclePhase';
 export * from './ModelError';
@@ -89,7 +92,7 @@ export * from './StorageClassProtocolType';
 export * from './StorageClassV2Read';
 export * from './StorageClassV2Spec';
 export * from './StorageTypeV2Spec';
-export * from './StorageUsageV2Spec';
+export * from './StorageUsageV2Status';
 export * from './StorageV2Create';
 export * from './StorageV2CreateSpec';
 export * from './StorageV2Read';

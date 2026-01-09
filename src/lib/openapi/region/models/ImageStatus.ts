@@ -13,45 +13,52 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { ImageState } from './ImageState';
+import {
+    ImageStateFromJSON,
+    ImageStateFromJSONTyped,
+    ImageStateToJSON,
+} from './ImageState';
+
 /**
- * Describes the network attachment for storage
+ * The image's status.
  * @export
- * @interface StorageAttachmentV2Spec
+ * @interface ImageStatus
  */
-export interface StorageAttachmentV2Spec {
+export interface ImageStatus {
     /**
-     * A list of network IDs
-     * @type {Array<string>}
-     * @memberof StorageAttachmentV2Spec
+     * 
+     * @type {ImageState}
+     * @memberof ImageStatus
      */
-    networkIds: Array<string>;
+    state: ImageState;
 }
 
 /**
- * Check if a given object implements the StorageAttachmentV2Spec interface.
+ * Check if a given object implements the ImageStatus interface.
  */
-export function instanceOfStorageAttachmentV2Spec(value: object): boolean {
+export function instanceOfImageStatus(value: object): boolean {
     let isInstance = true;
-    isInstance = isInstance && "networkIds" in value;
+    isInstance = isInstance && "state" in value;
 
     return isInstance;
 }
 
-export function StorageAttachmentV2SpecFromJSON(json: any): StorageAttachmentV2Spec {
-    return StorageAttachmentV2SpecFromJSONTyped(json, false);
+export function ImageStatusFromJSON(json: any): ImageStatus {
+    return ImageStatusFromJSONTyped(json, false);
 }
 
-export function StorageAttachmentV2SpecFromJSONTyped(json: any, ignoreDiscriminator: boolean): StorageAttachmentV2Spec {
+export function ImageStatusFromJSONTyped(json: any, ignoreDiscriminator: boolean): ImageStatus {
     if ((json === undefined) || (json === null)) {
         return json;
     }
     return {
         
-        'networkIds': json['networkIds'],
+        'state': ImageStateFromJSON(json['state']),
     };
 }
 
-export function StorageAttachmentV2SpecToJSON(value?: StorageAttachmentV2Spec | null): any {
+export function ImageStatusToJSON(value?: ImageStatus | null): any {
     if (value === undefined) {
         return undefined;
     }
@@ -60,7 +67,7 @@ export function StorageAttachmentV2SpecToJSON(value?: StorageAttachmentV2Spec | 
     }
     return {
         
-        'networkIds': value.networkIds,
+        'state': ImageStateToJSON(value.state),
     };
 }
 

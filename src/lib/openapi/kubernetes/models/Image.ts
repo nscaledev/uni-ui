@@ -19,6 +19,12 @@ import {
     ImageSpecFromJSONTyped,
     ImageSpecToJSON,
 } from './ImageSpec';
+import type { ImageStatus } from './ImageStatus';
+import {
+    ImageStatusFromJSON,
+    ImageStatusFromJSONTyped,
+    ImageStatusToJSON,
+} from './ImageStatus';
 import type { StaticResourceMetadata } from './StaticResourceMetadata';
 import {
     StaticResourceMetadataFromJSON,
@@ -44,6 +50,12 @@ export interface Image {
      * @memberof Image
      */
     spec: ImageSpec;
+    /**
+     * 
+     * @type {ImageStatus}
+     * @memberof Image
+     */
+    status: ImageStatus;
 }
 
 /**
@@ -53,6 +65,7 @@ export function instanceOfImage(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "metadata" in value;
     isInstance = isInstance && "spec" in value;
+    isInstance = isInstance && "status" in value;
 
     return isInstance;
 }
@@ -69,6 +82,7 @@ export function ImageFromJSONTyped(json: any, ignoreDiscriminator: boolean): Ima
         
         'metadata': StaticResourceMetadataFromJSON(json['metadata']),
         'spec': ImageSpecFromJSON(json['spec']),
+        'status': ImageStatusFromJSON(json['status']),
     };
 }
 
@@ -83,6 +97,7 @@ export function ImageToJSON(value?: Image | null): any {
         
         'metadata': StaticResourceMetadataToJSON(value.metadata),
         'spec': ImageSpecToJSON(value.spec),
+        'status': ImageStatusToJSON(value.status),
     };
 }
 
