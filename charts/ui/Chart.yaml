@@ -4,8 +4,8 @@ description: A Helm chart for deploying Unikorn UI
 
 type: application
 
-version: v1.13.0-rc3
-appVersion: v1.13.0-rc3
+version: v1.13.0-rc4
+appVersion: v1.13.0-rc4
 
 icon: https://assets.unikorn-cloud.org/assets/images/logos/dark-on-light/icon.png
 
