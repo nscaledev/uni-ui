@@ -85,6 +85,7 @@ models/ServerV2Spec.ts
 models/ServerV2Status.ts
 models/ServerV2Update.ts
 models/ServerWrite.ts
+models/SnapshotCreate.ts
 models/SshKey.ts
 models/StaticResourceMetadata.ts
 models/StorageAttachmentV2Spec.ts

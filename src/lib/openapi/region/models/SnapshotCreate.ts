@@ -13,12 +13,6 @@
  */
 
 import { exists, mapValues } from '../runtime';
-import type { IdentityWriteSpec } from './IdentityWriteSpec';
-import {
-    IdentityWriteSpecFromJSON,
-    IdentityWriteSpecFromJSONTyped,
-    IdentityWriteSpecToJSON,
-} from './IdentityWriteSpec';
 import type { ResourceWriteMetadata } from './ResourceWriteMetadata';
 import {
     ResourceWriteMetadataFromJSON,
@@ -27,29 +21,29 @@ import {
 } from './ResourceWriteMetadata';
 
 /**
- * An identity request.
+ * A compute image create request.
  * @export
- * @interface IdentityWrite
+ * @interface SnapshotCreate
  */
-export interface IdentityWrite {
+export interface SnapshotCreate {
     /**
      * 
      * @type {ResourceWriteMetadata}
-     * @memberof IdentityWrite
+     * @memberof SnapshotCreate
      */
     metadata: ResourceWriteMetadata;
     /**
-     * 
-     * @type {IdentityWriteSpec}
-     * @memberof IdentityWrite
+     * A compute image snapshot specification.
+     * @type {object}
+     * @memberof SnapshotCreate
      */
-    spec: IdentityWriteSpec;
+    spec: object;
 }
 
 /**
- * Check if a given object implements the IdentityWrite interface.
+ * Check if a given object implements the SnapshotCreate interface.
  */
-export function instanceOfIdentityWrite(value: object): boolean {
+export function instanceOfSnapshotCreate(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "metadata" in value;
     isInstance = isInstance && "spec" in value;
@@ -57,22 +51,22 @@ export function instanceOfIdentityWrite(value: object): boolean {
     return isInstance;
 }
 
-export function IdentityWriteFromJSON(json: any): IdentityWrite {
-    return IdentityWriteFromJSONTyped(json, false);
+export function SnapshotCreateFromJSON(json: any): SnapshotCreate {
+    return SnapshotCreateFromJSONTyped(json, false);
 }
 
-export function IdentityWriteFromJSONTyped(json: any, ignoreDiscriminator: boolean): IdentityWrite {
+export function SnapshotCreateFromJSONTyped(json: any, ignoreDiscriminator: boolean): SnapshotCreate {
     if ((json === undefined) || (json === null)) {
         return json;
     }
     return {
         
         'metadata': ResourceWriteMetadataFromJSON(json['metadata']),
-        'spec': IdentityWriteSpecFromJSON(json['spec']),
+        'spec': json['spec'],
     };
 }
 
-export function IdentityWriteToJSON(value?: IdentityWrite | null): any {
+export function SnapshotCreateToJSON(value?: SnapshotCreate | null): any {
     if (value === undefined) {
         return undefined;
     }
@@ -82,7 +76,7 @@ export function IdentityWriteToJSON(value?: IdentityWrite | null): any {
     return {
         
         'metadata': ResourceWriteMetadataToJSON(value.metadata),
-        'spec': IdentityWriteSpecToJSON(value.spec),
+        'spec': value.spec,
     };
 }
 

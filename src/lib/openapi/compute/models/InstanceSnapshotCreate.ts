@@ -1,8 +1,8 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * Kubernetes Service API
- * The Kubernetes Service API provides services that allows provisioning and life cycle management of Kubernetes clusters.
+ * Compute Service API
+ * The Compute Service API provides services that allows provisioning and life cycle management of Compute clusters.
  *
  * The version of the OpenAPI document: 1.13.0
  * 
@@ -21,34 +21,34 @@ import {
 } from './ResourceWriteMetadata';
 
 /**
- * A cluster manager.
+ * A compute instance snapshot request.
  * @export
- * @interface ClusterManagerWrite
+ * @interface InstanceSnapshotCreate
  */
-export interface ClusterManagerWrite {
+export interface InstanceSnapshotCreate {
     /**
      * 
      * @type {ResourceWriteMetadata}
-     * @memberof ClusterManagerWrite
+     * @memberof InstanceSnapshotCreate
      */
     metadata: ResourceWriteMetadata;
 }
 
 /**
- * Check if a given object implements the ClusterManagerWrite interface.
+ * Check if a given object implements the InstanceSnapshotCreate interface.
  */
-export function instanceOfClusterManagerWrite(value: object): boolean {
+export function instanceOfInstanceSnapshotCreate(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "metadata" in value;
 
     return isInstance;
 }
 
-export function ClusterManagerWriteFromJSON(json: any): ClusterManagerWrite {
-    return ClusterManagerWriteFromJSONTyped(json, false);
+export function InstanceSnapshotCreateFromJSON(json: any): InstanceSnapshotCreate {
+    return InstanceSnapshotCreateFromJSONTyped(json, false);
 }
 
-export function ClusterManagerWriteFromJSONTyped(json: any, ignoreDiscriminator: boolean): ClusterManagerWrite {
+export function InstanceSnapshotCreateFromJSONTyped(json: any, ignoreDiscriminator: boolean): InstanceSnapshotCreate {
     if ((json === undefined) || (json === null)) {
         return json;
     }
@@ -58,7 +58,7 @@ export function ClusterManagerWriteFromJSONTyped(json: any, ignoreDiscriminator:
     };
 }
 
-export function ClusterManagerWriteToJSON(value?: ClusterManagerWrite | null): any {
+export function InstanceSnapshotCreateToJSON(value?: InstanceSnapshotCreate | null): any {
     if (value === undefined) {
         return undefined;
     }
