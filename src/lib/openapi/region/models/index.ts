@@ -84,6 +84,7 @@ export * from './ServerV2Spec';
 export * from './ServerV2Status';
 export * from './ServerV2Update';
 export * from './ServerWrite';
+export * from './SnapshotCreate';
 export * from './SshKey';
 export * from './StaticResourceMetadata';
 export * from './StorageAttachmentV2Spec';

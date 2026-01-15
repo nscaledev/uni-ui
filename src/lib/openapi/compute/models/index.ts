@@ -38,6 +38,7 @@ export * from './InstanceCreateSpec';
 export * from './InstanceLifecyclePhase';
 export * from './InstanceNetworking';
 export * from './InstanceRead';
+export * from './InstanceSnapshotCreate';
 export * from './InstanceSpec';
 export * from './InstanceStatus';
 export * from './InstanceUpdate';
