@@ -1,6 +1,10 @@
 {{/*
 Create the container images
 */}}
+{{- define "unikorn.defaultTag" -}}
+v{{ .Chart.Version }}
+{{- end }}
+
 {{- define "unikorn-ui.image" -}}
 {{- .Values.image | default (printf "%s/unikorn-ui:%s" (include "unikorn.defaultRepositoryPath" .) (.Values.tag | default .Chart.Version)) }}
 {{- end }}
