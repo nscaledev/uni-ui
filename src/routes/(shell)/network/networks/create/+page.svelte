@@ -36,7 +36,7 @@
 			projectId: data.projectID,
 			regionId: data.regionID,
 			prefix: '192.168.0.0/24',
-			dnsNameservers: ['8.8.8.8', '8.8.4.4']
+			dnsNameservers: []
 		}
 	});
 
@@ -71,7 +71,7 @@
 
 	<InputChips
 		label="DNS nameservers"
-		hint="You must specify at least one DNS nameserver."
+		hint="Specifing explicit DNS nameservers will prevent instances on the same network from resolving each other."
 		name="dns-nameservers"
 		bind:value={resource.spec.dnsNameservers}
 	/>
