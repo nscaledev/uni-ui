@@ -133,7 +133,7 @@
 				<ShellMetadataItem
 					icon="mdi:dns-outline"
 					label="DNS Nameservers"
-					value={resource.spec.dnsNameservers.join(', ')}
+					value={resource.spec.dnsNameservers?.join(', ') || 'internal'}
 				/>
 			</ShellListItemMetadata>
 		</ShellListItem>
