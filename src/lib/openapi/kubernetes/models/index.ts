@@ -1,6 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export * from './Architecture';
+export * from './BearerMethod';
 export * from './ClusterManagerRead';
 export * from './ClusterManagerWrite';
 export * from './Flavor';
@@ -26,6 +27,7 @@ export * from './KubernetesClusterWorkloadPool';
 export * from './KubernetesClusterWrite';
 export * from './MachinePool';
 export * from './ModelError';
+export * from './OpenidProtectedResource';
 export * from './OrganizationScopedResourceReadMetadata';
 export * from './OsDistro';
 export * from './OsFamily';

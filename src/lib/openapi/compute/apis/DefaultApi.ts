@@ -30,6 +30,7 @@ import type {
   InstanceSnapshotCreate,
   InstanceUpdate,
   ModelError,
+  OpenidProtectedResource,
   RegionRead,
   SshKey,
 } from '../models/index';
@@ -64,6 +65,8 @@ import {
     InstanceUpdateToJSON,
     ModelErrorFromJSON,
     ModelErrorToJSON,
+    OpenidProtectedResourceFromJSON,
+    OpenidProtectedResourceToJSON,
     RegionReadFromJSON,
     RegionReadToJSON,
     SshKeyFromJSON,
@@ -1597,6 +1600,32 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async apiV2InstancesPost(requestParameters: ApiV2InstancesPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<InstanceRead> {
         const response = await this.apiV2InstancesPostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Reads the OIDC discovery page identifying authorization servers.
+     */
+    async wellKnownOpenidProtectedResourceGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<OpenidProtectedResource>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/.well-known/openid-protected-resource`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => OpenidProtectedResourceFromJSON(jsonValue));
+    }
+
+    /**
+     * Reads the OIDC discovery page identifying authorization servers.
+     */
+    async wellKnownOpenidProtectedResourceGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<OpenidProtectedResource> {
+        const response = await this.wellKnownOpenidProtectedResourceGetRaw(initOverrides);
         return await response.value();
     }
 
