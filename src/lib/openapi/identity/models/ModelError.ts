@@ -31,6 +31,12 @@ export interface ModelError {
      * @memberof ModelError
      */
     errorDescription: string;
+    /**
+     * Unique trace identifier for the request.
+     * @type {string}
+     * @memberof ModelError
+     */
+    traceId?: string;
 }
 
 
@@ -75,6 +81,7 @@ export function ModelErrorFromJSONTyped(json: any, ignoreDiscriminator: boolean)
         
         'error': json['error'],
         'errorDescription': json['error_description'],
+        'traceId': !exists(json, 'trace_id') ? undefined : json['trace_id'],
     };
 }
 
@@ -89,6 +96,7 @@ export function ModelErrorToJSON(value?: ModelError | null): any {
         
         'error': value.error,
         'error_description': value.errorDescription,
+        'trace_id': value.traceId,
     };
 }
 

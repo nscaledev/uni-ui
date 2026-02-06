@@ -22,6 +22,7 @@ import type {
   KubernetesClusterRead,
   KubernetesClusterWrite,
   ModelError,
+  OpenidProtectedResource,
   RegionRead,
   RegionTypeParameter,
   VirtualKubernetesClusterRead,
@@ -42,6 +43,8 @@ import {
     KubernetesClusterWriteToJSON,
     ModelErrorFromJSON,
     ModelErrorToJSON,
+    OpenidProtectedResourceFromJSON,
+    OpenidProtectedResourceToJSON,
     RegionReadFromJSON,
     RegionReadToJSON,
     RegionTypeParameterFromJSON,
@@ -881,6 +884,32 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async apiV1OrganizationsOrganizationIDVirtualclustersGet(requestParameters: ApiV1OrganizationsOrganizationIDVirtualclustersGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<VirtualKubernetesClusterRead>> {
         const response = await this.apiV1OrganizationsOrganizationIDVirtualclustersGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Reads the OIDC discovery page identifying authorization servers.
+     */
+    async wellKnownOpenidProtectedResourceGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<OpenidProtectedResource>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/.well-known/openid-protected-resource`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => OpenidProtectedResourceFromJSON(jsonValue));
+    }
+
+    /**
+     * Reads the OIDC discovery page identifying authorization servers.
+     */
+    async wellKnownOpenidProtectedResourceGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<OpenidProtectedResource> {
+        const response = await this.wellKnownOpenidProtectedResourceGetRaw(initOverrides);
         return await response.value();
     }
 
