@@ -23,12 +23,14 @@ import type {
   IdentityWrite,
   Image,
   ImageCreate,
+  ImageState,
   ModelError,
   NetworkRead,
   NetworkV2Create,
   NetworkV2Read,
   NetworkV2Update,
   NetworkWrite,
+  OpenidProtectedResource,
   RegionDetailRead,
   RegionRead,
   SecurityGroupRead,
@@ -65,6 +67,8 @@ import {
     ImageToJSON,
     ImageCreateFromJSON,
     ImageCreateToJSON,
+    ImageStateFromJSON,
+    ImageStateToJSON,
     ModelErrorFromJSON,
     ModelErrorToJSON,
     NetworkReadFromJSON,
@@ -77,6 +81,8 @@ import {
     NetworkV2UpdateToJSON,
     NetworkWriteFromJSON,
     NetworkWriteToJSON,
+    OpenidProtectedResourceFromJSON,
+    OpenidProtectedResourceToJSON,
     RegionDetailReadFromJSON,
     RegionDetailReadToJSON,
     RegionReadFromJSON,
@@ -359,6 +365,13 @@ export interface ApiV2NetworksNetworkIDPutRequest {
 
 export interface ApiV2NetworksPostRequest {
     networkV2Create?: NetworkV2Create;
+}
+
+export interface ApiV2RegionsRegionIDImagesGetRequest {
+    regionID: string;
+    organizationID?: Array<string>;
+    scope?: ApiV2RegionsRegionIDImagesGetScopeEnum;
+    status?: Array<ImageState>;
 }
 
 export interface ApiV2SecuritygroupsGetRequest {
@@ -2239,6 +2252,53 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
+     * List compute disk images
+     */
+    async apiV2RegionsRegionIDImagesGetRaw(requestParameters: ApiV2RegionsRegionIDImagesGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Image>>> {
+        if (requestParameters.regionID === null || requestParameters.regionID === undefined) {
+            throw new runtime.RequiredError('regionID','Required parameter requestParameters.regionID was null or undefined when calling apiV2RegionsRegionIDImagesGet.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.organizationID) {
+            queryParameters['organizationID'] = requestParameters.organizationID;
+        }
+
+        if (requestParameters.scope !== undefined) {
+            queryParameters['scope'] = requestParameters.scope;
+        }
+
+        if (requestParameters.status) {
+            queryParameters['status'] = requestParameters.status;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/regions/{regionID}/images`.replace(`{${"regionID"}}`, encodeURIComponent(String(requestParameters.regionID))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(ImageFromJSON));
+    }
+
+    /**
+     * List compute disk images
+     */
+    async apiV2RegionsRegionIDImagesGet(requestParameters: ApiV2RegionsRegionIDImagesGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Image>> {
+        const response = await this.apiV2RegionsRegionIDImagesGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
      * List security groups.
      * List security groups
      */
@@ -2915,4 +2975,39 @@ export class DefaultApi extends runtime.BaseAPI {
         await this.apiV2ServersServerIDStopPostRaw(requestParameters, initOverrides);
     }
 
+    /**
+     * Reads the OIDC discovery page identifying authorization servers.
+     */
+    async wellKnownOpenidProtectedResourceGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<OpenidProtectedResource>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/.well-known/openid-protected-resource`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => OpenidProtectedResourceFromJSON(jsonValue));
+    }
+
+    /**
+     * Reads the OIDC discovery page identifying authorization servers.
+     */
+    async wellKnownOpenidProtectedResourceGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<OpenidProtectedResource> {
+        const response = await this.wellKnownOpenidProtectedResourceGetRaw(initOverrides);
+        return await response.value();
+    }
+
 }
+
+/**
+ * @export
+ */
+export const ApiV2RegionsRegionIDImagesGetScopeEnum = {
+    Owned: 'owned',
+    Available: 'available'
+} as const;
+export type ApiV2RegionsRegionIDImagesGetScopeEnum = typeof ApiV2RegionsRegionIDImagesGetScopeEnum[keyof typeof ApiV2RegionsRegionIDImagesGetScopeEnum];

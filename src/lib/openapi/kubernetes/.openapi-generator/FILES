@@ -2,6 +2,7 @@ apis/DefaultApi.ts
 apis/index.ts
 index.ts
 models/Architecture.ts
+models/BearerMethod.ts
 models/ClusterManagerRead.ts
 models/ClusterManagerWrite.ts
 models/Flavor.ts
@@ -27,6 +28,7 @@ models/KubernetesClusterWorkloadPool.ts
 models/KubernetesClusterWrite.ts
 models/MachinePool.ts
 models/ModelError.ts
+models/OpenidProtectedResource.ts
 models/OrganizationScopedResourceReadMetadata.ts
 models/OsDistro.ts
 models/OsFamily.ts

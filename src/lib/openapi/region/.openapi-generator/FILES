@@ -2,6 +2,7 @@ apis/DefaultApi.ts
 apis/index.ts
 index.ts
 models/Architecture.ts
+models/BearerMethod.ts
 models/ConsoleOutput.ts
 models/ConsoleSession.ts
 models/ExternalNetwork.ts
@@ -39,6 +40,7 @@ models/NetworkV2Status.ts
 models/NetworkV2Update.ts
 models/NetworkWrite.ts
 models/NetworkWriteSpec.ts
+models/OpenidProtectedResource.ts
 models/OrganizationScopedResourceReadMetadata.ts
 models/OsDistro.ts
 models/OsFamily.ts

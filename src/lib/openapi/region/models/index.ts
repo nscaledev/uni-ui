@@ -1,6 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export * from './Architecture';
+export * from './BearerMethod';
 export * from './ConsoleOutput';
 export * from './ConsoleSession';
 export * from './ExternalNetwork';
@@ -38,6 +39,7 @@ export * from './NetworkV2Status';
 export * from './NetworkV2Update';
 export * from './NetworkWrite';
 export * from './NetworkWriteSpec';
+export * from './OpenidProtectedResource';
 export * from './OrganizationScopedResourceReadMetadata';
 export * from './OsDistro';
 export * from './OsFamily';
