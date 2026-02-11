@@ -8,6 +8,7 @@
 	import * as Clients from '$lib/clients';
 	import * as Kubernetes from '$lib/openapi/kubernetes';
 
+	import { env as publicEnv } from '$env/dynamic/public';
 	import type { ShellPageSettings } from '$lib/layouts/types.ts';
 	import ShellPageHeader from '$lib/layouts/ShellPageHeader.svelte';
 	import ShellMetadataSection from '$lib/layouts/ShellMetadataSection.svelte';
@@ -19,6 +20,19 @@
 	import ResourceList from '$lib/layouts/ResourceList.svelte';
 	import KubernetesWorkloadPool from '$lib/KubernetesWorkloadPool.svelte';
 	import Flavor from '$lib/Flavor.svelte';
+
+	type KubernetesClusterFeaturesUI = Kubernetes.KubernetesClusterFeatures & {
+		autoscaling?: boolean;
+		gpuOperator?: boolean;
+	};
+
+	const DEFAULT_CLUSTER_FEATURES: KubernetesClusterFeaturesUI = {
+		autoscaling: true,
+		gpuOperator: true,
+		observabilityAgent: false
+	};
+
+	const enableObservabilityAgent = publicEnv.PUBLIC_FEATURE_OBSERVABILITY_AGENT === 'true';
 
 	const settings: ShellPageSettings = {
 		feature: 'Infrastructure',
@@ -45,6 +59,7 @@
 		spec: {
 			regionId: data.regionID,
 			version: versions[0],
+			features: { ...DEFAULT_CLUSTER_FEATURES },
 			autoUpgrade: {
 				enabled: true
 			},
@@ -61,6 +76,20 @@
 			]
 		}
 	});
+
+	function clusterFeatures(): KubernetesClusterFeaturesUI {
+		if (!resource.spec.features) {
+			resource.spec.features = { ...DEFAULT_CLUSTER_FEATURES };
+		}
+
+		return resource.spec.features as KubernetesClusterFeaturesUI;
+	}
+
+	function observabilityAgentChange(e: { checked: boolean }) {
+		const features = clusterFeatures();
+
+		features.observabilityAgent = e.checked;
+	}
 
 	function autoUpgradeChange(e: { checked: boolean }) {
 		if (!resource.spec.autoUpgrade) {
@@ -319,6 +348,23 @@
 			</ResourceList>
 		{:else if index === 2}
 			<h2 class="h2">Advanced Options</h2>
+
+			{#if enableObservabilityAgent}
+				<ShellSection title="Observability Agent">
+					<p>
+						Install the observability agent to collect Kubernetes metrics and telemetry and forward
+						them to your observability stack.
+					</p>
+
+					<Switch
+						name="observability-agent"
+						label="Deploy observability agent"
+						hint="Installs telemetry collectors in the cluster."
+						initial={Boolean(resource.spec.features?.observabilityAgent)}
+						onCheckedChange={observabilityAgentChange}
+					/>
+				</ShellSection>
+			{/if}
 
 			<ShellSection title="Auto Upgrade">
 				<p>
