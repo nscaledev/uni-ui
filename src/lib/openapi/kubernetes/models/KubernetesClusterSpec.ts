@@ -25,6 +25,12 @@ import {
     KubernetesClusterAutoUpgradeFromJSONTyped,
     KubernetesClusterAutoUpgradeToJSON,
 } from './KubernetesClusterAutoUpgrade';
+import type { KubernetesClusterFeatures } from './KubernetesClusterFeatures';
+import {
+    KubernetesClusterFeaturesFromJSON,
+    KubernetesClusterFeaturesFromJSONTyped,
+    KubernetesClusterFeaturesToJSON,
+} from './KubernetesClusterFeatures';
 import type { KubernetesClusterNetwork } from './KubernetesClusterNetwork';
 import {
     KubernetesClusterNetworkFromJSON,
@@ -93,6 +99,12 @@ export interface KubernetesClusterSpec {
      * @memberof KubernetesClusterSpec
      */
     networking?: KubernetesClusterNetwork;
+    /**
+     * 
+     * @type {KubernetesClusterFeatures}
+     * @memberof KubernetesClusterSpec
+     */
+    features?: KubernetesClusterFeatures;
 }
 
 /**
@@ -125,6 +137,7 @@ export function KubernetesClusterSpecFromJSONTyped(json: any, ignoreDiscriminato
         'workloadPools': ((json['workloadPools'] as Array<any>).map(KubernetesClusterWorkloadPoolFromJSON)),
         'api': !exists(json, 'api') ? undefined : KubernetesClusterAPIFromJSON(json['api']),
         'networking': !exists(json, 'networking') ? undefined : KubernetesClusterNetworkFromJSON(json['networking']),
+        'features': !exists(json, 'features') ? undefined : KubernetesClusterFeaturesFromJSON(json['features']),
     };
 }
 
@@ -145,6 +158,7 @@ export function KubernetesClusterSpecToJSON(value?: KubernetesClusterSpec | null
         'workloadPools': ((value.workloadPools as Array<any>).map(KubernetesClusterWorkloadPoolToJSON)),
         'api': KubernetesClusterAPIToJSON(value.api),
         'networking': KubernetesClusterNetworkToJSON(value.networking),
+        'features': KubernetesClusterFeaturesToJSON(value.features),
     };
 }
 

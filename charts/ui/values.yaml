@@ -50,6 +50,9 @@ compute:
   # The API's hostname.
   host: compute.unikorn-cloud.org
 
+features:
+  observabilityAgent: false
+
 oauth2:
   # The client identifier assigned to this application.
   clientID: 3fc34852-9186-4884-b580-78bf4bcf628a
