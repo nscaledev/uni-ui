@@ -26,6 +26,10 @@
 	let clusters = $derived(data.clusters.filter((x) => x.metadata.projectId == data.projectID));
 	let names: Array<string> = $derived((clusters || []).map((x) => x.metadata.name));
 
+	function initialRegionID(): string {
+		return data.regionID;
+	}
+
 	let resource: Kubernetes.VirtualKubernetesClusterWrite = $state({
 		metadata: {
 			name: uniqueNamesGenerator({
@@ -35,7 +39,7 @@
 			})
 		},
 		spec: {
-			regionId: data.regionID,
+			regionId: initialRegionID(),
 			workloadPools: [
 				{
 					name: 'default',

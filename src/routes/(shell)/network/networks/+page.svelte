@@ -35,12 +35,16 @@
 		return () => clearInterval(interval);
 	});
 
-	let createProjectID = $state(data.projects[0]?.metadata.id);
-	let createRegionID = $state(data.regions[0]?.metadata.id);
-
-	function lookupRegion(id: string): Region.RegionRead {
-		return data.regions.find((x) => x.metadata.id == id) as Region.RegionRead;
+	function initialCreateProjectID(): string | undefined {
+		return data.projects[0]?.metadata.id;
 	}
+
+	function initialCreateRegionID(): string | undefined {
+		return data.regions[0]?.metadata.id;
+	}
+
+	let createProjectID = $state(initialCreateProjectID());
+	let createRegionID = $state(initialCreateRegionID());
 
 	function confirm(resource: Region.NetworkV2Read) {
 		const parameters = {
@@ -75,7 +79,9 @@
 						<div class="font-bold">Region</div>
 
 						<div class="input-group grid grid-cols-[auto_1fr]">
-							<iconify-icon icon={RegionUtil.iconIcon(lookupRegion(createRegionID))} class="ig-cell"
+							<iconify-icon
+								icon={RegionUtil.icon(data.regions, createRegionID || '')}
+								class="ig-cell"
 							></iconify-icon>
 
 							<select class="ig-select" bind:value={createRegionID}>

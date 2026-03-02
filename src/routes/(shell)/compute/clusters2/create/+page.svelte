@@ -34,6 +34,18 @@
 	let clusters = $derived(data.clusters.filter((x) => x.status.networkId == data.networkID));
 	let names = $derived((clusters || []).map((x) => x.metadata.name));
 
+	function initialOrganizationID(): string {
+		return data.organizationID;
+	}
+
+	function initialProjectID(): string {
+		return data.projectID;
+	}
+
+	function initialNetworkID(): string {
+		return data.networkID;
+	}
+
 	let resource: Compute.ClusterV2Create = $state({
 		metadata: {
 			name: uniqueNamesGenerator({
@@ -43,9 +55,9 @@
 			})
 		},
 		spec: {
-			organizationId: data.organizationID,
-			projectId: data.projectID,
-			networkId: data.networkID,
+			organizationId: initialOrganizationID(),
+			projectId: initialProjectID(),
+			networkId: initialNetworkID(),
 			pools: [
 				{
 					name: 'default',

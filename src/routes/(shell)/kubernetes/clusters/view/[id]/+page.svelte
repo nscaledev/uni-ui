@@ -28,11 +28,12 @@
 		icon: 'mdi:kubernetes'
 	};
 
+	function initialCluster() {
+		return data.cluster;
+	}
+
 	// TODO: move into +page.ts
-	let cluster = $derived.by(() => {
-		let cluster = $state(data.cluster);
-		return cluster;
-	});
+	let cluster = $state(initialCluster());
 
 	$effect.pre(() => {
 		if (!cluster) return;
@@ -45,10 +46,14 @@
 		}
 	});
 
+	function initialVersions(): Array<string> {
+		return [...new Set(data.images.map((x) => x.spec.softwareVersions?.kubernetes || ''))]
+			.sort()
+			.reverse();
+	}
+
 	// TODO: move into +page.ts
-	const versions = [...new Set(data.images.map((x) => x.spec.softwareVersions?.kubernetes || ''))]
-		.sort()
-		.reverse();
+	const versions = initialVersions();
 
 	function autoUpgradeChange(e: { checked: boolean }) {
 		if (!cluster.spec.autoUpgrade) {
