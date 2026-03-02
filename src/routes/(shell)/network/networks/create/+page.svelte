@@ -23,6 +23,18 @@
 		icon: 'mdi:network-outline'
 	};
 
+	function initialOrganizationID(): string {
+		return data.organizationID;
+	}
+
+	function initialProjectID(): string {
+		return data.projectID;
+	}
+
+	function initialRegionID(): string {
+		return data.regionID;
+	}
+
 	let resource: Region.NetworkV2Create = $state({
 		metadata: {
 			name: uniqueNamesGenerator({
@@ -32,9 +44,9 @@
 			})
 		},
 		spec: {
-			organizationId: data.organizationID,
-			projectId: data.projectID,
-			regionId: data.regionID,
+			organizationId: initialOrganizationID(),
+			projectId: initialProjectID(),
+			regionId: initialRegionID(),
 			prefix: '192.168.0.0/24',
 			dnsNameservers: []
 		}
