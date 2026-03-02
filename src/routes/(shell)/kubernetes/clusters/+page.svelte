@@ -9,7 +9,6 @@
 
 	import * as Clients from '$lib/clients';
 	import * as Kubernetes from '$lib/openapi/kubernetes';
-	import * as Region from '$lib/openapi/region';
 	import * as RegionUtil from '$lib/regionutil';
 
 	import type { ShellPageSettings } from '$lib/layouts/types.ts';
@@ -81,12 +80,16 @@
 			.catch((e: Error) => Clients.error(e));
 	}
 
-	let createProjectID = $state(data.projects[0]?.metadata.id);
-	let createRegionID = $state(data.regions[0]?.metadata.id);
-
-	function lookupRegion(id: string): Region.RegionRead {
-		return data.regions.find((x) => x.metadata.id == id) as Region.RegionRead;
+	function initialCreateProjectID(): string | undefined {
+		return data.projects[0]?.metadata.id;
 	}
+
+	function initialCreateRegionID(): string | undefined {
+		return data.regions[0]?.metadata.id;
+	}
+
+	let createProjectID = $state(initialCreateProjectID());
+	let createRegionID = $state(initialCreateRegionID());
 </script>
 
 <ShellPageHeader {settings}>
@@ -110,7 +113,9 @@
 						<div class="font-bold">Region</div>
 
 						<div class="input-group grid grid-cols-[auto_1fr]">
-							<iconify-icon icon={RegionUtil.iconIcon(lookupRegion(createRegionID))} class="ig-cell"
+							<iconify-icon
+								icon={RegionUtil.icon(data.regions, createRegionID || '')}
+								class="ig-cell"
 							></iconify-icon>
 
 							<select class="ig-select" bind:value={createRegionID}>

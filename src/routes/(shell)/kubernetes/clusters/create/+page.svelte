@@ -27,9 +27,17 @@
 		icon: 'mdi:kubernetes'
 	};
 
-	const versions = [...new Set(data.images.map((x) => x.spec.softwareVersions?.kubernetes || ''))]
-		.sort()
-		.reverse();
+	function initialVersions(): Array<string> {
+		return [...new Set(data.images.map((x) => x.spec.softwareVersions?.kubernetes || ''))]
+			.sort()
+			.reverse();
+	}
+
+	function initialRegionID(): string {
+		return data.regionID;
+	}
+
+	const versions = initialVersions();
 
 	let clusters = $derived(data.clusters.filter((x) => x.metadata.projectId == data.projectID));
 	let names: Array<string> = $derived((clusters || []).map((x) => x.metadata.name));
@@ -43,7 +51,7 @@
 			})
 		},
 		spec: {
-			regionId: data.regionID,
+			regionId: initialRegionID(),
 			version: versions[0],
 			autoUpgrade: {
 				enabled: true

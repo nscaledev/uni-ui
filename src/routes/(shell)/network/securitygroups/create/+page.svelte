@@ -23,6 +23,10 @@
 		icon: 'mdi:security-network'
 	};
 
+	function initialNetworkID(): string {
+		return data.network.metadata.id;
+	}
+
 	let resource: Region.SecurityGroupV2Create = $state({
 		metadata: {
 			name: uniqueNamesGenerator({
@@ -32,7 +36,7 @@
 			})
 		},
 		spec: {
-			networkId: data.network.metadata.id,
+			networkId: initialNetworkID(),
 			rules: []
 		}
 	});

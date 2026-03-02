@@ -30,11 +30,21 @@
 		return instance;
 	});
 
-	let securityGroups: Array<string> = $state(data.instance.spec.networking?.securityGroups || []);
-	let publicIP: boolean = $state(data.instance.spec.networking?.publicIP || false);
-	let allowedSourceAddresses: Array<string> = $state(
-		data.instance.spec.networking?.allowedSourceAddresses || []
-	);
+	function initialSecurityGroups(): Array<string> {
+		return data.instance.spec.networking?.securityGroups || [];
+	}
+
+	function initialPublicIP(): boolean {
+		return data.instance.spec.networking?.publicIP || false;
+	}
+
+	function initialAllowedSourceAddresses(): Array<string> {
+		return data.instance.spec.networking?.allowedSourceAddresses || [];
+	}
+
+	let securityGroups: Array<string> = $state(initialSecurityGroups());
+	let publicIP: boolean = $state(initialPublicIP());
+	let allowedSourceAddresses: Array<string> = $state(initialAllowedSourceAddresses());
 
 	// A flavor can only be used if there is a compatible image.
 	let flavors = $derived(

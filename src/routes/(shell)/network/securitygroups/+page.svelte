@@ -34,7 +34,11 @@
 		return () => clearInterval(interval);
 	});
 
-	let createNetworkID = $state(data.networks[0]?.metadata.id);
+	function initialCreateNetworkID(): string | undefined {
+		return data.networks[0]?.metadata.id;
+	}
+
+	let createNetworkID = $state(initialCreateNetworkID());
 
 	function lookupNetwork(id: string): Region.NetworkV2Read {
 		return data.networks.find((x) => x.metadata.id == id) as Region.NetworkV2Read;
