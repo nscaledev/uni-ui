@@ -29,6 +29,7 @@ import type {
   Oauth2ProviderWrite,
   OnboardRequestOptions,
   OpenidConfiguration,
+  OpenidProtectedResource,
   OrganizationRead,
   OrganizationWrite,
   ProjectRead,
@@ -75,6 +76,8 @@ import {
     OnboardRequestOptionsToJSON,
     OpenidConfigurationFromJSON,
     OpenidConfigurationToJSON,
+    OpenidProtectedResourceFromJSON,
+    OpenidProtectedResourceToJSON,
     OrganizationReadFromJSON,
     OrganizationReadToJSON,
     OrganizationWriteFromJSON,
@@ -114,10 +117,6 @@ export interface ApiV1OrganizationsGetRequest {
 }
 
 export interface ApiV1OrganizationsOrganizationIDAclGetRequest {
-    organizationID: string;
-}
-
-export interface ApiV1OrganizationsOrganizationIDAllocationsGetRequest {
     organizationID: string;
 }
 
@@ -459,41 +458,6 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async apiV1OrganizationsOrganizationIDAclGet(requestParameters: ApiV1OrganizationsOrganizationIDAclGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Acl> {
         const response = await this.apiV1OrganizationsOrganizationIDAclGetRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Lists all allocation.
-     */
-    async apiV1OrganizationsOrganizationIDAllocationsGetRaw(requestParameters: ApiV1OrganizationsOrganizationIDAllocationsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<AllocationRead>>> {
-        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
-            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV1OrganizationsOrganizationIDAllocationsGet.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v1/organizations/{organizationID}/allocations`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(AllocationReadFromJSON));
-    }
-
-    /**
-     * Lists all allocation.
-     */
-    async apiV1OrganizationsOrganizationIDAllocationsGet(requestParameters: ApiV1OrganizationsOrganizationIDAllocationsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<AllocationRead>> {
-        const response = await this.apiV1OrganizationsOrganizationIDAllocationsGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -2295,6 +2259,32 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async wellKnownOpenidConfigurationGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<OpenidConfiguration> {
         const response = await this.wellKnownOpenidConfigurationGetRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Reads the OIDC discovery page identifying authorization severs.
+     */
+    async wellKnownOpenidProtectedResourceGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<OpenidProtectedResource>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/.well-known/openid-protected-resource`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => OpenidProtectedResourceFromJSON(jsonValue));
+    }
+
+    /**
+     * Reads the OIDC discovery page identifying authorization severs.
+     */
+    async wellKnownOpenidProtectedResourceGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<OpenidProtectedResource> {
+        const response = await this.wellKnownOpenidProtectedResourceGetRaw(initOverrides);
         return await response.value();
     }
 

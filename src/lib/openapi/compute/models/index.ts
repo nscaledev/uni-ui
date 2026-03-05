@@ -2,6 +2,7 @@
 /* eslint-disable */
 export * from './AllowedAddressPair';
 export * from './Architecture';
+export * from './BearerMethod';
 export * from './ClusterV2Create';
 export * from './ClusterV2CreateSpec';
 export * from './ClusterV2Read';
@@ -44,6 +45,7 @@ export * from './InstanceStatus';
 export * from './InstanceUpdate';
 export * from './MachinePool';
 export * from './ModelError';
+export * from './OpenidProtectedResource';
 export * from './OrganizationScopedResourceReadMetadata';
 export * from './OsDistro';
 export * from './OsFamily';

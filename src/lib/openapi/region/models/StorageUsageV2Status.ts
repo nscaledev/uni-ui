@@ -31,6 +31,12 @@ export interface StorageUsageV2Status {
      * @memberof StorageUsageV2Status
      */
     usedBytes?: number;
+    /**
+     * timestamp when the usage was last updated
+     * @type {Date}
+     * @memberof StorageUsageV2Status
+     */
+    updatedAt?: Date;
 }
 
 /**
@@ -55,6 +61,7 @@ export function StorageUsageV2StatusFromJSONTyped(json: any, ignoreDiscriminator
         
         'capacityBytes': json['capacityBytes'],
         'usedBytes': !exists(json, 'usedBytes') ? undefined : json['usedBytes'],
+        'updatedAt': !exists(json, 'updatedAt') ? undefined : (new Date(json['updatedAt'])),
     };
 }
 
@@ -69,6 +76,7 @@ export function StorageUsageV2StatusToJSON(value?: StorageUsageV2Status | null):
         
         'capacityBytes': value.capacityBytes,
         'usedBytes': value.usedBytes,
+        'updatedAt': value.updatedAt === undefined ? undefined : (value.updatedAt.toISOString()),
     };
 }
 

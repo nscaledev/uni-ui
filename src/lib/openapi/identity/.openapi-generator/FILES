@@ -11,6 +11,7 @@ models/AllocationSpec.ts
 models/AllocationWrite.ts
 models/AuthMethod.ts
 models/AuthorizationRequestOptions.ts
+models/BearerMethod.ts
 models/Claim.ts
 models/CodeChallengeMethod.ts
 models/GrantType.ts
@@ -27,6 +28,7 @@ models/Oauth2ProviderType.ts
 models/Oauth2ProviderWrite.ts
 models/OnboardRequestOptions.ts
 models/OpenidConfiguration.ts
+models/OpenidProtectedResource.ts
 models/OrganizationRead.ts
 models/OrganizationScopedResourceReadMetadata.ts
 models/OrganizationSpec.ts
