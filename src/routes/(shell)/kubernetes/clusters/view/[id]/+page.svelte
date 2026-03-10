@@ -339,12 +339,13 @@
 			<ShellSection title="Hardware Enablement">
 				<p>
 					Installs hardware operators and drivers on the cluster, such as the GPU operator and
-					specialist network configuration. Enable this if your workload pools use GPU flavors.
+					specialist network configuration.
 				</p>
 
 				<Switch
 					name="hardwareenablement"
 					label="Enable hardware operators"
+					hint="Enable this if your workload pools use GPU flavors. Disabling will uninstall all hardware integrations."
 					initial={cluster.spec.features?.hardwareEnablement}
 					onCheckedChange={hardwareEnablementChange}
 				/>
