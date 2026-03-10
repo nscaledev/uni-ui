@@ -56,6 +56,9 @@
 			autoUpgrade: {
 				enabled: true
 			},
+			features: {
+				hardwareEnablement: false
+			},
 			workloadPools: [
 				{
 					name: 'default',
@@ -69,6 +72,10 @@
 			]
 		}
 	});
+
+	function hardwareEnablementChange(e: { checked: boolean }) {
+		resource.spec.features = { hardwareEnablement: e.checked };
+	}
 
 	function autoUpgradeChange(e: { checked: boolean }) {
 		if (!resource.spec.autoUpgrade) {
@@ -327,6 +334,19 @@
 			</ResourceList>
 		{:else if index === 2}
 			<h2 class="h2">Advanced Options</h2>
+
+			<ShellSection title="Hardware Enablement">
+				<p>
+					Installs hardware operators and drivers on the cluster, such as the GPU operator and
+					specialist network configuration. Enable this if your workload pools use GPU flavors.
+				</p>
+
+				<Switch
+					name="hardwareenablement"
+					label="Enable hardware operators"
+					onCheckedChange={hardwareEnablementChange}
+				/>
+			</ShellSection>
 
 			<ShellSection title="Auto Upgrade">
 				<p>
