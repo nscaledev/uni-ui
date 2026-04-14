@@ -38,7 +38,10 @@
 		const parameters = {
 			organizationID: data.organizationID,
 			groupid: group.metadata.id,
-			groupWrite: group
+			groupWrite: {
+				...group,
+				spec: { ...group.spec, subjects: undefined }
+			}
 		};
 
 		Clients.identity()
