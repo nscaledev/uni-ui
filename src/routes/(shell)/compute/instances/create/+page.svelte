@@ -12,6 +12,7 @@
 	import ShellPageHeader from '$lib/layouts/ShellPageHeader.svelte';
 	import ShellMetadataSection from '$lib/layouts/ShellMetadataSection.svelte';
 	import ShellSection from '$lib/layouts/ShellSection.svelte';
+	import Select from '$lib/forms/Select.svelte';
 	import SelectNew from '$lib/forms/SelectNew.svelte';
 	import MultiSelect from '$lib/forms/MultiSelect.svelte';
 	import Switch from '$lib/forms/Switch.svelte';
@@ -55,7 +56,8 @@
 			projectId: initialProjectID(),
 			networkId: initialNetworkID(),
 			flavorId: '',
-			imageId: ''
+			imageId: '',
+			sshCertificateAuthorityId: undefined
 		}
 	});
 
@@ -96,6 +98,10 @@
 	let metadataValid = $state(false);
 
 	function submit() {
+		if (!resource.spec.sshCertificateAuthorityId) {
+			delete resource.spec.sshCertificateAuthorityId;
+		}
+
 		if (securityGroups || publicIP || allowedSourceAddresses) {
 			resource.spec.networking = {};
 
@@ -182,6 +188,19 @@
 		hint="Instances will only allow traffic to egres from their onw IP address.  To enable NFV functionality (e.g. acting as a router), this specifies a set of additional prefixes that are allowed to egress."
 		bind:value={allowedSourceAddresses}
 	/>
+
+	<Select
+		label="SSH Certificate CA"
+		hint="Optionally attach an SSH certificate authority to trust user certificates for instance access."
+		bind:value={resource.spec.sshCertificateAuthorityId}
+	>
+		<option value="">None</option>
+		{#each data.sshCertificateAuthorities as sshCertificateAuthority}
+			<option value={sshCertificateAuthority.metadata.id}>
+				{sshCertificateAuthority.metadata.name}
+			</option>
+		{/each}
+	</Select>
 </ShellSection>
 
 <div class="flex justify-between">

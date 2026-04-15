@@ -40,12 +40,18 @@ export const load: PageLoad = async ({ fetch, parent, url }) => {
 		networkID: [networkID]
 	});
 
+	const sshCertificateAuthorities = Clients.region(fetch).apiV2SshcertificateauthoritiesGet({
+		organizationID: [organizationID],
+		projectID: [projectID]
+	});
+
 	return {
 		projectID: projectID,
 		regionID: regionID,
 		networkID: networkID,
 		images: await assertNonEmptyList(images),
 		flavors: await assertNonEmptyList(flavors),
-		securityGroups: await securityGroups
+		securityGroups: await securityGroups,
+		sshCertificateAuthorities: await sshCertificateAuthorities
 	};
 };
