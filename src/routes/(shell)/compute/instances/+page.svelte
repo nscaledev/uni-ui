@@ -12,6 +12,7 @@
 	import * as Region from '$lib/openapi/region';
 	import * as RegionUtil from '$lib/regionutil';
 	import * as MachineStatus from '$lib/machineStatus';
+	import * as Formatters from '$lib/formatters';
 
 	import type { ShellPageSettings } from '$lib/layouts/types.ts';
 	import ShellPageHeader from '$lib/layouts/ShellPageHeader.svelte';
@@ -19,8 +20,6 @@
 	import ShellListItem from '$lib/layouts/ShellListItem.svelte';
 	import ShellListItemHeader from '$lib/layouts/ShellListItemHeader.svelte';
 	import ShellListItemBadges from '$lib/layouts/ShellListItemBadges.svelte';
-	import ShellListItemMetadata from '$lib/layouts/ShellListItemMetadata.svelte';
-	import ShellMetadataItem from '$lib/layouts/ShellMetadataItem.svelte';
 	import Badge from '$lib/layouts/Badge.svelte';
 	import PopupButton from '$lib/forms/PopupButton.svelte';
 	import SubtleButton from '$lib/forms/SubtleButton.svelte';
@@ -88,6 +87,20 @@
 				window.URL.revokeObjectURL(url);
 			})
 			.catch((e: Error) => Clients.error(e));
+	}
+
+	function sshKeyDownloadDisabled(resource: Compute.InstanceRead): boolean {
+		return !!resource.spec.sshCertificateAuthorityId;
+	}
+
+	function sshCertificateAuthorityName(resource: Compute.InstanceRead): string | undefined {
+		if (!resource.spec.sshCertificateAuthorityId) return;
+
+		const sshCertificateAuthority = data.sshCertificateAuthorities.find(
+			(x) => x.metadata.id == resource.spec.sshCertificateAuthorityId
+		);
+
+		return sshCertificateAuthority?.metadata.name || resource.spec.sshCertificateAuthorityId;
 	}
 
 	function start(resource: Compute.InstanceRead): void {
@@ -198,26 +211,58 @@
 					</ShellListItemBadges>
 				{/snippet}
 
-				<ShellListItemMetadata metadata={resource.metadata} />
+				<div class="col-span-3 lg:col-span-6 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+					<div class="flex items-center gap-2">
+						<iconify-icon class="text-lg text-primary-600-400" icon="mdi:clock-time-five-outline"
+						></iconify-icon>
+						<div class="font-bold">Age</div>
+						<div>{Formatters.ageFormatter(resource.metadata.creationTime)}</div>
+					</div>
 
-				{#if resource.status.privateIP}
-					<ShellMetadataItem
-						icon="mdi:local-area-network"
-						label="Private IP"
-						value={resource.status.privateIP}
-					/>
-				{/if}
+					<div class="flex items-center gap-2">
+						<iconify-icon class="text-lg text-primary-600-400" icon="mdi:user-outline"
+						></iconify-icon>
+						<div class="font-bold">Owner</div>
+						<div>{resource.metadata.createdBy || 'unknown'}</div>
+					</div>
+				</div>
 
-				{#if resource.status.publicIP}
-					<ShellMetadataItem
-						icon="mdi:local-area-network"
-						label="Public IP"
-						value={resource.status.publicIP}
-					/>
-				{/if}
+				<div class="col-span-3 lg:col-span-6 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+					{#if resource.status.privateIP}
+						<div class="flex items-center gap-2">
+							<iconify-icon class="text-lg text-primary-600-400" icon="mdi:local-area-network"
+							></iconify-icon>
+							<div class="font-bold">Private IP</div>
+							<div>{resource.status.privateIP}</div>
+						</div>
+					{/if}
+
+					{#if resource.status.publicIP}
+						<div class="flex items-center gap-2">
+							<iconify-icon class="text-lg text-primary-600-400" icon="mdi:local-area-network"
+							></iconify-icon>
+							<div class="font-bold">Public IP</div>
+							<div>{resource.status.publicIP}</div>
+						</div>
+					{/if}
+
+					{#if sshCertificateAuthorityName(resource)}
+						<div class="flex items-center gap-2">
+							<iconify-icon class="text-lg text-primary-600-400" icon="mdi:key-chain-variant"
+							></iconify-icon>
+							<div class="font-bold">SSH Certificate CA</div>
+							<div>{sshCertificateAuthorityName(resource) || ''}</div>
+						</div>
+					{/if}
+				</div>
 
 				{#snippet trail()}
-					<SubtleButton icon="mdi:connection" label="SSH Key" clicked={() => getSSHKey(resource)} />
+					<SubtleButton
+						icon="mdi:connection"
+						label="SSH Key"
+						clicked={() => getSSHKey(resource)}
+						disabled={sshKeyDownloadDisabled(resource)}
+					/>
 					<ModalIcon
 						icon={resource.status.powerState !== Compute.InstanceLifecyclePhase.Stopped
 							? 'mdi:stop'

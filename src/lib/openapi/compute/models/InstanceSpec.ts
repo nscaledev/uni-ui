@@ -22,6 +22,9 @@ import {
 
 /**
  * A compute instance.
+ * Some stored desired-state changes only take effect on the backing server when that server is
+ * rebuilt or recreated. Currently, changing flavorId or imageId causes the backing server to
+ * be rebuilt or recreated.
  * @export
  * @interface InstanceSpec
  */
@@ -44,6 +47,13 @@ export interface InstanceSpec {
      * @memberof InstanceSpec
      */
     networking?: InstanceNetworking;
+    /**
+     * The SSH certificate authority used to bootstrap login trust when the backing server is
+     * created.
+     * @type {string}
+     * @memberof InstanceSpec
+     */
+    sshCertificateAuthorityId?: string;
     /**
      * Contains base64-encoded configuration information or scripts to use upon launch.
      * The format of the data is governed by the cloud-init standard, and may be a script,
@@ -78,6 +88,7 @@ export function InstanceSpecFromJSONTyped(json: any, ignoreDiscriminator: boolea
         'flavorId': json['flavorId'],
         'imageId': json['imageId'],
         'networking': !exists(json, 'networking') ? undefined : InstanceNetworkingFromJSON(json['networking']),
+        'sshCertificateAuthorityId': !exists(json, 'sshCertificateAuthorityId') ? undefined : json['sshCertificateAuthorityId'],
         'userData': !exists(json, 'userData') ? undefined : json['userData'],
     };
 }
@@ -94,6 +105,7 @@ export function InstanceSpecToJSON(value?: InstanceSpec | null): any {
         'flavorId': value.flavorId,
         'imageId': value.imageId,
         'networking': InstanceNetworkingToJSON(value.networking),
+        'sshCertificateAuthorityId': value.sshCertificateAuthorityId,
         'userData': value.userData,
     };
 }
