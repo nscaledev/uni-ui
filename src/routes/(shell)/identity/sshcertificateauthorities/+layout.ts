@@ -5,16 +5,12 @@ import type { LayoutLoad } from './$types';
 import * as Clients from '$lib/clients';
 
 export const load: LayoutLoad = async ({ fetch, depends, parent }) => {
-	depends('layout:instances');
+	depends('layout:sshcertificateauthorities');
 
 	const { organizationID } = await parent();
 
-	const networks = Clients.region(fetch).apiV2NetworksGet({
-		organizationID: [organizationID]
-	});
-
-	const instances = Clients.compute(fetch).apiV2InstancesGet({
-		organizationID: [organizationID]
+	const projects = Clients.identity(fetch).apiV1OrganizationsOrganizationIDProjectsGet({
+		organizationID: organizationID
 	});
 
 	const sshCertificateAuthorities = Clients.region(fetch).apiV2SshcertificateauthoritiesGet({
@@ -22,8 +18,7 @@ export const load: LayoutLoad = async ({ fetch, depends, parent }) => {
 	});
 
 	return {
-		networks: await networks,
-		instances: await instances,
+		projects: await projects,
 		sshCertificateAuthorities: await sshCertificateAuthorities
 	};
 };

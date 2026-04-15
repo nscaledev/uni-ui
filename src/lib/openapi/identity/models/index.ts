@@ -8,6 +8,7 @@ export * from './AclProject';
 export * from './AllocationRead';
 export * from './AllocationSpec';
 export * from './AllocationWrite';
+export * from './AuthClaims';
 export * from './AuthMethod';
 export * from './AuthorizationRequestOptions';
 export * from './BearerMethod';
