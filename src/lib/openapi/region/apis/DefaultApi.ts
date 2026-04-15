@@ -44,6 +44,8 @@ import type {
   ServerV2Update,
   ServerWrite,
   SnapshotCreate,
+  SshCertificateAuthorityV2Create,
+  SshCertificateAuthorityV2Read,
   SshKey,
   StorageClassV2Read,
   StorageV2Create,
@@ -109,6 +111,10 @@ import {
     ServerWriteToJSON,
     SnapshotCreateFromJSON,
     SnapshotCreateToJSON,
+    SshCertificateAuthorityV2CreateFromJSON,
+    SshCertificateAuthorityV2CreateToJSON,
+    SshCertificateAuthorityV2ReadFromJSON,
+    SshCertificateAuthorityV2ReadToJSON,
     SshKeyFromJSON,
     SshKeyToJSON,
     StorageClassV2ReadFromJSON,
@@ -363,6 +369,16 @@ export interface ApiV2NetworksNetworkIDPutRequest {
     networkV2Update?: NetworkV2Update;
 }
 
+export interface ApiV2NetworksNetworkIDReferencesReferenceDeleteRequest {
+    networkID: string;
+    reference: string;
+}
+
+export interface ApiV2NetworksNetworkIDReferencesReferencePutRequest {
+    networkID: string;
+    reference: string;
+}
+
 export interface ApiV2NetworksPostRequest {
     networkV2Create?: NetworkV2Create;
 }
@@ -456,6 +472,24 @@ export interface ApiV2ServersServerIDStartPostRequest {
 
 export interface ApiV2ServersServerIDStopPostRequest {
     serverID: string;
+}
+
+export interface ApiV2SshcertificateauthoritiesGetRequest {
+    tag?: Array<string>;
+    organizationID?: Array<string>;
+    projectID?: Array<string>;
+}
+
+export interface ApiV2SshcertificateauthoritiesPostRequest {
+    sshCertificateAuthorityV2Create?: SshCertificateAuthorityV2Create;
+}
+
+export interface ApiV2SshcertificateauthoritiesSshCertificateAuthorityIDDeleteRequest {
+    sshCertificateAuthorityID: string;
+}
+
+export interface ApiV2SshcertificateauthoritiesSshCertificateAuthorityIDGetRequest {
+    sshCertificateAuthorityID: string;
 }
 
 /**
@@ -2216,6 +2250,82 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
+     * Idempotent interface for removing external references from a resource. 
+     */
+    async apiV2NetworksNetworkIDReferencesReferenceDeleteRaw(requestParameters: ApiV2NetworksNetworkIDReferencesReferenceDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters.networkID === null || requestParameters.networkID === undefined) {
+            throw new runtime.RequiredError('networkID','Required parameter requestParameters.networkID was null or undefined when calling apiV2NetworksNetworkIDReferencesReferenceDelete.');
+        }
+
+        if (requestParameters.reference === null || requestParameters.reference === undefined) {
+            throw new runtime.RequiredError('reference','Required parameter requestParameters.reference was null or undefined when calling apiV2NetworksNetworkIDReferencesReferenceDelete.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/networks/{networkID}/references/{reference}`.replace(`{${"networkID"}}`, encodeURIComponent(String(requestParameters.networkID))).replace(`{${"reference"}}`, encodeURIComponent(String(requestParameters.reference))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Idempotent interface for removing external references from a resource. 
+     */
+    async apiV2NetworksNetworkIDReferencesReferenceDelete(requestParameters: ApiV2NetworksNetworkIDReferencesReferenceDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.apiV2NetworksNetworkIDReferencesReferenceDeleteRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     * Idempotent interface for adding external references to a resource. 
+     */
+    async apiV2NetworksNetworkIDReferencesReferencePutRaw(requestParameters: ApiV2NetworksNetworkIDReferencesReferencePutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters.networkID === null || requestParameters.networkID === undefined) {
+            throw new runtime.RequiredError('networkID','Required parameter requestParameters.networkID was null or undefined when calling apiV2NetworksNetworkIDReferencesReferencePut.');
+        }
+
+        if (requestParameters.reference === null || requestParameters.reference === undefined) {
+            throw new runtime.RequiredError('reference','Required parameter requestParameters.reference was null or undefined when calling apiV2NetworksNetworkIDReferencesReferencePut.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/networks/{networkID}/references/{reference}`.replace(`{${"networkID"}}`, encodeURIComponent(String(requestParameters.networkID))).replace(`{${"reference"}}`, encodeURIComponent(String(requestParameters.reference))),
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Idempotent interface for adding external references to a resource. 
+     */
+    async apiV2NetworksNetworkIDReferencesReferencePut(requestParameters: ApiV2NetworksNetworkIDReferencesReferencePutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.apiV2NetworksNetworkIDReferencesReferencePutRaw(requestParameters, initOverrides);
+    }
+
+    /**
      * Create a new network.
      * Create network
      */
@@ -2973,6 +3083,160 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async apiV2ServersServerIDStopPost(requestParameters: ApiV2ServersServerIDStopPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.apiV2ServersServerIDStopPostRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     * List SSH certificate authorities.
+     * List SSH certificate authorities
+     */
+    async apiV2SshcertificateauthoritiesGetRaw(requestParameters: ApiV2SshcertificateauthoritiesGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SshCertificateAuthorityV2Read>>> {
+        const queryParameters: any = {};
+
+        if (requestParameters.tag) {
+            queryParameters['tag'] = requestParameters.tag.join(runtime.COLLECTION_FORMATS["csv"]);
+        }
+
+        if (requestParameters.organizationID) {
+            queryParameters['organizationID'] = requestParameters.organizationID;
+        }
+
+        if (requestParameters.projectID) {
+            queryParameters['projectID'] = requestParameters.projectID;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/sshcertificateauthorities`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SshCertificateAuthorityV2ReadFromJSON));
+    }
+
+    /**
+     * List SSH certificate authorities.
+     * List SSH certificate authorities
+     */
+    async apiV2SshcertificateauthoritiesGet(requestParameters: ApiV2SshcertificateauthoritiesGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<SshCertificateAuthorityV2Read>> {
+        const response = await this.apiV2SshcertificateauthoritiesGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Create a new SSH certificate authority.
+     * Create SSH certificate authority
+     */
+    async apiV2SshcertificateauthoritiesPostRaw(requestParameters: ApiV2SshcertificateauthoritiesPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SshCertificateAuthorityV2Read>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/sshcertificateauthorities`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: SshCertificateAuthorityV2CreateToJSON(requestParameters.sshCertificateAuthorityV2Create),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SshCertificateAuthorityV2ReadFromJSON(jsonValue));
+    }
+
+    /**
+     * Create a new SSH certificate authority.
+     * Create SSH certificate authority
+     */
+    async apiV2SshcertificateauthoritiesPost(requestParameters: ApiV2SshcertificateauthoritiesPostRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SshCertificateAuthorityV2Read> {
+        const response = await this.apiV2SshcertificateauthoritiesPostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Delete an SSH certificate authority.
+     * Delete SSH certificate authority
+     */
+    async apiV2SshcertificateauthoritiesSshCertificateAuthorityIDDeleteRaw(requestParameters: ApiV2SshcertificateauthoritiesSshCertificateAuthorityIDDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters.sshCertificateAuthorityID === null || requestParameters.sshCertificateAuthorityID === undefined) {
+            throw new runtime.RequiredError('sshCertificateAuthorityID','Required parameter requestParameters.sshCertificateAuthorityID was null or undefined when calling apiV2SshcertificateauthoritiesSshCertificateAuthorityIDDelete.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/sshcertificateauthorities/{sshCertificateAuthorityID}`.replace(`{${"sshCertificateAuthorityID"}}`, encodeURIComponent(String(requestParameters.sshCertificateAuthorityID))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Delete an SSH certificate authority.
+     * Delete SSH certificate authority
+     */
+    async apiV2SshcertificateauthoritiesSshCertificateAuthorityIDDelete(requestParameters: ApiV2SshcertificateauthoritiesSshCertificateAuthorityIDDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.apiV2SshcertificateauthoritiesSshCertificateAuthorityIDDeleteRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     * Get an SSH certificate authority.
+     * Get SSH certificate authority
+     */
+    async apiV2SshcertificateauthoritiesSshCertificateAuthorityIDGetRaw(requestParameters: ApiV2SshcertificateauthoritiesSshCertificateAuthorityIDGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SshCertificateAuthorityV2Read>> {
+        if (requestParameters.sshCertificateAuthorityID === null || requestParameters.sshCertificateAuthorityID === undefined) {
+            throw new runtime.RequiredError('sshCertificateAuthorityID','Required parameter requestParameters.sshCertificateAuthorityID was null or undefined when calling apiV2SshcertificateauthoritiesSshCertificateAuthorityIDGet.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/sshcertificateauthorities/{sshCertificateAuthorityID}`.replace(`{${"sshCertificateAuthorityID"}}`, encodeURIComponent(String(requestParameters.sshCertificateAuthorityID))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SshCertificateAuthorityV2ReadFromJSON(jsonValue));
+    }
+
+    /**
+     * Get an SSH certificate authority.
+     * Get SSH certificate authority
+     */
+    async apiV2SshcertificateauthoritiesSshCertificateAuthorityIDGet(requestParameters: ApiV2SshcertificateauthoritiesSshCertificateAuthorityIDGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SshCertificateAuthorityV2Read> {
+        const response = await this.apiV2SshcertificateauthoritiesSshCertificateAuthorityIDGetRaw(requestParameters, initOverrides);
+        return await response.value();
     }
 
     /**
