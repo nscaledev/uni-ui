@@ -13,12 +13,25 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { AuthClaims } from './AuthClaims';
+import {
+    AuthClaimsFromJSON,
+    AuthClaimsFromJSONTyped,
+    AuthClaimsToJSON,
+} from './AuthClaims';
+
 /**
  * Access token introspection data.
  * @export
  * @interface Userinfo
  */
 export interface Userinfo {
+    /**
+     * 
+     * @type {AuthClaims}
+     * @memberof Userinfo
+     */
+    httpsUnikornCloudOrgAuthz?: AuthClaims;
     /**
      * The access token's subject.
      * @type {string}
@@ -143,6 +156,7 @@ export function UserinfoFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
     }
     return {
         
+        'httpsUnikornCloudOrgAuthz': !exists(json, 'https://unikorn-cloud.org/authz') ? undefined : AuthClaimsFromJSON(json['https://unikorn-cloud.org/authz']),
         'sub': json['sub'],
         'email': !exists(json, 'email') ? undefined : json['email'],
         'emailVerified': !exists(json, 'email_verified') ? undefined : json['email_verified'],
@@ -172,6 +186,7 @@ export function UserinfoToJSON(value?: Userinfo | null): any {
     }
     return {
         
+        'https://unikorn-cloud.org/authz': AuthClaimsToJSON(value.httpsUnikornCloudOrgAuthz),
         'sub': value.sub,
         'email': value.email,
         'email_verified': value.emailVerified,

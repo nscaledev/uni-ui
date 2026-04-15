@@ -109,6 +109,16 @@
 								operations: [Identity.AclOperation.Read]
 							}
 						]
+					},
+					{
+						label: 'SSH Certificate CAs',
+						href: 'sshcertificateauthorities',
+						rbac: [
+							{
+								endpoint: 'region:sshcertificateauthorities:v2',
+								operations: [Identity.AclOperation.Read]
+							}
+						]
 					}
 				]
 			},

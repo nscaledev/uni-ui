@@ -19,7 +19,8 @@
  */
 export const RegionType = {
     Openstack: 'openstack',
-    Kubernetes: 'kubernetes'
+    Kubernetes: 'kubernetes',
+    Simulated: 'simulated'
 } as const;
 export type RegionType = typeof RegionType[keyof typeof RegionType];
 
