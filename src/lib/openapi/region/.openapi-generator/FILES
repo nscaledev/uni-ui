@@ -25,6 +25,17 @@ models/ImageState.ts
 models/ImageStatus.ts
 models/ImageVirtualization.ts
 models/InstanceLifecyclePhase.ts
+models/LoadBalancerHealthCheckV2.ts
+models/LoadBalancerListenerProtocolV2.ts
+models/LoadBalancerListenerV2.ts
+models/LoadBalancerMemberV2.ts
+models/LoadBalancerPoolV2.ts
+models/LoadBalancerV2Create.ts
+models/LoadBalancerV2CreateSpec.ts
+models/LoadBalancerV2Read.ts
+models/LoadBalancerV2Spec.ts
+models/LoadBalancerV2Status.ts
+models/LoadBalancerV2Update.ts
 models/ModelError.ts
 models/NFSV2Spec.ts
 models/NetworkDirection.ts
