@@ -24,6 +24,9 @@ import type {
   Image,
   ImageCreate,
   ImageState,
+  LoadBalancerV2Create,
+  LoadBalancerV2Read,
+  LoadBalancerV2Update,
   ModelError,
   NetworkRead,
   NetworkV2Create,
@@ -71,6 +74,12 @@ import {
     ImageCreateToJSON,
     ImageStateFromJSON,
     ImageStateToJSON,
+    LoadBalancerV2CreateFromJSON,
+    LoadBalancerV2CreateToJSON,
+    LoadBalancerV2ReadFromJSON,
+    LoadBalancerV2ReadToJSON,
+    LoadBalancerV2UpdateFromJSON,
+    LoadBalancerV2UpdateToJSON,
     ModelErrorFromJSON,
     ModelErrorToJSON,
     NetworkReadFromJSON,
@@ -347,6 +356,31 @@ export interface ApiV2FilestoragePostRequest {
 
 export interface ApiV2FilestorageclassesGetRequest {
     regionID?: Array<string>;
+}
+
+export interface ApiV2LoadbalancersGetRequest {
+    tag?: Array<string>;
+    organizationID?: Array<string>;
+    projectID?: Array<string>;
+    regionID?: Array<string>;
+    networkID?: Array<string>;
+}
+
+export interface ApiV2LoadbalancersLoadBalancerIDDeleteRequest {
+    loadBalancerID: string;
+}
+
+export interface ApiV2LoadbalancersLoadBalancerIDGetRequest {
+    loadBalancerID: string;
+}
+
+export interface ApiV2LoadbalancersLoadBalancerIDPutRequest {
+    loadBalancerID: string;
+    loadBalancerV2Update?: LoadBalancerV2Update;
+}
+
+export interface ApiV2LoadbalancersPostRequest {
+    loadBalancerV2Create?: LoadBalancerV2Create;
 }
 
 export interface ApiV2NetworksGetRequest {
@@ -2084,6 +2118,208 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async apiV2FilestorageclassesGet(requestParameters: ApiV2FilestorageclassesGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<StorageClassV2Read>> {
         const response = await this.apiV2FilestorageclassesGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * List load balancers.
+     * List load balancers
+     */
+    async apiV2LoadbalancersGetRaw(requestParameters: ApiV2LoadbalancersGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<LoadBalancerV2Read>>> {
+        const queryParameters: any = {};
+
+        if (requestParameters.tag) {
+            queryParameters['tag'] = requestParameters.tag.join(runtime.COLLECTION_FORMATS["csv"]);
+        }
+
+        if (requestParameters.organizationID) {
+            queryParameters['organizationID'] = requestParameters.organizationID;
+        }
+
+        if (requestParameters.projectID) {
+            queryParameters['projectID'] = requestParameters.projectID;
+        }
+
+        if (requestParameters.regionID) {
+            queryParameters['regionID'] = requestParameters.regionID;
+        }
+
+        if (requestParameters.networkID) {
+            queryParameters['networkID'] = requestParameters.networkID;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/loadbalancers`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(LoadBalancerV2ReadFromJSON));
+    }
+
+    /**
+     * List load balancers.
+     * List load balancers
+     */
+    async apiV2LoadbalancersGet(requestParameters: ApiV2LoadbalancersGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<LoadBalancerV2Read>> {
+        const response = await this.apiV2LoadbalancersGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Delete a load balancer.
+     * Delete load balancer
+     */
+    async apiV2LoadbalancersLoadBalancerIDDeleteRaw(requestParameters: ApiV2LoadbalancersLoadBalancerIDDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters.loadBalancerID === null || requestParameters.loadBalancerID === undefined) {
+            throw new runtime.RequiredError('loadBalancerID','Required parameter requestParameters.loadBalancerID was null or undefined when calling apiV2LoadbalancersLoadBalancerIDDelete.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/loadbalancers/{loadBalancerID}`.replace(`{${"loadBalancerID"}}`, encodeURIComponent(String(requestParameters.loadBalancerID))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Delete a load balancer.
+     * Delete load balancer
+     */
+    async apiV2LoadbalancersLoadBalancerIDDelete(requestParameters: ApiV2LoadbalancersLoadBalancerIDDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.apiV2LoadbalancersLoadBalancerIDDeleteRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     * Get a load balancer.
+     * Get load balancer
+     */
+    async apiV2LoadbalancersLoadBalancerIDGetRaw(requestParameters: ApiV2LoadbalancersLoadBalancerIDGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<LoadBalancerV2Read>> {
+        if (requestParameters.loadBalancerID === null || requestParameters.loadBalancerID === undefined) {
+            throw new runtime.RequiredError('loadBalancerID','Required parameter requestParameters.loadBalancerID was null or undefined when calling apiV2LoadbalancersLoadBalancerIDGet.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/loadbalancers/{loadBalancerID}`.replace(`{${"loadBalancerID"}}`, encodeURIComponent(String(requestParameters.loadBalancerID))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => LoadBalancerV2ReadFromJSON(jsonValue));
+    }
+
+    /**
+     * Get a load balancer.
+     * Get load balancer
+     */
+    async apiV2LoadbalancersLoadBalancerIDGet(requestParameters: ApiV2LoadbalancersLoadBalancerIDGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<LoadBalancerV2Read> {
+        const response = await this.apiV2LoadbalancersLoadBalancerIDGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Update a load balancer.
+     * Update load balancer
+     */
+    async apiV2LoadbalancersLoadBalancerIDPutRaw(requestParameters: ApiV2LoadbalancersLoadBalancerIDPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<LoadBalancerV2Read>> {
+        if (requestParameters.loadBalancerID === null || requestParameters.loadBalancerID === undefined) {
+            throw new runtime.RequiredError('loadBalancerID','Required parameter requestParameters.loadBalancerID was null or undefined when calling apiV2LoadbalancersLoadBalancerIDPut.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/loadbalancers/{loadBalancerID}`.replace(`{${"loadBalancerID"}}`, encodeURIComponent(String(requestParameters.loadBalancerID))),
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: LoadBalancerV2UpdateToJSON(requestParameters.loadBalancerV2Update),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => LoadBalancerV2ReadFromJSON(jsonValue));
+    }
+
+    /**
+     * Update a load balancer.
+     * Update load balancer
+     */
+    async apiV2LoadbalancersLoadBalancerIDPut(requestParameters: ApiV2LoadbalancersLoadBalancerIDPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<LoadBalancerV2Read> {
+        const response = await this.apiV2LoadbalancersLoadBalancerIDPutRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Create a new load balancer.
+     * Create load balancer
+     */
+    async apiV2LoadbalancersPostRaw(requestParameters: ApiV2LoadbalancersPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<LoadBalancerV2Read>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.accessToken) {
+            // oauth required
+            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
+        }
+
+        const response = await this.request({
+            path: `/api/v2/loadbalancers`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: LoadBalancerV2CreateToJSON(requestParameters.loadBalancerV2Create),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => LoadBalancerV2ReadFromJSON(jsonValue));
+    }
+
+    /**
+     * Create a new load balancer.
+     * Create load balancer
+     */
+    async apiV2LoadbalancersPost(requestParameters: ApiV2LoadbalancersPostRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<LoadBalancerV2Read> {
+        const response = await this.apiV2LoadbalancersPostRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
