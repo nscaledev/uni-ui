@@ -88,10 +88,6 @@ models/ServerV2Status.ts
 models/ServerV2Update.ts
 models/ServerWrite.ts
 models/SnapshotCreate.ts
-models/SshCertificateAuthorityV2Create.ts
-models/SshCertificateAuthorityV2CreateSpec.ts
-models/SshCertificateAuthorityV2Read.ts
-models/SshCertificateAuthorityV2Spec.ts
 models/SshKey.ts
 models/StaticResourceMetadata.ts
 models/StorageAttachmentV2Spec.ts

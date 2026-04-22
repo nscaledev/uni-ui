@@ -17,13 +17,8 @@ export const load: LayoutLoad = async ({ fetch, depends, parent }) => {
 		organizationID: [organizationID]
 	});
 
-	const sshCertificateAuthorities = Clients.region(fetch).apiV2SshcertificateauthoritiesGet({
-		organizationID: [organizationID]
-	});
-
 	return {
 		networks: await networks,
-		instances: await instances,
-		sshCertificateAuthorities: await sshCertificateAuthorities
+		instances: await instances
 	};
 };

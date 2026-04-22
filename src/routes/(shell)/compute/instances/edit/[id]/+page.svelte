@@ -9,7 +9,6 @@
 	import type { ShellPageSettings } from '$lib/layouts/types.ts';
 	import ShellPageHeader from '$lib/layouts/ShellPageHeader.svelte';
 	import ShellMetadataSection from '$lib/layouts/ShellMetadataSection.svelte';
-	import ShellMetadataItem from '$lib/layouts/ShellMetadataItem.svelte';
 	import ShellSection from '$lib/layouts/ShellSection.svelte';
 	import SelectNew from '$lib/forms/SelectNew.svelte';
 	import MultiSelect from '$lib/forms/MultiSelect.svelte';
@@ -78,16 +77,6 @@
 	});
 
 	let metadataValid = $state(false);
-
-	let sshCertificateAuthorityName = $derived.by(() => {
-		if (!data.instance.spec.sshCertificateAuthorityId) return;
-
-		const sshCertificateAuthority = data.sshCertificateAuthorities.find(
-			(x) => x.metadata.id == data.instance.spec.sshCertificateAuthorityId
-		);
-
-		return sshCertificateAuthority?.metadata.name || data.instance.spec.sshCertificateAuthorityId;
-	});
 
 	function submit() {
 		if (securityGroups || publicIP || allowedSourceAddresses) {
@@ -177,14 +166,6 @@
 		hint="Instances will only allow traffic to egres from their onw IP address.  To enable NFV functionality (e.g. acting as a router), this specifies a set of additional prefixes that are allowed to egress."
 		bind:value={allowedSourceAddresses}
 	/>
-
-	{#if sshCertificateAuthorityName}
-		<ShellMetadataItem
-			icon="mdi:key-chain-variant"
-			label="SSH Certificate CA"
-			value={sshCertificateAuthorityName}
-		/>
-	{/if}
 </ShellSection>
 
 <div class="flex justify-between">

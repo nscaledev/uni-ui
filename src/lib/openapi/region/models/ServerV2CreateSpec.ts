@@ -58,12 +58,6 @@ export interface ServerV2CreateSpec {
      * @memberof ServerV2CreateSpec
      */
     networkId: string;
-    /**
-     * The SSH certificate authority ID.
-     * @type {string}
-     * @memberof ServerV2CreateSpec
-     */
-    sshCertificateAuthorityId?: string;
 }
 
 /**
@@ -93,7 +87,6 @@ export function ServerV2CreateSpecFromJSONTyped(json: any, ignoreDiscriminator: 
         'networking': !exists(json, 'networking') ? undefined : ServerV2NetworkingFromJSON(json['networking']),
         'userData': !exists(json, 'userData') ? undefined : json['userData'],
         'networkId': json['networkId'],
-        'sshCertificateAuthorityId': !exists(json, 'sshCertificateAuthorityId') ? undefined : json['sshCertificateAuthorityId'],
     };
 }
 
@@ -111,7 +104,6 @@ export function ServerV2CreateSpecToJSON(value?: ServerV2CreateSpec | null): any
         'networking': ServerV2NetworkingToJSON(value.networking),
         'userData': value.userData,
         'networkId': value.networkId,
-        'sshCertificateAuthorityId': value.sshCertificateAuthorityId,
     };
 }
 
