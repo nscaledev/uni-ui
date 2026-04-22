@@ -16,7 +16,17 @@
 
 	let { name, initial = false, onCheckedChange, label, hint = '' }: Props = $props();
 
-	let checked = $state(initial);
+	let previousInitial = $state<boolean | undefined>(undefined);
+	let checked = $state(false);
+
+	$effect.pre(() => {
+		if (previousInitial === initial) {
+			return;
+		}
+
+		previousInitial = initial;
+		checked = initial;
+	});
 
 	function update(e: { checked: boolean }) {
 		checked = e.checked;

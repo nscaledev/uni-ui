@@ -1,7 +1,7 @@
 <script lang="ts">
 	interface Props {
 		// Value to bind to.
-		value: number;
+		value: number | undefined;
 		// Label to attach describing the input.
 		label: string;
 		// Formatting hint.

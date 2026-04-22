@@ -5,7 +5,7 @@
 		// Unique element name.
 		name: string;
 		// Value to bind to.
-		value: Array<string>;
+		value: Array<string> | undefined;
 		// Label to attach describing the input.
 		label: string;
 		// Formatting hint.
