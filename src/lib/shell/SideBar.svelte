@@ -146,6 +146,16 @@
 								operations: [Identity.AclOperation.Read]
 							}
 						]
+					},
+					{
+						label: 'Load Balancers',
+						href: 'loadbalancers',
+						rbac: [
+							{
+								endpoint: 'region:loadbalancers:v2',
+								operations: [Identity.AclOperation.Read]
+							}
+						]
 					}
 				]
 			},
@@ -291,7 +301,15 @@
 		return item.items?.find((x) => $page.url.pathname.startsWith(item.base + '/' + x.href));
 	});
 
-	let selectedOrganizationID = $state(organizationID);
+	let previousOrganizationID = $state('');
+	let selectedOrganizationID = $state('');
+
+	$effect.pre(() => {
+		if (previousOrganizationID === organizationID) return;
+
+		previousOrganizationID = organizationID;
+		selectedOrganizationID = organizationID;
+	});
 
 	$effect.pre(() => {
 		if (!browser) return;
