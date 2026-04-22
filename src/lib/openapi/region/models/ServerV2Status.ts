@@ -21,7 +21,7 @@ import {
 } from './InstanceLifecyclePhase';
 
 /**
- * Read only status information about a server.
+ * Read only status information about a security group.
  * @export
  * @interface ServerV2Status
  */
@@ -38,12 +38,6 @@ export interface ServerV2Status {
      * @memberof ServerV2Status
      */
     networkId: string;
-    /**
-     * The SSH certificate authority ID.
-     * @type {string}
-     * @memberof ServerV2Status
-     */
-    sshCertificateAuthorityId?: string;
     /**
      * 
      * @type {InstanceLifecyclePhase}
@@ -87,7 +81,6 @@ export function ServerV2StatusFromJSONTyped(json: any, ignoreDiscriminator: bool
         
         'regionId': json['regionId'],
         'networkId': json['networkId'],
-        'sshCertificateAuthorityId': !exists(json, 'sshCertificateAuthorityId') ? undefined : json['sshCertificateAuthorityId'],
         'powerState': !exists(json, 'powerState') ? undefined : InstanceLifecyclePhaseFromJSON(json['powerState']),
         'privateIP': !exists(json, 'privateIP') ? undefined : json['privateIP'],
         'publicIP': !exists(json, 'publicIP') ? undefined : json['publicIP'],
@@ -105,7 +98,6 @@ export function ServerV2StatusToJSON(value?: ServerV2Status | null): any {
         
         'regionId': value.regionId,
         'networkId': value.networkId,
-        'sshCertificateAuthorityId': value.sshCertificateAuthorityId,
         'powerState': InstanceLifecyclePhaseToJSON(value.powerState),
         'privateIP': value.privateIP,
         'publicIP': value.publicIP,

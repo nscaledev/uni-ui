@@ -25,12 +25,6 @@ import {
     KubernetesClusterAutoUpgradeFromJSONTyped,
     KubernetesClusterAutoUpgradeToJSON,
 } from './KubernetesClusterAutoUpgrade';
-import type { KubernetesClusterControlPlane } from './KubernetesClusterControlPlane';
-import {
-    KubernetesClusterControlPlaneFromJSON,
-    KubernetesClusterControlPlaneFromJSONTyped,
-    KubernetesClusterControlPlaneToJSON,
-} from './KubernetesClusterControlPlane';
 import type { KubernetesClusterFeatures } from './KubernetesClusterFeatures';
 import {
     KubernetesClusterFeaturesFromJSON,
@@ -94,12 +88,6 @@ export interface KubernetesClusterSpec {
      */
     features?: KubernetesClusterFeatures;
     /**
-     * 
-     * @type {KubernetesClusterControlPlane}
-     * @memberof KubernetesClusterSpec
-     */
-    controlPlane?: KubernetesClusterControlPlane;
-    /**
      * A list of Kubernetes cluster workload pools.
      * @type {Array<KubernetesClusterWorkloadPool>}
      * @memberof KubernetesClusterSpec
@@ -147,7 +135,6 @@ export function KubernetesClusterSpecFromJSONTyped(json: any, ignoreDiscriminato
         'applicationBundleName': !exists(json, 'applicationBundleName') ? undefined : json['applicationBundleName'],
         'autoUpgrade': !exists(json, 'autoUpgrade') ? undefined : KubernetesClusterAutoUpgradeFromJSON(json['autoUpgrade']),
         'features': !exists(json, 'features') ? undefined : KubernetesClusterFeaturesFromJSON(json['features']),
-        'controlPlane': !exists(json, 'controlPlane') ? undefined : KubernetesClusterControlPlaneFromJSON(json['controlPlane']),
         'workloadPools': ((json['workloadPools'] as Array<any>).map(KubernetesClusterWorkloadPoolFromJSON)),
         'api': !exists(json, 'api') ? undefined : KubernetesClusterAPIFromJSON(json['api']),
         'networking': !exists(json, 'networking') ? undefined : KubernetesClusterNetworkFromJSON(json['networking']),
@@ -169,7 +156,6 @@ export function KubernetesClusterSpecToJSON(value?: KubernetesClusterSpec | null
         'applicationBundleName': value.applicationBundleName,
         'autoUpgrade': KubernetesClusterAutoUpgradeToJSON(value.autoUpgrade),
         'features': KubernetesClusterFeaturesToJSON(value.features),
-        'controlPlane': KubernetesClusterControlPlaneToJSON(value.controlPlane),
         'workloadPools': ((value.workloadPools as Array<any>).map(KubernetesClusterWorkloadPoolToJSON)),
         'api': KubernetesClusterAPIToJSON(value.api),
         'networking': KubernetesClusterNetworkToJSON(value.networking),

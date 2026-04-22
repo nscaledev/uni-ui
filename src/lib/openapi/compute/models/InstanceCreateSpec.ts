@@ -45,13 +45,6 @@ export interface InstanceCreateSpec {
      */
     networking?: InstanceNetworking;
     /**
-     * The SSH certificate authority used to bootstrap login trust when the backing server is
-     * created.
-     * @type {string}
-     * @memberof InstanceCreateSpec
-     */
-    sshCertificateAuthorityId?: string;
-    /**
      * Contains base64-encoded configuration information or scripts to use upon launch.
      * The format of the data is governed by the cloud-init standard, and may be a script,
      * a MIME multipart archive, etc.
@@ -106,7 +99,6 @@ export function InstanceCreateSpecFromJSONTyped(json: any, ignoreDiscriminator: 
         'flavorId': json['flavorId'],
         'imageId': json['imageId'],
         'networking': !exists(json, 'networking') ? undefined : InstanceNetworkingFromJSON(json['networking']),
-        'sshCertificateAuthorityId': !exists(json, 'sshCertificateAuthorityId') ? undefined : json['sshCertificateAuthorityId'],
         'userData': !exists(json, 'userData') ? undefined : json['userData'],
         'organizationId': json['organizationId'],
         'projectId': json['projectId'],
@@ -126,7 +118,6 @@ export function InstanceCreateSpecToJSON(value?: InstanceCreateSpec | null): any
         'flavorId': value.flavorId,
         'imageId': value.imageId,
         'networking': InstanceNetworkingToJSON(value.networking),
-        'sshCertificateAuthorityId': value.sshCertificateAuthorityId,
         'userData': value.userData,
         'organizationId': value.organizationId,
         'projectId': value.projectId,

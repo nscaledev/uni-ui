@@ -21,7 +21,6 @@ models/KubernetesClusterAutoUpgrade.ts
 models/KubernetesClusterAutoUpgradeDaysOfWeek.ts
 models/KubernetesClusterAutoUpgradeWindow.ts
 models/KubernetesClusterAutoscaling.ts
-models/KubernetesClusterControlPlane.ts
 models/KubernetesClusterFeatures.ts
 models/KubernetesClusterNetwork.ts
 models/KubernetesClusterRead.ts

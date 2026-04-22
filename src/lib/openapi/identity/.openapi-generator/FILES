@@ -9,7 +9,6 @@ models/AclProject.ts
 models/AllocationRead.ts
 models/AllocationSpec.ts
 models/AllocationWrite.ts
-models/AuthClaims.ts
 models/AuthMethod.ts
 models/AuthorizationRequestOptions.ts
 models/BearerMethod.ts
