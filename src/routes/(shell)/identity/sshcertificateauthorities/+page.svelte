@@ -55,7 +55,7 @@
 	{#each data.sshCertificateAuthorities || [] as resource}
 		<ShellListItem>
 			{#snippet main()}
-				<ShellListItemHeader
+			<ShellListItemHeader
 					metadata={resource.metadata}
 					projects={data.projects}
 					href="/identity/sshcertificateauthorities/view/{resource.metadata.id}"

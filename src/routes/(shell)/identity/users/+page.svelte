@@ -88,10 +88,7 @@
 	{#each data.users || [] as resource}
 		<ShellListItem>
 			{#snippet main()}
-				<ShellListItemHeader
-					title={resource.spec.subject}
-					href="/identity/users/view/{resource.metadata.id}"
-				/>
+				<ShellListItemHeader title={resource.spec.subject} />
 			{/snippet}
 
 			{#snippet badges()}

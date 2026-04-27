@@ -173,26 +173,6 @@
 								operations: [Identity.AclOperation.Read]
 							}
 						]
-					},
-					{
-						label: 'Clusters',
-						href: 'clusters2',
-						rbac: [
-							{
-								endpoint: 'compute:clusters',
-								operations: [Identity.AclOperation.Read]
-							}
-						]
-					},
-					{
-						label: 'Clusters (Legacy)',
-						href: 'clusters',
-						rbac: [
-							{
-								endpoint: 'compute:clusters',
-								operations: [Identity.AclOperation.Read]
-							}
-						]
 					}
 				]
 			},
@@ -201,16 +181,6 @@
 				title: 'Kubernetes',
 				icon: 'mdi:kubernetes',
 				items: [
-					{
-						label: 'Virtual clusters',
-						href: 'virtualclusters',
-						rbac: [
-							{
-								endpoint: 'kubernetes:virtualclusters',
-								operations: [Identity.AclOperation.Read]
-							}
-						]
-					},
 					{
 						label: 'Clusters',
 						href: 'clusters',

@@ -55,10 +55,7 @@
 	{#each data.projects || [] as resource}
 		<ShellListItem>
 			{#snippet main()}
-				<ShellListItemHeader
-					metadata={resource.metadata}
-					href="/identity/projects/view/{resource.metadata.id}"
-				/>
+				<ShellListItemHeader metadata={resource.metadata} />
 			{/snippet}
 
 			{#snippet badges()}

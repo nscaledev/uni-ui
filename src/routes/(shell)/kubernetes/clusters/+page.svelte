@@ -147,11 +147,7 @@
 		{#each data.clusters as resource}
 			<ShellListItem>
 				{#snippet main()}
-					<ShellListItemHeader
-						metadata={resource.metadata}
-						href="/kubernetes/clusters/view/{resource.metadata.id}"
-						projects={data.projects}
-					/>
+					<ShellListItemHeader metadata={resource.metadata} projects={data.projects} />
 				{/snippet}
 
 				{#snippet badges()}
