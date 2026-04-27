@@ -2,7 +2,7 @@
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
-	import { navigating } from '$app/state';
+	import { startAutoRefresh } from '$lib/loadutil';
 
 	let { data }: { data: PageData } = $props();
 
@@ -26,11 +26,7 @@
 		icon: 'mdi:account-service-outline'
 	};
 
-	onMount(() => {
-		const interval = setInterval(() => navigating.to || invalidate('layout:serviceaccounts'), 5000);
-
-		return () => clearInterval(interval);
-	});
+	onMount(() => startAutoRefresh('layout:serviceaccounts'));
 
 	function confirm(id: string) {
 		const parameters = {

@@ -2,7 +2,7 @@
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
-	import { navigating } from '$app/state';
+	import { startAutoRefresh } from '$lib/loadutil';
 
 	let { data }: { data: PageData } = $props();
 
@@ -29,11 +29,7 @@
 		icon: 'mdi:network-outline'
 	};
 
-	onMount(() => {
-		const interval = setInterval(() => navigating.to || invalidate('layout:networks'), 5000);
-
-		return () => clearInterval(interval);
-	});
+	onMount(() => startAutoRefresh('layout:networks'));
 
 	function initialCreateProjectID(): string | undefined {
 		return data.projects[0]?.metadata.id;

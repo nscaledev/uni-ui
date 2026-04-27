@@ -2,7 +2,7 @@
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
-	import { navigating } from '$app/state';
+	import { startAutoRefresh } from '$lib/loadutil';
 
 	let { data }: { data: PageData } = $props();
 
@@ -26,11 +26,7 @@
 		icon: 'mdi:folder-open-outline'
 	};
 
-	onMount(() => {
-		const interval = setInterval(() => navigating.to || invalidate('layout:projects'), 5000);
-
-		return () => clearInterval(interval);
-	});
+	onMount(() => startAutoRefresh('layout:projects'));
 
 	function confirm(id: string): void {
 		const parameters = {

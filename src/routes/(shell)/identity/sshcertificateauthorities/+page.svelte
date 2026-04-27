@@ -2,7 +2,7 @@
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
-	import { navigating } from '$app/state';
+	import { startAutoRefresh } from '$lib/loadutil';
 
 	let { data }: { data: PageData } = $props();
 
@@ -26,14 +26,7 @@
 		icon: 'mdi:key-chain-variant'
 	};
 
-	onMount(() => {
-		const interval = setInterval(
-			() => navigating.to || invalidate('layout:sshcertificateauthorities'),
-			5000
-		);
-
-		return () => clearInterval(interval);
-	});
+	onMount(() => startAutoRefresh('layout:sshcertificateauthorities'));
 
 	function confirm(id: string): void {
 		Clients.region()

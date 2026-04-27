@@ -2,7 +2,7 @@
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
-	import { navigating } from '$app/state';
+	import { startAutoRefresh } from '$lib/loadutil';
 
 	let { data }: { data: PageData } = $props();
 
@@ -25,11 +25,7 @@
 		icon: 'mdi:key-outline'
 	};
 
-	onMount(() => {
-		const interval = setInterval(() => navigating.to || invalidate('layout:oauth2providers'), 5000);
-
-		return () => clearInterval(interval);
-	});
+	onMount(() => startAutoRefresh('layout:oauth2providers'));
 
 	function confirm(id: string): void {
 		const parameters = {

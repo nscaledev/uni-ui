@@ -2,7 +2,7 @@
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
-	import { navigating } from '$app/state';
+	import { startAutoRefresh } from '$lib/loadutil';
 	import { browser } from '$app/environment';
 
 	let { data }: { data: PageData } = $props();
@@ -31,11 +31,7 @@
 		icon: 'mdi:kubernetes'
 	};
 
-	onMount(() => {
-		const interval = setInterval(() => navigating.to || invalidate('layout:clusters'), 5000);
-
-		return () => clearInterval(interval);
-	});
+	onMount(() => startAutoRefresh('layout:clusters'));
 
 	function confirm(resource: Kubernetes.KubernetesClusterRead): void {
 		const parameters = {

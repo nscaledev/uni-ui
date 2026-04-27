@@ -2,7 +2,7 @@
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
-	import { navigating } from '$app/state';
+	import { startAutoRefresh } from '$lib/loadutil';
 	import { browser } from '$app/environment';
 
 	let { data }: { data: PageData } = $props();
@@ -33,11 +33,7 @@
 		icon: 'mdi:server-network-outline'
 	};
 
-	onMount(() => {
-		const interval = setInterval(() => navigating.to || invalidate('layout:instances'), 5000);
-
-		return () => clearInterval(interval);
-	});
+	onMount(() => startAutoRefresh('layout:instances'));
 
 	function initialNetworkID(): string | undefined {
 		return data.networks[0]?.metadata.id;
