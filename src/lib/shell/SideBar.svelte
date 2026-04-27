@@ -202,33 +202,6 @@
 						]
 					}
 				]
-			},
-			{
-				base: '/regions',
-				title: 'Regions',
-				icon: 'mdi:web',
-				items: [
-					{
-						label: 'Identities',
-						href: 'identities',
-						rbac: [
-							{
-								endpoint: 'region:identities',
-								operations: [Identity.AclOperation.Read]
-							}
-						]
-					},
-					{
-						label: 'Networks',
-						href: 'networks',
-						rbac: [
-							{
-								endpoint: 'region:networks',
-								operations: [Identity.AclOperation.Read]
-							}
-						]
-					}
-				]
 			}
 		];
 
