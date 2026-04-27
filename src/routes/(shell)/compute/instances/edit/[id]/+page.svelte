@@ -11,7 +11,7 @@
 	import ShellMetadataSection from '$lib/layouts/ShellMetadataSection.svelte';
 	import ShellMetadataItem from '$lib/layouts/ShellMetadataItem.svelte';
 	import ShellSection from '$lib/layouts/ShellSection.svelte';
-	import SelectNew from '$lib/forms/SelectNew.svelte';
+	import RichSelect from '$lib/forms/RichSelect.svelte';
 	import MultiSelect from '$lib/forms/MultiSelect.svelte';
 	import Switch from '$lib/forms/Switch.svelte';
 	import InputChips from '$lib/forms/InputChips.svelte';
@@ -124,7 +124,7 @@
 <ShellMetadataSection metadata={resource.metadata} names={data.names} bind:valid={metadataValid} />
 
 <ShellSection title="Topology">
-	<SelectNew
+	<RichSelect
 		value={resource.spec.flavorId}
 		onValueChange={(e) => (resource.spec.flavorId = e.value)}
 		options={flavors.map((x) => x.metadata.id)}
@@ -135,9 +135,9 @@
 		{#snippet contents(id: string)}
 			<Flavor flavor={lookupFlavor(id)} />
 		{/snippet}
-	</SelectNew>
+	</RichSelect>
 
-	<SelectNew
+	<RichSelect
 		value={resource.spec.imageId}
 		onValueChange={(e) => (resource.spec.imageId = e.value)}
 		options={images.map((x) => x.metadata.id)}
@@ -147,7 +147,7 @@
 		{#snippet contents(id: string)}
 			<Image image={lookupImage(id)} />
 		{/snippet}
-	</SelectNew>
+	</RichSelect>
 </ShellSection>
 
 <ShellSection title="Networking">

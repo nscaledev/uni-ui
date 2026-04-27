@@ -8,7 +8,7 @@
 	import Switch from '$lib/forms/Switch.svelte';
 	import Select from '$lib/forms/Select.svelte';
 	import RangeSlider from '$lib/forms/RangeSlider.svelte';
-	import SelectNew from '$lib/forms/SelectNew.svelte';
+	import RichSelect from '$lib/forms/RichSelect.svelte';
 	import Flavor from '$lib/Flavor.svelte';
 
 	interface Props {
@@ -85,7 +85,7 @@
 
 <ShellSection title="Pool Topology">
 	{#if flavors && pool.machine.flavorId}
-		<SelectNew
+		<RichSelect
 			value={pool.machine.flavorId}
 			options={flavors.map((x) => x.metadata.id)}
 			onValueChange={(e) => (pool.machine.flavorId = e.value)}
@@ -96,7 +96,7 @@
 			{#snippet contents(id: string)}
 				<Flavor flavor={lookupFlavor(id)} />
 			{/snippet}
-		</SelectNew>
+		</RichSelect>
 
 		{#if !lookupFlavor(pool.machine.flavorId).spec.baremetal}
 			<Switch
