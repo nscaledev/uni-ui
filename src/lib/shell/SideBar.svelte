@@ -281,7 +281,7 @@
 		selectedOrganizationID = organizationID;
 	});
 
-	$effect.pre(() => {
+	$effect(() => {
 		if (!browser) return;
 
 		if (selectedOrganizationID != organizationID) {
