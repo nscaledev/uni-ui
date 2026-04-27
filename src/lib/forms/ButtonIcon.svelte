@@ -13,11 +13,6 @@
 	<iconify-icon {icon} class="text-2xl"></iconify-icon>
 {/snippet}
 
-<button
-	class="btn flex gap-2 items-center p-0 {props.class || ''}"
-	{disabled}
-	onclick={clicked}
-	onkeypress={clicked}
->
+<button class="btn flex gap-2 items-center p-0 {props.class || ''}" {disabled} onclick={clicked}>
 	{@render content()}
 </button>

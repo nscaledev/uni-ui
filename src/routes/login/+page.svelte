@@ -79,7 +79,6 @@
 							<button
 								class="btn border border-surface-500 shadow-lg flex align-center"
 								onclick={() => login(provider.type)}
-								onkeypress={() => login(provider.type)}
 								aria-label={provider.label}
 							>
 								<iconify-icon icon={provider.icon} class="p-1 text-xl"></iconify-icon>

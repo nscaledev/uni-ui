@@ -30,7 +30,6 @@
 			''}"
 		{disabled}
 		onclick={clicked}
-		onkeypress={clicked}
 	>
 		{@render content()}
 	</button>

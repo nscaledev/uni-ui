@@ -339,11 +339,7 @@
 					{#snippet panel()}
 						<ul class="ml-12 mr-2 text-sm">
 							{#each entry.items as item}
-								<a
-									href={entry.base + '/' + item.href}
-									onclick={() => onClicked?.()}
-									onkeypress={() => onClicked?.()}
-								>
+								<a href={entry.base + '/' + item.href} onclick={() => onClicked?.()}>
 									<li
 										class="p-2 hover:preset-tonal-primary rounded"
 										class:preset-tonal-primary={activeItem == item}

@@ -134,11 +134,7 @@
 
 						<hr class="!border-t-1 border-surface-200-800" />
 
-						<button
-							class="btn hover:preset-tonal-primary justify-start"
-							onclick={logout}
-							onkeypress={logout}
-						>
+						<button class="btn hover:preset-tonal-primary justify-start" onclick={logout}>
 							<div class="flex gap-2 items-center">
 								<iconify-icon icon="material-symbols:logout" class="text-2xl text-primary-600-400"
 								></iconify-icon>

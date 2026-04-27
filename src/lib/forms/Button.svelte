@@ -25,12 +25,7 @@
 		</div>
 	</a>
 {:else if clicked}
-	<button
-		class="btn flex gap-2 items-center {props.class || ''}"
-		{disabled}
-		onclick={clicked}
-		onkeypress={clicked}
-	>
+	<button class="btn flex gap-2 items-center {props.class || ''}" {disabled} onclick={clicked}>
 		{@render content()}
 	</button>
 {/if}

@@ -22,11 +22,7 @@
 		disabled
 		class="ig-input overflow-hidden text-ellipsis whitespace-nowrap"
 	/>
-	<button
-		class="ig-btn flex items-center gap-2"
-		onclick={() => copyToClipboard()}
-		onkeypress={() => copyToClipboard()}
-	>
+	<button class="ig-btn flex items-center gap-2" onclick={() => copyToClipboard()}>
 		<iconify-icon icon="mdi:clipboard-outline"></iconify-icon>
 		<span>Copy</span>
 	</button>

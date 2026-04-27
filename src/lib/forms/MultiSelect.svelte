@@ -51,7 +51,7 @@
 		{#each value as v, i}
 			<div class="card shadow-lg bg-surface-50-950 flex justify-between items-center p-3">
 				{@render selected(v)}
-				<button onclick={() => remove(i)} onkeypress={() => remove(i)} aria-label="Remove item">
+				<button onclick={() => remove(i)} aria-label="Remove item">
 					<iconify-icon icon="mdi:trash-can-outline" class="text-xl text-primary-600-400"
 					></iconify-icon>
 				</button>

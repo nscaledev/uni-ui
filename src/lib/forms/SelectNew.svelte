@@ -50,11 +50,7 @@
 	{#snippet content()}
 		<div class="flex flex-col">
 			{#each options as o}
-				<button
-					class="p-2 hover:bg-surface-100-900"
-					onclick={() => select(o)}
-					onkeypress={() => select(o)}
-				>
+				<button class="p-2 hover:bg-surface-100-900" onclick={() => select(o)}>
 					{@render contents(o)}
 				</button>
 			{/each}
