@@ -5,3 +5,4 @@
 @import '@skeletonlabs/skeleton/optional/presets';
 @import '../unikorn';
 @source '../node_modules/@skeletonlabs/skeleton-svelte/dist';
+@import './styles/design.css';
