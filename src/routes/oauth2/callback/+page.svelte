@@ -2,10 +2,32 @@
 	import Spinner from '$lib/primitives/Spinner.svelte';
 </script>
 
-<!-- I will never get rendered due to page.ts blocking, returning a promise means redirect doesn't work -->
-<div class="grid grid-cols-3 grid-rows-3 w-full h-screen">
-	<div class="col-start-2 row-start-2 flex flex-col gap-4 items-center">
-		<div class="h2">Exchanging credentials</div>
-		<Spinner class="text-2xl" />
+<!-- Never rendered — page.ts redirect blocks this — but kept as a fallback -->
+<div class="auth-screen">
+	<div class="auth-loading">
+		<p class="auth-loading__label">Exchanging credentials</p>
+		<Spinner />
 	</div>
 </div>
+
+<style>
+	.auth-screen {
+		display: grid;
+		place-items: center;
+		min-height: 100vh;
+		background: var(--bg-0);
+	}
+
+	.auth-loading {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 16px;
+	}
+
+	.auth-loading__label {
+		font-size: 14px;
+		font-weight: 500;
+		color: var(--text-2);
+	}
+</style>
