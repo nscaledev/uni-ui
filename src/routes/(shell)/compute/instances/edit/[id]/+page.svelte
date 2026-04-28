@@ -1,13 +1,9 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-
 	let { data }: { data: PageData } = $props();
-
 	import * as Clients from '$lib/clients';
 	import * as Compute from '$lib/openapi/compute';
-
-	import type { ShellPageSettings } from '$lib/layouts/types.ts';
-	import ShellPageHeader from '$lib/layouts/ShellPageHeader.svelte';
+	import FormPage from '$lib/layouts/FormPage.svelte';
 	import ShellMetadataSection from '$lib/layouts/ShellMetadataSection.svelte';
 	import ShellMetadataItem from '$lib/layouts/ShellMetadataItem.svelte';
 	import ShellSection from '$lib/layouts/ShellSection.svelte';
@@ -15,186 +11,118 @@
 	import MultiSelect from '$lib/forms/MultiSelect.svelte';
 	import Switch from '$lib/forms/Switch.svelte';
 	import InputChips from '$lib/forms/InputChips.svelte';
-	import Button from '$lib/forms/Button.svelte';
 	import Flavor from '$lib/Flavor.svelte';
 	import Image from '$lib/Image.svelte';
-
-	const settings: ShellPageSettings = {
-		feature: 'Infrastructure',
-		name: 'Update Compute Instance',
-		description: 'Update a compute instance.',
-		icon: 'mdi:server-network-outline'
-	};
-
 	let resource = $derived.by(() => {
 		let instance = $state(data.instance);
 		return instance;
 	});
-
-	function initialSecurityGroups(): Array<string> {
+	function initSecurityGroups() {
 		return data.instance.spec.networking?.securityGroups || [];
 	}
-
-	function initialPublicIP(): boolean {
+	function initPublicIP() {
 		return data.instance.spec.networking?.publicIP || false;
 	}
-
-	function initialAllowedSourceAddresses(): Array<string> {
+	function initAllowedSourceAddresses() {
 		return data.instance.spec.networking?.allowedSourceAddresses || [];
 	}
-
-	let securityGroups: Array<string> = $state(initialSecurityGroups());
-	let publicIP: boolean = $state(initialPublicIP());
-	let allowedSourceAddresses: Array<string> = $state(initialAllowedSourceAddresses());
-
-	// A flavor can only be used if there is a compatible image.
+	let securityGroups: Array<string> = $state(initSecurityGroups());
+	let publicIP = $state(initPublicIP());
+	let allowedSourceAddresses: Array<string> = $state(initAllowedSourceAddresses());
 	let flavors = $derived(
 		data.flavors.filter((x) => data.images.some((y) => x.spec.disk >= y.spec.sizeGiB))
 	);
-
 	$effect.pre(() => {
 		resource.spec.flavorId = flavors[0].metadata.id;
 	});
-
 	function lookupFlavor(id: string): Compute.Flavor {
 		return flavors.find((x) => x.metadata.id == id) as Compute.Flavor;
 	}
-
-	// Images that can be used depend on the flavor selected.
 	let images = $derived(
 		data.images.filter((x) => x.spec.sizeGiB <= lookupFlavor(resource.spec.flavorId).spec.disk)
 	);
-
 	function lookupImage(id: string): Compute.Image {
 		return images.find((x) => x.metadata.id == id) as Compute.Image;
 	}
-
 	$effect.pre(() => {
-		if (images.find((x) => x.metadata.id == resource.spec.imageId)) {
-			return;
-		}
-
+		if (images.find((x) => x.metadata.id == resource.spec.imageId)) return;
 		resource.spec.imageId = images.length ? images[0].metadata.id : '';
 	});
-
 	let metadataValid = $state(false);
-
-	let sshCertificateAuthorityName = $derived.by(() => {
-		if (!data.instance.spec.sshCertificateAuthorityId) return;
-
-		const sshCertificateAuthority = data.sshCertificateAuthorities.find(
-			(x) => x.metadata.id == data.instance.spec.sshCertificateAuthorityId
-		);
-
-		return sshCertificateAuthority?.metadata.name || data.instance.spec.sshCertificateAuthorityId;
-	});
-
+	let valid = $derived(metadataValid && !!resource.spec.flavorId && !!resource.spec.imageId);
 	function submit() {
-		if (securityGroups || publicIP || allowedSourceAddresses) {
-			resource.spec.networking = {};
-
-			if (securityGroups) {
-				resource.spec.networking.securityGroups = securityGroups;
-			}
-
-			if (publicIP) {
-				resource.spec.networking.publicIP = publicIP;
-			}
-
-			if (allowedSourceAddresses) {
-				resource.spec.networking.allowedSourceAddresses = allowedSourceAddresses;
-			}
-		}
-
-		const parameters = {
-			instanceID: resource.metadata.id,
-			instanceUpdate: resource
-		};
-
+		resource.spec.networking = {};
+		if (securityGroups.length) resource.spec.networking.securityGroups = securityGroups;
+		if (publicIP) resource.spec.networking.publicIP = publicIP;
+		if (allowedSourceAddresses.length)
+			resource.spec.networking.allowedSourceAddresses = allowedSourceAddresses;
 		Clients.compute()
-			.apiV2InstancesInstanceIDPut(parameters)
+			.apiV2InstancesInstanceIDPut({ instanceID: resource.metadata.id, instanceUpdate: resource })
 			.then(() => window.location.assign('/compute/instances'))
 			.catch((e: Error) => Clients.error(e));
 	}
 </script>
 
-<ShellPageHeader {settings} />
-<h2 class="h2">Basic Configuration</h2>
-
-<ShellMetadataSection metadata={resource.metadata} names={data.names} bind:valid={metadataValid} />
-
-<ShellSection title="Topology">
-	<RichSelect
-		value={resource.spec.flavorId}
-		onValueChange={(e) => (resource.spec.flavorId = e.value)}
-		options={flavors.map((x) => x.metadata.id)}
-		label="Choose an instance flavor."
-		hint="Allows selection of the instance's vailable resources to be used by workloads per pool
-	member. This includes CPU, GPU and memory."
-	>
-		{#snippet contents(id: string)}
-			<Flavor flavor={lookupFlavor(id)} />
-		{/snippet}
-	</RichSelect>
-
-	<RichSelect
-		value={resource.spec.imageId}
-		onValueChange={(e) => (resource.spec.imageId = e.value)}
-		options={images.map((x) => x.metadata.id)}
-		label="Choose an instance image."
-		hint="Allows the selection of the instances's operating system image."
-	>
-		{#snippet contents(id: string)}
-			<Image image={lookupImage(id)} />
-		{/snippet}
-	</RichSelect>
-</ShellSection>
-
-<ShellSection title="Networking">
-	<MultiSelect
-		label="Security Groups"
-		hint="Select security groups to apply to the instance.  By default all traffic can egress, none can ingress."
-		value={securityGroups}
-		onValueChange={(e) => (securityGroups = e.value)}
-		options={data.securityGroups.map((x) => ({ value: x.metadata.id, label: x.metadata.name }))}
-	>
-		{#snippet selected(id: string)}
-			{data.securityGroups.find((x) => x.metadata.id == id)?.metadata.name}
-		{/snippet}
-	</MultiSelect>
-
-	<Switch
-		name="public-ip"
-		label="Public IP"
-		hint="Allocates a public IP address so the instance can be reached on the Internet."
-		initial={publicIP}
-		onCheckedChange={(e) => (publicIP = e.checked)}
-	/>
-
-	<InputChips
-		name="allowed-source-addresses"
-		label="Allowed Source Addresses"
-		hint="Instances will only allow traffic to egres from their onw IP address.  To enable NFV functionality (e.g. acting as a router), this specifies a set of additional prefixes that are allowed to egress."
-		bind:value={allowedSourceAddresses}
-	/>
-
-	{#if sshCertificateAuthorityName}
-		<ShellMetadataItem icon="key" label="SSH Certificate CA" value={sshCertificateAuthorityName} />
-	{/if}
-</ShellSection>
-
-<div class="flex justify-between">
-	<Button
-		icon="x"
-		label="Cancel"
-		class="preset-outlined-surface-600-400"
-		href="/network/networks"
-	/>
-	<Button
-		icon="check"
-		label="Update"
-		class="preset-filled-primary-500"
-		clicked={submit}
-		disabled={!metadataValid || !resource.spec.flavorId || !resource.spec.imageId}
-	/>
-</div>
+<FormPage
+	breadcrumb={[
+		{ label: 'Compute Instances', href: '/compute/instances' },
+		{ label: resource.metadata.name }
+	]}
+	cancelHref="/compute/instances"
+	submitLabel="Save Changes"
+	onSubmit={submit}
+	{valid}
+>
+	{#snippet form()}
+		<ShellMetadataSection
+			metadata={resource.metadata}
+			names={data.names}
+			bind:valid={metadataValid}
+		/>
+		<ShellSection title="Topology">
+			<RichSelect
+				value={resource.spec.flavorId}
+				onValueChange={(e) => (resource.spec.flavorId = e.value)}
+				options={flavors.map((x) => x.metadata.id)}
+				label="Choose an instance flavor."
+				hint="CPU, GPU and memory resources allocated to the instance."
+			>
+				{#snippet contents(id: string)}<Flavor flavor={lookupFlavor(id)} />{/snippet}
+			</RichSelect>
+			<RichSelect
+				value={resource.spec.imageId}
+				onValueChange={(e) => (resource.spec.imageId = e.value)}
+				options={images.map((x) => x.metadata.id)}
+				label="Choose an instance image."
+				hint="Operating system image for the instance."
+			>
+				{#snippet contents(id: string)}<Image image={lookupImage(id)} />{/snippet}
+			</RichSelect>
+		</ShellSection>
+		<ShellSection title="Networking">
+			<MultiSelect
+				label="Security groups"
+				hint="Security groups to apply to the instance."
+				value={securityGroups}
+				onValueChange={(e) => (securityGroups = e.value)}
+				options={data.securityGroups.map((x) => ({ value: x.metadata.id, label: x.metadata.name }))}
+			>
+				{#snippet selected(id: string)}{data.securityGroups.find((x) => x.metadata.id == id)
+						?.metadata.name}{/snippet}
+			</MultiSelect>
+			<Switch
+				name="public-ip"
+				label="Public IP"
+				hint="Allocates a public IP so the instance can be reached on the internet."
+				initial={publicIP}
+				onCheckedChange={(e) => (publicIP = e.checked)}
+			/>
+			<InputChips
+				name="allowed-source-addresses"
+				label="Allowed source addresses"
+				hint="Additional prefixes allowed to egress."
+				bind:value={allowedSourceAddresses}
+			/>
+		</ShellSection>
+	{/snippet}
+</FormPage>

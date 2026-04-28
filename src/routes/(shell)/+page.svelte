@@ -4,19 +4,13 @@
 	let { data }: { data: PageData } = $props();
 
 	import ProgressRing from '$lib/primitives/ProgressRing.svelte';
-	import type { ShellPageSettings } from '$lib/layouts/types.ts';
-	import ShellPageHeader from '$lib/layouts/ShellPageHeader.svelte';
 	import ShellSection from '$lib/layouts/ShellSection.svelte';
-
-	const settings: ShellPageSettings = {
-		feature: 'None',
-		name: 'Dashboard',
-		description: 'Summary of your resources.',
-		icon: 'dashboard'
-	};
 </script>
 
-<ShellPageHeader {settings}></ShellPageHeader>
+<div class="page-header">
+	<h1 class="page-header__title">Dashboard</h1>
+	<p class="page-header__desc">Summary of your resources.</p>
+</div>
 <ShellSection title="Resource Utilization">
 	<div class="quota-grid">
 		{#each data.quotas.quotas as quota}
@@ -105,6 +99,22 @@
 	}
 
 	.quota-stats__row--muted span {
+		color: var(--text-3);
+	}
+
+	.page-header {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		margin-bottom: 4px;
+	}
+	.page-header__title {
+		font-size: 20px;
+		font-weight: 600;
+		color: var(--text-1);
+	}
+	.page-header__desc {
+		font-size: 13px;
 		color: var(--text-3);
 	}
 </style>

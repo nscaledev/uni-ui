@@ -3,75 +3,58 @@
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
 	import { startAutoRefresh } from '$lib/loadutil';
-
 	let { data }: { data: PageData } = $props();
-
 	import * as Clients from '$lib/clients';
-
 	import type { ShellPageSettings } from '$lib/layouts/types.ts';
-	import ShellPageHeader from '$lib/layouts/ShellPageHeader.svelte';
+	import ListPage from '$lib/layouts/ListPage.svelte';
 	import ShellList from '$lib/layouts/ShellList.svelte';
 	import ShellListItem from '$lib/layouts/ShellListItem.svelte';
 	import ShellListItemHeader from '$lib/layouts/ShellListItemHeader.svelte';
 	import ShellListItemBadges from '$lib/layouts/ShellListItemBadges.svelte';
 	import ShellListItemMetadata from '$lib/layouts/ShellListItemMetadata.svelte';
+	import Placeholder from '$lib/layouts/Placeholder.svelte';
 	import SubtleButton from '$lib/forms/SubtleButton.svelte';
 	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
-
 	const settings: ShellPageSettings = {
 		feature: 'Identity',
 		name: 'OAuth2 Providers',
-		description: 'Manage your OAuth2 providers.',
-		icon: 'key'
+		description: 'External identity providers for authentication.',
+		icon: 'shield'
 	};
-
 	onMount(() => startAutoRefresh('layout:oauth2providers'));
-
-	function confirm(id: string): void {
-		const parameters = {
-			organizationID: data.organizationID,
-			providerID: id
-		};
-
+	function deleteProvider(id: string) {
 		Clients.identity()
-			.apiV1OrganizationsOrganizationIDOauth2providersProviderIDDelete(parameters)
+			.apiV1OrganizationsOrganizationIDOauth2providersProviderIDDelete({
+				organizationID: data.organizationID,
+				providerID: id
+			})
 			.then(() => invalidate('layout:oauth2providers'))
 			.catch((e: Error) => Clients.error(e));
 	}
 </script>
 
-<ShellPageHeader {settings}>
-	{#snippet tools()}
-		<SubtleButton icon="plus" label="Create" href="/identity/oauth2providers/create" />
-	{/snippet}
-</ShellPageHeader>
-
-<ShellList>
-	{#each data.oauth2providers || [] as resource}
-		<ShellListItem>
-			{#snippet main()}
-				<ShellListItemHeader
-					metadata={resource.metadata}
-					href="/identity/oauth2providers/view/{resource.metadata.id}"
-				/>
-			{/snippet}
-
-			{#snippet badges()}
-				<ShellListItemBadges metadata={resource.metadata} />
-			{/snippet}
-
-			<ShellListItemMetadata metadata={resource.metadata} />
-
-			{#snippet trail()}
-				<ModalIcon
-					icon="trash"
-					label="Delete"
-					title="Are you sure?"
-					confirm={() => confirm(resource.metadata.id)}
-				>
-					Removing oauth provider "{resource.metadata.name}" may prevent user authentication.
-				</ModalIcon>
-			{/snippet}
-		</ShellListItem>
-	{/each}
-</ShellList>
+<ListPage {settings} resources={data.oauth2providers || []}>
+	{#snippet tools()}<SubtleButton
+			icon="plus"
+			label="Create"
+			href="/identity/oauth2providers/create"
+		/>{/snippet}
+	{#snippet list(providers)}<ShellList
+			>{#each providers as resource}<ShellListItem>
+					{#snippet main()}<ShellListItemHeader metadata={resource.metadata} />{/snippet}
+					{#snippet badges()}<ShellListItemBadges
+							metadata={resource.metadata}
+							showHealth={false}
+							showProvisioning={false}
+						/>{/snippet}
+					{#snippet trail()}<ModalIcon
+							icon="trash"
+							title="Delete provider?"
+							confirm={() => deleteProvider(resource.metadata.id)}
+							>Removing "{resource.metadata.name}" may prevent user authentication.</ModalIcon
+						>{/snippet}
+					<ShellListItemMetadata metadata={resource.metadata} />
+				</ShellListItem>{/each}</ShellList
+		>{/snippet}
+	{#snippet empty()}<Placeholder>No OAuth2 providers configured.</Placeholder>{/snippet}
+</ListPage>

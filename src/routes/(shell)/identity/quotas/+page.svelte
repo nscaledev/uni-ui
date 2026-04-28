@@ -1,47 +1,63 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-
 	let { data }: { data: PageData } = $props();
-
 	import * as Clients from '$lib/clients';
-
-	import type { ShellPageSettings } from '$lib/layouts/types.ts';
-	import ShellPageHeader from '$lib/layouts/ShellPageHeader.svelte';
 	import ShellSection from '$lib/layouts/ShellSection.svelte';
 	import NumberInput from '$lib/forms/NumberInput.svelte';
 	import Button from '$lib/forms/Button.svelte';
-
-	const settings: ShellPageSettings = {
-		feature: 'Identity',
-		name: 'Manage Quotas',
-		description: 'Manage quotas for the organization.',
-		icon: 'dashboard'
-	};
-
 	let quotas = $derived.by(() => {
-		let quotas = $state(data.quotas);
-		return quotas;
+		let q = $state(data.quotas);
+		return q;
 	});
-
 	function submit() {
-		const parameters = {
-			organizationID: data.organizationID,
-			quotasWrite: quotas
-		};
-
 		Clients.identity()
-			.apiV1OrganizationsOrganizationIDQuotasPut(parameters)
+			.apiV1OrganizationsOrganizationIDQuotasPut({
+				organizationID: data.organizationID,
+				quotasWrite: quotas
+			})
 			.catch((e: Error) => Clients.error(e));
 	}
 </script>
 
-<ShellPageHeader {settings} />
-<ShellSection title="Quotas">
-	{#each quotas.quotas as quota}
-		<NumberInput label={quota.displayName} hint={quota.description} bind:value={quota.quantity} />
-	{/each}
-</ShellSection>
-
-<div class="flex justify-end">
-	<Button icon="check" label="Update" class="preset-filled-primary-500" clicked={submit} />
+<div class="settings-page">
+	<header class="settings-page__header">
+		<h1 class="settings-page__title">Quotas</h1>
+		<p class="settings-page__desc">Manage resource quotas for the organization.</p>
+	</header>
+	<ShellSection title="Resource Limits">
+		{#each quotas.quotas as quota}
+			<NumberInput label={quota.displayName} hint={quota.description} bind:value={quota.quantity} />
+		{/each}
+	</ShellSection>
+	<div class="settings-page__footer">
+		<Button icon="check" label="Update" class="btn--primary" clicked={submit} />
+	</div>
 </div>
+
+<style>
+	.settings-page {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		max-width: 680px;
+	}
+	.settings-page__header {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+	.settings-page__title {
+		font-size: 20px;
+		font-weight: 600;
+		color: var(--text-1);
+	}
+	.settings-page__desc {
+		font-size: 13px;
+		color: var(--text-3);
+	}
+	.settings-page__footer {
+		display: flex;
+		justify-content: flex-end;
+		padding-top: 8px;
+	}
+</style>

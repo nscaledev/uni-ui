@@ -3,77 +3,63 @@
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
 	import { startAutoRefresh } from '$lib/loadutil';
-
 	let { data }: { data: PageData } = $props();
-
 	import * as Clients from '$lib/clients';
-
 	import type { ShellPageSettings } from '$lib/layouts/types.ts';
-	import ShellPageHeader from '$lib/layouts/ShellPageHeader.svelte';
+	import ListPage from '$lib/layouts/ListPage.svelte';
 	import ShellList from '$lib/layouts/ShellList.svelte';
 	import ShellListItem from '$lib/layouts/ShellListItem.svelte';
 	import ShellListItemHeader from '$lib/layouts/ShellListItemHeader.svelte';
 	import ShellListItemBadges from '$lib/layouts/ShellListItemBadges.svelte';
 	import ShellListItemMetadata from '$lib/layouts/ShellListItemMetadata.svelte';
 	import ShellMetadataItem from '$lib/layouts/ShellMetadataItem.svelte';
+	import Placeholder from '$lib/layouts/Placeholder.svelte';
 	import SubtleButton from '$lib/forms/SubtleButton.svelte';
 	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
-
 	const settings: ShellPageSettings = {
 		feature: 'Identity',
 		name: 'Service Accounts',
-		description: 'Service accounts provide long-lived user accounts for use with CLI tooling.',
-		icon: 'mdi:account-service-outline'
+		description: 'Machine accounts for automation.',
+		icon: 'key'
 	};
-
 	onMount(() => startAutoRefresh('layout:serviceaccounts'));
-
-	function confirm(id: string) {
-		const parameters = {
-			organizationID: data.organizationID,
-			serviceAccountID: id
-		};
-
+	function deleteServiceAccount(id: string) {
 		Clients.identity()
-			.apiV1OrganizationsOrganizationIDServiceaccountsServiceAccountIDDelete(parameters)
+			.apiV1OrganizationsOrganizationIDServiceaccountsServiceAccountIDDelete({
+				organizationID: data.organizationID,
+				serviceAccountID: id
+			})
 			.then(() => invalidate('layout:serviceaccounts'))
 			.catch((e: Error) => Clients.error(e));
 	}
 </script>
 
-<ShellPageHeader {settings}>
-	{#snippet tools()}
-		<SubtleButton icon="plus" label="Create" href="/identity/serviceaccounts/create" />
-	{/snippet}
-</ShellPageHeader>
-
-<ShellList>
-	{#each data.serviceAccounts || [] as resource}
-		<ShellListItem>
-			{#snippet main()}
-				<ShellListItemHeader metadata={resource.metadata} />
-			{/snippet}
-
-			{#snippet badges()}
-				<ShellListItemBadges metadata={resource.metadata} />
-			{/snippet}
-
-			<ShellListItemMetadata metadata={resource.metadata}></ShellListItemMetadata>
-
-			<ShellListItemMetadata>
-				<ShellMetadataItem icon="key" label="Expiry" value={resource.status.expiry.toUTCString()} />
-			</ShellListItemMetadata>
-
-			{#snippet trail()}
-				<ModalIcon
-					icon="trash"
-					label="Delete"
-					title="Are you sure?"
-					confirm={() => confirm(resource.metadata.id)}
-				>
-					Removing service account "{resource.metadata.name}" may break automation.
-				</ModalIcon>
-			{/snippet}
-		</ShellListItem>
-	{/each}
-</ShellList>
+<ListPage {settings} resources={data.serviceAccounts || []}>
+	{#snippet tools()}<SubtleButton
+			icon="plus"
+			label="Create"
+			href="/identity/serviceaccounts/create"
+		/>{/snippet}
+	{#snippet list(accounts)}<ShellList
+			>{#each accounts as resource}<ShellListItem>
+					{#snippet main()}<ShellListItemHeader metadata={resource.metadata} />{/snippet}
+					{#snippet badges()}<ShellListItemBadges
+							metadata={resource.metadata}
+							showHealth={false}
+						/>{/snippet}
+					{#snippet trail()}<ModalIcon
+							icon="trash"
+							title="Delete service account?"
+							confirm={() => deleteServiceAccount(resource.metadata.id)}
+							>Removing "{resource.metadata.name}" may break automation.</ModalIcon
+						>{/snippet}
+					<ShellListItemMetadata metadata={resource.metadata} />
+					<ShellMetadataItem
+						icon="clock"
+						label="Expiry"
+						value={resource.status.expiry.toUTCString()}
+					/>
+				</ShellListItem>{/each}</ShellList
+		>{/snippet}
+	{#snippet empty()}<Placeholder>No service accounts yet.</Placeholder>{/snippet}
+</ListPage>
