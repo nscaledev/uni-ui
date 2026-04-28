@@ -4,6 +4,7 @@
 >
 	import type { Snippet } from 'svelte';
 	import { computeStats } from '$lib/layouts/stats';
+	import { ageFormatter } from '$lib/formatters';
 	import type { ShellPageSettings } from '$lib/layouts/types';
 	import ShellPageHeader from '$lib/layouts/ShellPageHeader.svelte';
 	import Icon from '$lib/primitives/Icon.svelte';
@@ -12,18 +13,15 @@
 	interface Props {
 		settings: ShellPageSettings;
 		resources: Array<T>;
-		// Override the default name-based filter.
 		filterFn?: (r: T, query: string) => boolean;
 		tools?: Snippet;
-		// Card/list view (required).
+		// Required: card / list view.
 		list: Snippet<[Array<T>]>;
-		// Optional table view — presence adds the Table button to the view switcher.
+		// Optional: custom table row. When absent a generic name/status/age table is shown.
 		tableRow?: Snippet<[T]>;
 		tableHeaders?: Array<string>;
-		// Optional grouped view — presence adds the Grouped button to the view switcher.
-		// Return the group key for a resource (e.g. projectId or region).
+		// Optional: enables grouped view. Return the group key for each resource.
 		groupKey?: (r: T) => string;
-		// Display label for a group key (defaults to the raw key).
 		groupLabel?: (key: string) => string;
 		empty?: Snippet;
 	}
@@ -41,25 +39,15 @@
 		empty
 	}: Props = $props();
 
-	type View = 'cards' | 'table' | 'grouped';
+	type View = 'list' | 'table' | 'grouped';
 
 	let query = $state('');
 	let statusFilter = $state<'all' | 'provisioned' | 'attention'>('all');
-	let view = $state<View>('cards');
+	let view = $state<View>('list');
 
-	// Available view options
-	const views = $derived.by(() => {
-		const v: Array<{ id: View; icon: string; label: string }> = [
-			{ id: 'cards', icon: 'rows', label: 'List' }
-		];
-		if (tableRow) v.push({ id: 'table', icon: 'table', label: 'Table' });
-		if (groupKey) v.push({ id: 'grouped', icon: 'cards', label: 'Grouped' });
-		return v;
-	});
-
-	// Reset to cards if current view becomes unavailable
+	// Reset grouped view if groupKey prop is removed
 	$effect(() => {
-		if (!views.find((v) => v.id === view)) view = 'cards';
+		if (view === 'grouped' && !groupKey) view = 'list';
 	});
 
 	const filtered = $derived.by(() => {
@@ -81,7 +69,6 @@
 		return r;
 	});
 
-	// Group the filtered array when in grouped view
 	const groups = $derived.by(() => {
 		if (view !== 'grouped' || !groupKey) return null;
 		const map = new Map<string, Array<T>>();
@@ -128,11 +115,11 @@
 	</div>
 </div>
 
-<!-- Ribbon: filters left, view switcher right -->
+<!-- Ribbon -->
 <div class="toolbar">
-	<!-- Search -->
-	<div class="search-chip">
-		<Icon name="search" size={13} class="search-chip__icon" />
+	<!-- Search chip -->
+	<div class="search-chip" class:search-chip--active={!!query}>
+		<Icon name="search" size={13} class="search-icon" />
 		<input type="search" class="search-chip__input" placeholder="Filter…" bind:value={query} />
 		{#if query}
 			<button class="search-chip__clear" onclick={() => (query = '')} aria-label="Clear">
@@ -141,22 +128,20 @@
 		{/if}
 	</div>
 
-	<!-- Status filter chips -->
+	<!-- Status chips -->
 	<button
 		class="filter-chip"
 		class:active={statusFilter === 'provisioned'}
 		onclick={() => (statusFilter = statusFilter === 'provisioned' ? 'all' : 'provisioned')}
 	>
-		<span class="status-dot status-dot--ok"></span>
-		Provisioned
+		<span class="dot dot--ok"></span>Provisioned
 	</button>
 	<button
 		class="filter-chip"
 		class:active={statusFilter === 'attention'}
 		onclick={() => (statusFilter = statusFilter === 'attention' ? 'all' : 'attention')}
 	>
-		<span class="status-dot status-dot--warn"></span>
-		Needs attention
+		<span class="dot dot--warn"></span>Needs attention
 	</button>
 
 	{#if query && filtered.length !== resources.length}
@@ -165,21 +150,20 @@
 
 	<div class="spacer"></div>
 
-	<!-- View switcher — only when more than one view is available -->
-	{#if views.length > 1}
-		<div class="seg" role="group" aria-label="View">
-			{#each views as v}
-				<button
-					class:active={view === v.id}
-					onclick={() => (view = v.id)}
-					title={v.label}
-					aria-pressed={view === v.id}
-				>
-					<Icon name={v.icon} size={14} />
-				</button>
-			{/each}
-		</div>
-	{/if}
+	<!-- View switcher: list + table always; grouped when groupKey provided -->
+	<div class="seg" role="group" aria-label="View">
+		<button class:active={view === 'list'} onclick={() => (view = 'list')} title="List">
+			<Icon name="rows" size={14} />
+		</button>
+		<button class:active={view === 'table'} onclick={() => (view = 'table')} title="Table">
+			<Icon name="table" size={14} />
+		</button>
+		{#if groupKey}
+			<button class:active={view === 'grouped'} onclick={() => (view = 'grouped')} title="Grouped">
+				<Icon name="cards" size={14} />
+			</button>
+		{/if}
+	</div>
 </div>
 
 <!-- Content -->
@@ -187,23 +171,35 @@
 	{#if empty && resources.length === 0 && statusFilter === 'all' && !query}
 		{@render empty()}
 	{:else}
-		<div class="empty-filter">
+		<p class="empty-filter">
 			{#if query}No resources match "<strong>{query}</strong>"{:else}No resources match the current
 				filter.{/if}
-		</div>
+		</p>
 	{/if}
-{:else if view === 'table' && tableRow}
+{:else if view === 'table'}
 	<div class="table-wrap">
 		<table class="table">
-			{#if tableHeaders?.length}
-				<thead>
-					<tr
-						>{#each tableHeaders as h}<th>{h}</th>{/each}</tr
-					>
-				</thead>
-			{/if}
+			<thead>
+				<tr>
+					{#if tableHeaders?.length}
+						{#each tableHeaders as h}<th>{h}</th>{/each}
+					{:else}
+						<th>Name</th><th>Status</th><th>Age</th>
+					{/if}
+				</tr>
+			</thead>
 			<tbody>
-				{#each filtered as resource}{@render tableRow(resource)}{/each}
+				{#each filtered as resource}
+					{#if tableRow}
+						{@render tableRow(resource)}
+					{:else}
+						<tr>
+							<td class="primary">{resource.metadata.name}</td>
+							<td>{resource.metadata.provisioningStatus}</td>
+							<td>{ageFormatter(resource.metadata.creationTime)}</td>
+						</tr>
+					{/if}
+				{/each}
 			</tbody>
 		</table>
 	</div>
@@ -228,7 +224,6 @@
 		color: var(--danger);
 	}
 
-	/* Compact search input styled to sit beside filter chips */
 	.search-chip {
 		display: inline-flex;
 		align-items: center;
@@ -237,20 +232,22 @@
 		padding: 0 10px;
 		border-radius: 8px;
 		background: var(--bg-2);
-		border: 1px solid var(--line);
-		box-shadow: var(--shadow-inset);
+		border: 1px dashed var(--line);
+		color: var(--text-2);
+		font-size: 12px;
 		transition: border-color 120ms var(--ease);
-		min-width: 160px;
+		min-width: 140px;
 	}
 
-	.search-chip:focus-within {
-		border-color: color-mix(in oklch, var(--accent) 60%, var(--line));
-		box-shadow:
-			0 0 0 3px var(--accent-glow),
-			var(--shadow-inset);
+	.search-chip:focus-within,
+	.search-chip--active {
+		background: linear-gradient(180deg, var(--bg-3), var(--bg-2));
+		border: 1px solid var(--line-strong);
+		color: var(--text-1);
+		box-shadow: var(--shadow-inset);
 	}
 
-	:global(.search-chip__icon) {
+	:global(.search-icon) {
 		color: var(--text-4);
 		flex-shrink: 0;
 	}
@@ -280,18 +277,18 @@
 		color: var(--text-2);
 	}
 
-	.status-dot {
+	.dot {
 		width: 6px;
 		height: 6px;
 		border-radius: 999px;
 		flex-shrink: 0;
 	}
 
-	.status-dot--ok {
+	.dot--ok {
 		background: var(--accent);
 	}
-	.status-dot--warn {
-		background: var(--warning, oklch(0.75 0.15 60));
+	.dot--warn {
+		background: oklch(0.75 0.15 60);
 	}
 
 	.match-count {
