@@ -3,36 +3,34 @@
 
 	interface Props {
 		icon: string;
-		label: string;
+		label?: string;
 		disabled?: boolean;
 		href?: string;
 		clicked?: () => void;
-		[key: string]: any;
+		class?: string;
 	}
 
-	let { icon, label, disabled = $bindable(), href, clicked, ...props }: Props = $props();
+	let {
+		icon,
+		label,
+		disabled = $bindable(false),
+		href,
+		clicked,
+		class: cls = ''
+	}: Props = $props();
 </script>
 
 {#snippet content()}
-	<Icon name={icon} size={20} />
-	{#if label}
-		<div>{label}</div>
-	{/if}
+	<Icon name={icon} size={16} />
+	{#if label}<span>{label}</span>{/if}
 {/snippet}
 
 {#if href}
-	<a {href}>
-		<div class="btn flex gap-2 items-center p-0 {props.class || ''}">
-			{@render content()}
-		</div>
+	<a {href} class="btn btn--ghost {cls}">
+		{@render content()}
 	</a>
-{:else if clicked}
-	<button
-		class="btn flex gap-2 items-center p-0 disabled:opacity-50 disabled:cursor-not-allowed {props.class ||
-			''}"
-		{disabled}
-		onclick={clicked}
-	>
+{:else}
+	<button class="btn btn--ghost {cls}" {disabled} onclick={clicked}>
 		{@render content()}
 	</button>
 {/if}

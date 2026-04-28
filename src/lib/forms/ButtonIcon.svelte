@@ -5,16 +5,12 @@
 		icon: string;
 		disabled?: boolean;
 		clicked: () => void;
-		[key: string]: any;
+		class?: string;
 	}
 
-	let { icon, disabled = $bindable(), href, clicked, ...props }: Props = $props();
+	let { icon, disabled = $bindable(false), clicked, class: cls = '' }: Props = $props();
 </script>
 
-{#snippet content()}
-	<Icon name={icon} size={20} />
-{/snippet}
-
-<button class="btn flex gap-2 items-center p-0 {props.class || ''}" {disabled} onclick={clicked}>
-	{@render content()}
+<button class="btn btn--icon {cls}" {disabled} onclick={clicked}>
+	<Icon name={icon} size={16} />
 </button>
