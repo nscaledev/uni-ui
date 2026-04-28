@@ -42,8 +42,16 @@
 		padding: 14px 16px;
 		background: var(--bg-2);
 		border: 1px solid var(--line);
-		border-radius: var(--r-md);
+		border-radius: var(--r-lg);
 		box-shadow: var(--shadow-inset);
+		transition:
+			border-color 120ms var(--ease),
+			transform 140ms var(--ease);
+	}
+
+	.list-item:hover {
+		border-color: var(--line-strong);
+		transform: translateY(-1px);
 	}
 
 	.list-item__header {
@@ -73,7 +81,9 @@
 
 	.list-item__meta {
 		display: flex;
-		flex-direction: column;
-		gap: 4px;
+		flex-wrap: wrap;
+		gap: 8px 20px;
+		padding-top: 6px;
+		border-top: 1px solid var(--line-weak);
 	}
 </style>

@@ -5,8 +5,6 @@
 	interface Props {
 		label: string;
 		hint?: string;
-		// When validators are present the parent passes its valid state here
-		// so we can render the status icon.
 		valid?: boolean;
 		showValidation?: boolean;
 		control: Snippet;
@@ -15,43 +13,38 @@
 	let { label, hint, valid, showValidation = false, control }: Props = $props();
 </script>
 
-<div class="field">
-	<div class="field__label">{label}</div>
+<div class="form-row">
+	<div class="form-row__left">
+		<div class="form-row__title">{label}</div>
+		{#if hint}
+			<div class="form-row__hint">{hint}</div>
+		{/if}
+	</div>
 
-	{#if hint}
-		<div class="field__hint">{hint}</div>
-	{/if}
-
-	{#if showValidation}
-		<div class="field__validated">
-			{@render control()}
-			<div class="field__status" class:ok={valid} class:err={!valid}>
-				{#if valid}
-					<Icon name="checkCircle" size={16} />
-				{:else}
-					<Icon name="alert" size={16} />
-				{/if}
+	<div class="form-row__control">
+		{#if showValidation}
+			<div class="field__validated">
+				{@render control()}
+				<div class="field__status" class:ok={valid} class:err={!valid}>
+					{#if valid}
+						<Icon name="checkCircle" size={16} />
+					{:else}
+						<Icon name="alert" size={16} />
+					{/if}
+				</div>
 			</div>
-		</div>
-	{:else}
-		{@render control()}
-	{/if}
+		{:else}
+			{@render control()}
+		{/if}
+	</div>
 </div>
 
 <style>
-	.field {
-		display: flex;
-		flex-direction: column;
-		gap: 6px;
+	.form-row__left {
+		padding-top: 2px;
 	}
 
-	.field__hint {
-		font-size: 11.5px;
-		color: var(--text-3);
-		line-height: 1.45;
-	}
-
-	/* Wraps input + validation icon in a single .input-styled row */
+	/* Validated wrapper: shares .input chrome, validation icon on right */
 	.field__validated {
 		display: flex;
 		align-items: center;
@@ -69,7 +62,6 @@
 			var(--shadow-inset);
 	}
 
-	/* The actual <input> inside the validated wrapper loses its own chrome */
 	.field__validated :global(input) {
 		flex: 1;
 		min-width: 0;
