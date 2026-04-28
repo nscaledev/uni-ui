@@ -10,7 +10,8 @@
 
 	let { data, children }: Props = $props();
 
-	import { AppBar, Avatar, Modal, Popover, Toaster } from '@skeletonlabs/skeleton-svelte';
+	import { AppBar, Avatar, Modal, Popover } from '@skeletonlabs/skeleton-svelte';
+	import Toast from '$lib/primitives/Toast.svelte';
 
 	/* Required for OpenTelemetry */
 	import { Resource } from '@opentelemetry/resources';
@@ -26,7 +27,6 @@
 	provider.register();
 
 	import { logout } from '$lib/credentials';
-	import { toaster } from '$lib/toaster';
 	import Logo from '$lib/logos/Logo.svelte';
 	import SideBar from '$lib/shell/SideBar.svelte';
 	import Icon from '$lib/primitives/Icon.svelte';
@@ -70,7 +70,7 @@
 	</div>
 {/if}
 
-<Toaster {toaster}></Toaster>
+<Toast />
 
 <div class="w-screen h-screen flex flex-col">
 	<AppBar background="bg-surface-50-950" border="border-b border-surface-200-800">
