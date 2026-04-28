@@ -12,29 +12,58 @@
 	interface Props {
 		settings: ShellPageSettings;
 		resources: Array<T>;
-		// Override the default name-based filter with a custom predicate.
+		// Override the default name-based filter.
 		filterFn?: (r: T, query: string) => boolean;
 		tools?: Snippet;
-		// Card list view (required).
+		// Card/list view (required).
 		list: Snippet<[Array<T>]>;
-		// Optional table view — presence enables the view switcher.
+		// Optional table view — presence adds the Table button to the view switcher.
 		tableRow?: Snippet<[T]>;
-		// Table column headers (only used when tableRow is provided).
 		tableHeaders?: Array<string>;
+		// Optional grouped view — presence adds the Grouped button to the view switcher.
+		// Return the group key for a resource (e.g. projectId or region).
+		groupKey?: (r: T) => string;
+		// Display label for a group key (defaults to the raw key).
+		groupLabel?: (key: string) => string;
 		empty?: Snippet;
 	}
 
-	let { settings, resources, filterFn, tools, list, tableRow, tableHeaders, empty }: Props =
-		$props();
+	let {
+		settings,
+		resources,
+		filterFn,
+		tools,
+		list,
+		tableRow,
+		tableHeaders,
+		groupKey,
+		groupLabel,
+		empty
+	}: Props = $props();
+
+	type View = 'cards' | 'table' | 'grouped';
 
 	let query = $state('');
 	let statusFilter = $state<'all' | 'provisioned' | 'attention'>('all');
-	let view = $state<'cards' | 'table'>('cards');
+	let view = $state<View>('cards');
+
+	// Available view options
+	const views = $derived.by(() => {
+		const v: Array<{ id: View; icon: string; label: string }> = [
+			{ id: 'cards', icon: 'rows', label: 'List' }
+		];
+		if (tableRow) v.push({ id: 'table', icon: 'table', label: 'Table' });
+		if (groupKey) v.push({ id: 'grouped', icon: 'cards', label: 'Grouped' });
+		return v;
+	});
+
+	// Reset to cards if current view becomes unavailable
+	$effect(() => {
+		if (!views.find((v) => v.id === view)) view = 'cards';
+	});
 
 	const filtered = $derived.by(() => {
 		let r = resources;
-
-		// Status filter
 		if (statusFilter === 'provisioned') {
 			r = r.filter(
 				(x) => x.metadata.provisioningStatus === Identity.ResourceProvisioningStatus.Provisioned
@@ -44,15 +73,28 @@
 				(x) => x.metadata.provisioningStatus !== Identity.ResourceProvisioningStatus.Provisioned
 			);
 		}
-
-		// Name search
 		if (query.trim()) {
 			const q = query.toLowerCase();
 			const fn = filterFn ?? ((x: T) => x.metadata.name.toLowerCase().includes(q));
 			r = r.filter((x) => fn(x, q));
 		}
-
 		return r;
+	});
+
+	// Group the filtered array when in grouped view
+	const groups = $derived.by(() => {
+		if (view !== 'grouped' || !groupKey) return null;
+		const map = new Map<string, Array<T>>();
+		for (const r of filtered) {
+			const k = groupKey(r);
+			if (!map.has(k)) map.set(k, []);
+			map.get(k)!.push(r);
+		}
+		return Array.from(map.entries()).map(([key, items]) => ({
+			key,
+			label: groupLabel ? groupLabel(key) : key,
+			items
+		}));
 	});
 
 	const stats = $derived(computeStats(resources));
@@ -86,20 +128,15 @@
 	</div>
 </div>
 
-<!-- Toolbar: search + filters + view switcher -->
+<!-- Ribbon: filters left, view switcher right -->
 <div class="toolbar">
 	<!-- Search -->
-	<div class="filter-bar__search">
-		<Icon name="search" size={14} class="filter-bar__icon" />
-		<input
-			type="search"
-			class="filter-bar__input"
-			placeholder="Filter by name…"
-			bind:value={query}
-		/>
+	<div class="search-chip">
+		<Icon name="search" size={13} class="search-chip__icon" />
+		<input type="search" class="search-chip__input" placeholder="Filter…" bind:value={query} />
 		{#if query}
-			<button class="filter-bar__clear" onclick={() => (query = '')} aria-label="Clear filter">
-				<Icon name="x" size={12} />
+			<button class="search-chip__clear" onclick={() => (query = '')} aria-label="Clear">
+				<Icon name="x" size={11} />
 			</button>
 		{/if}
 	</div>
@@ -110,7 +147,7 @@
 		class:active={statusFilter === 'provisioned'}
 		onclick={() => (statusFilter = statusFilter === 'provisioned' ? 'all' : 'provisioned')}
 	>
-		<span class="chip-dot chip-dot--ok"></span>
+		<span class="status-dot status-dot--ok"></span>
 		Provisioned
 	</button>
 	<button
@@ -118,63 +155,72 @@
 		class:active={statusFilter === 'attention'}
 		onclick={() => (statusFilter = statusFilter === 'attention' ? 'all' : 'attention')}
 	>
-		<span class="chip-dot chip-dot--warn"></span>
+		<span class="status-dot status-dot--warn"></span>
 		Needs attention
 	</button>
 
 	{#if query && filtered.length !== resources.length}
-		<span class="filter-count">{filtered.length} of {resources.length}</span>
+		<span class="match-count">{filtered.length} of {resources.length}</span>
 	{/if}
 
 	<div class="spacer"></div>
 
-	<!-- View switcher (only when table view is provided) -->
-	{#if tableRow}
-		<div class="seg">
-			<button class:active={view === 'cards'} onclick={() => (view = 'cards')} title="Card view">
-				<Icon name="cards" size={14} />
-			</button>
-			<button class:active={view === 'table'} onclick={() => (view = 'table')} title="Table view">
-				<Icon name="table" size={14} />
-			</button>
+	<!-- View switcher — only when more than one view is available -->
+	{#if views.length > 1}
+		<div class="seg" role="group" aria-label="View">
+			{#each views as v}
+				<button
+					class:active={view === v.id}
+					onclick={() => (view = v.id)}
+					title={v.label}
+					aria-pressed={view === v.id}
+				>
+					<Icon name={v.icon} size={14} />
+				</button>
+			{/each}
 		</div>
 	{/if}
 </div>
 
 <!-- Content -->
-{#if filtered.length > 0}
-	{#if view === 'table' && tableRow}
-		<div class="table-wrap">
-			<table class="table">
-				{#if tableHeaders?.length}
-					<thead>
-						<tr>
-							{#each tableHeaders as h}
-								<th>{h}</th>
-							{/each}
-						</tr>
-					</thead>
-				{/if}
-				<tbody>
-					{#each filtered as resource}
-						{@render tableRow(resource)}
-					{/each}
-				</tbody>
-			</table>
-		</div>
+{#if filtered.length === 0}
+	{#if empty && resources.length === 0 && statusFilter === 'all' && !query}
+		{@render empty()}
 	{:else}
-		{@render list(filtered)}
+		<div class="empty-filter">
+			{#if query}No resources match "<strong>{query}</strong>"{:else}No resources match the current
+				filter.{/if}
+		</div>
 	{/if}
-{:else if empty && resources.length === 0 && statusFilter === 'all' && !query}
-	{@render empty()}
-{:else}
-	<div class="filter-empty">
-		{#if query}
-			No resources match "<strong>{query}</strong>"
-		{:else}
-			No resources match the current filter.
-		{/if}
+{:else if view === 'table' && tableRow}
+	<div class="table-wrap">
+		<table class="table">
+			{#if tableHeaders?.length}
+				<thead>
+					<tr
+						>{#each tableHeaders as h}<th>{h}</th>{/each}</tr
+					>
+				</thead>
+			{/if}
+			<tbody>
+				{#each filtered as resource}{@render tableRow(resource)}{/each}
+			</tbody>
+		</table>
 	</div>
+{:else if view === 'grouped' && groups}
+	{#each groups as group}
+		<div class="group">
+			<div class="group__head">
+				<span class="group__title">{group.label}</span>
+				<span class="group__meta"
+					>{group.items.length} {group.items.length === 1 ? 'resource' : 'resources'}</span
+				>
+			</div>
+			{@render list(group.items)}
+		</div>
+	{/each}
+{:else}
+	{@render list(filtered)}
 {/if}
 
 <style>
@@ -182,76 +228,78 @@
 		color: var(--danger);
 	}
 
-	:global(.filter-bar__icon) {
+	/* Compact search input styled to sit beside filter chips */
+	.search-chip {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		height: 28px;
+		padding: 0 10px;
+		border-radius: 8px;
+		background: var(--bg-2);
+		border: 1px solid var(--line);
+		box-shadow: var(--shadow-inset);
+		transition: border-color 120ms var(--ease);
+		min-width: 160px;
+	}
+
+	.search-chip:focus-within {
+		border-color: color-mix(in oklch, var(--accent) 60%, var(--line));
+		box-shadow:
+			0 0 0 3px var(--accent-glow),
+			var(--shadow-inset);
+	}
+
+	:global(.search-chip__icon) {
 		color: var(--text-4);
 		flex-shrink: 0;
 	}
 
-	.filter-bar__search {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		height: 32px;
-		padding: 0 10px;
-		background: var(--bg-1);
-		border: 1px solid var(--line);
-		border-radius: var(--r-md);
-		box-shadow: var(--shadow-inset);
-		min-width: 200px;
-		max-width: 280px;
+	.search-chip__input {
 		flex: 1;
-	}
-
-	.filter-bar__search:focus-within {
-		border-color: color-mix(in oklch, var(--accent) 60%, var(--line));
-	}
-
-	.filter-bar__input {
-		flex: 1;
+		min-width: 0;
 		background: transparent;
 		border: 0;
 		outline: 0;
 		color: var(--text-1);
 		font: inherit;
-		font-size: 13px;
-		min-width: 0;
+		font-size: 12px;
 	}
 
-	.filter-bar__input::placeholder {
+	.search-chip__input::placeholder {
 		color: var(--text-4);
 	}
 
-	.filter-bar__clear {
+	.search-chip__clear {
 		color: var(--text-4);
 		display: flex;
 		align-items: center;
 	}
 
-	.filter-bar__clear:hover {
+	.search-chip__clear:hover {
 		color: var(--text-2);
 	}
 
-	.filter-count {
-		font-size: 12px;
-		color: var(--text-3);
-	}
-
-	.chip-dot {
+	.status-dot {
 		width: 6px;
 		height: 6px;
 		border-radius: 999px;
 		flex-shrink: 0;
 	}
 
-	.chip-dot--ok {
+	.status-dot--ok {
 		background: var(--accent);
 	}
-
-	.chip-dot--warn {
-		background: var(--warning, #f59e0b);
+	.status-dot--warn {
+		background: var(--warning, oklch(0.75 0.15 60));
 	}
 
-	.filter-empty {
+	.match-count {
+		font-size: 11.5px;
+		color: var(--text-3);
+	}
+
+	.empty-filter {
 		padding: 32px;
 		text-align: center;
 		font-size: 13px;
