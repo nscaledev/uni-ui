@@ -7,100 +7,89 @@
 
 	import * as Clients from '$lib/clients';
 	import * as Region from '$lib/openapi/region';
+	import * as RegionUtil from '$lib/regionutil';
 
-	import type { ShellPageSettings } from '$lib/layouts/types.ts';
-	import ShellPageHeader from '$lib/layouts/ShellPageHeader.svelte';
+	import FormPage from '$lib/layouts/FormPage.svelte';
 	import ShellMetadataSection from '$lib/layouts/ShellMetadataSection.svelte';
 	import ShellSection from '$lib/layouts/ShellSection.svelte';
 	import TextInput from '$lib/forms/TextInput.svelte';
 	import InputChips from '$lib/forms/InputChips.svelte';
-	import Button from '$lib/forms/Button.svelte';
 
-	const settings: ShellPageSettings = {
-		feature: 'Network',
-		name: 'Create Network',
-		description: 'Create and deploy a new network.',
-		icon: 'network'
-	};
-
-	function initialOrganizationID(): string {
-		return data.organizationID;
-	}
-
-	function initialProjectID(): string {
-		return data.projectID;
-	}
-
-	function initialRegionID(): string {
-		return data.regionID;
-	}
+	// eslint-disable-next-line svelte/valid-compile
+	const organizationID = data.organizationID;
+	// eslint-disable-next-line svelte/valid-compile
+	const projectID = data.projectID;
+	// eslint-disable-next-line svelte/valid-compile
+	const regionID = data.regionID;
 
 	let resource: Region.NetworkV2Create = $state({
 		metadata: {
-			name: uniqueNamesGenerator({
-				dictionaries: [adjectives, animals],
-				separator: '-',
-				length: 2
-			})
+			name: uniqueNamesGenerator({ dictionaries: [adjectives, animals], separator: '-', length: 2 })
 		},
 		spec: {
-			organizationId: initialOrganizationID(),
-			projectId: initialProjectID(),
-			regionId: initialRegionID(),
+			organizationId: organizationID,
+			projectId: projectID,
+			regionId: regionID,
 			prefix: '192.168.0.0/24',
 			dnsNameservers: []
 		}
 	});
 
 	let metadataValid = $state(false);
-
 	let valid = $derived(metadataValid);
 
-	let names: Array<string> = [];
-
 	function submit() {
-		const parameters = {
-			networkV2Create: resource
-		};
-
 		Clients.region()
-			.apiV2NetworksPost(parameters)
+			.apiV2NetworksPost({ networkV2Create: resource })
 			.then(() => window.location.assign('/network/networks'))
 			.catch((e: Error) => Clients.error(e));
 	}
+
+	const projectName = $derived(
+		data.projects?.find((p) => p.metadata.id === projectID)?.metadata.name ?? projectID
+	);
+	const regionName = $derived(RegionUtil.name(data.regions, regionID));
 </script>
 
-<ShellPageHeader {settings} />
+<FormPage
+	breadcrumb={[{ label: 'Networks', href: '/network/networks' }, { label: 'Create' }]}
+	cancelHref="/network/networks"
+	submitLabel="Create Network"
+	onSubmit={submit}
+	{valid}
+>
+	{#snippet form()}
+		<ShellMetadataSection metadata={resource.metadata} names={[]} bind:valid={metadataValid} />
 
-<ShellMetadataSection metadata={resource.metadata} {names} bind:valid={metadataValid} />
+		<ShellSection title="Configuration">
+			<TextInput
+				label="Network prefix"
+				hint="Must be at least a /24. The top /25 is reserved for storage integration."
+				bind:value={resource.spec.prefix}
+			/>
+			<InputChips
+				label="DNS nameservers"
+				hint="Explicit nameservers prevent instances on the same network from resolving each other."
+				name="dns-nameservers"
+				bind:value={resource.spec.dnsNameservers}
+			/>
+		</ShellSection>
+	{/snippet}
 
-<ShellSection title="Configuration">
-	<TextInput
-		label="Choose a network prefix."
-		hint="Must be at least a /24, the top /25 is reserved for storage integration."
-		bind:value={resource.spec.prefix}
-	/>
-
-	<InputChips
-		label="DNS nameservers"
-		hint="Specifing explicit DNS nameservers will prevent instances on the same network from resolving each other."
-		name="dns-nameservers"
-		bind:value={resource.spec.dnsNameservers}
-	/>
-</ShellSection>
-
-<div class="flex justify-between">
-	<Button
-		icon="x"
-		label="Cancel"
-		class="preset-outlined-surface-600-400"
-		href="/network/networks"
-	/>
-	<Button
-		icon="check"
-		label="Create"
-		class="preset-filled-primary-500"
-		clicked={submit}
-		disabled={!valid}
-	/>
-</div>
+	{#snippet summary()}
+		<dl class="summary">
+			<dt>Project</dt>
+			<dd>{projectName}</dd>
+			<dt>Region</dt>
+			<dd>{RegionUtil.flag(data.regions, regionID)} {regionName}</dd>
+			<dt>Name</dt>
+			<dd>{resource.metadata.name || '—'}</dd>
+			<dt>Prefix</dt>
+			<dd>{resource.spec.prefix}</dd>
+			{#if resource.spec.dnsNameservers?.length}
+				<dt>DNS</dt>
+				<dd>{resource.spec.dnsNameservers.join(', ')}</dd>
+			{/if}
+		</dl>
+	{/snippet}
+</FormPage>

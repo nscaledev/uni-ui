@@ -1,21 +1,21 @@
-<script lang="ts">
+<script
+	lang="ts"
+	generics="T extends { metadata: { provisioningStatus: string; creationTime: Date; name: string } }"
+>
 	import type { Snippet } from 'svelte';
 	import { computeStats } from '$lib/layouts/stats';
 	import type { ShellPageSettings } from '$lib/layouts/types';
 	import ShellPageHeader from '$lib/layouts/ShellPageHeader.svelte';
 	import Icon from '$lib/primitives/Icon.svelte';
 
-	interface Resource {
-		metadata: { provisioningStatus: string; creationTime: Date; name: string };
-	}
-
 	interface Props {
 		settings: ShellPageSettings;
-		resources: Array<Resource>;
-		// Filter predicate — return true to include. Default: filter by name substring.
-		filterFn?: (r: Resource, query: string) => boolean;
+		resources: Array<T>;
+		// Override the default name-based filter with a custom predicate.
+		filterFn?: (r: T, query: string) => boolean;
 		tools?: Snippet;
-		list: Snippet<[Array<Resource>]>;
+		// Receives the filtered array so callers keep full type information.
+		list: Snippet<[Array<T>]>;
 		empty?: Snippet;
 	}
 
@@ -26,7 +26,7 @@
 	const filtered = $derived.by(() => {
 		if (!query.trim()) return resources;
 		const q = query.toLowerCase();
-		const fn = filterFn ?? ((r: Resource) => r.metadata.name.toLowerCase().includes(q));
+		const fn = filterFn ?? ((r: T) => r.metadata.name.toLowerCase().includes(q));
 		return resources.filter((r) => fn(r, q));
 	});
 
