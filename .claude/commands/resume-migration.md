@@ -17,7 +17,7 @@ Every commit must pass:
 npm run check && npm run lint && npm run test:unit -- --run
 ```
 
-## Completed commits (do not redo)
+## Completed commits
 
 | # | Commit | SHA |
 |---|--------|-----|
@@ -29,57 +29,105 @@ npm run check && npm run lint && npm run test:unit -- --run
 | 6 | Remove legacy regions section | 5a21d6e |
 | 7 | Rename SelectNew → RichSelect | 9cf8bec |
 | 8 | Add design CSS, fonts, bits-ui | 86a3af1 |
+| 8b | Theme store (appearance/surface/view) | f861117 |
+| 9 | Icon system (inline SVG, drop Iconify) | fb44b16 |
+| 10 | Button primitives (.btn / .btn--ghost / .btn--icon) | deaf404 |
+| 11 | FieldWrapper + TextInput + NumberInput | e108a5d |
+| 12 | Switch (pure CSS toggle) | 72ce505 |
+| 13 | RangeSlider (Bits UI Slider) | 591756a |
+| 14 | MultiSelect (Bits UI Combobox) | f315e06 |
+| 15 | InputChips (custom, no library) | 357731c |
+| 16 | RichSelect (Floating UI) | c9ef03b |
+| 17 | ModalIcon → Bits UI Dialog | e22aa8f |
+| 18 | Toast system (custom, replaces Skeleton Toaster) | 6afcdcc |
 
-## Next commit to implement: Commit 8 — Theme store
+## Next commit: Commit 19 — New primitives: Chip, StatusDot, Badge
 
-**File to create**: `src/lib/stores/theme.ts`
+**Files to create/update:**
+- `src/lib/primitives/Chip.svelte` — NEW. Design's `.chip`, `.chip--ok`, `.chip--err`, `.chip--warn`, `.chip--muted` CSS classes.
+- `src/lib/primitives/StatusDot.svelte` — NEW. A coloured dot for provisioning status.
+- `src/lib/layouts/Badge.svelte` — RESKIN (already updated to use Icon; now apply design tokens).
 
-```ts
-// Three persisted stores, each synced to localStorage and applied to <html>
-// appearance: 'light' | 'dim' | 'dark'   localStorage key: uk:appearance
-// surface:    'solid' | 'glass'           localStorage key: uk:surface
-// view:       'table' | 'cards' | 'grouped'  localStorage key: uk:view
-//
-// appearance and surface must call:
-//   document.documentElement.setAttribute('data-appearance', value)
-//   document.documentElement.setAttribute('data-surface', value)
-// on change (use $effect, browser-guarded).
-```
+**Chip usage in the codebase:** Not yet used — it's a new primitive that will replace ad-hoc badge-like elements when pages are migrated. The design's `.chip` class is already in `design.css`.
 
-After that, the sequence continues through the plan: primitives (Icon, buttons, inputs, etc.), shell layout, page templates, then resource pages one by one.
+**StatusDot usage:** Will be used in list pages to show provisioning/health status. Should accept a `status` string and map to a colour.
 
-## Key decisions already made
+After that:
 
-- **No stepper/wizard**: all create forms are single-page with FormSection cards + sticky summary panel
-- **No virtual clusters**: deleted entirely
-- **No compute clusters**: both legacy and clusters2 deleted
-- **No identity view pages**: users/projects/serviceaccounts/sshcertificateauthorities view pages deleted
-- **No K8s cluster view page**: deferred (no API for workload pool state yet)
+## Commit 20 — Form layout primitives
+- `FormSection.svelte` (was `ShellSection.svelte`) → design's `.form-section` card
+- `FormRow.svelte` (NEW) → design's `.form-row` (`grid-template-columns: 220px 1fr`)
+- `ResourceList.svelte` — reskin (keep API)
+- `Placeholder.svelte` — reskin
+
+## Commit 21 — Clipboard reskin
+- `Clipboard.svelte` — reskin only, no API change
+
+## Commits 22–25 — Shell (big visual change)
+- 22: Brand, Sidebar, Header, Tweaks (`+layout.svelte` CSS grid)
+- 23: ScopePicker
+- 24: OmniSearch
+
+## Commits 26–27 — Page templates
+- 26: ListPage + stats utility
+- 27: FormPage
+
+## Commits 28–38 — Resource pages (one per resource)
+
+---
+
+## Key decisions (do not re-litigate)
+
+- **No stepper/wizard**: all create forms are single-page (K8s clusters already converted)
+- **No virtual clusters, no compute clusters, no legacy regions**: deleted
+- **No identity view pages, no K8s cluster view page**: deleted
 - **Compute instances view page**: kept — shows instance + all dependency health
-- **Regions section**: deleted entirely (superseded by V2 APIs)
 - **Fonts**: self-hosted in `static/fonts/` (air-gapped deployment)
-- **Icons**: Iconify to be removed; inline SVGs via `Icon.svelte` (Commit 9)
-- **Scope picker**: org-level only initially (no project-level scope yet)
-- **Select.svelte**: native `<select>` wrapper — keep as-is
-- **RichSelect.svelte**: custom Popover-based dropdown for flavors/images (was SelectNew)
+- **Icons**: inline SVGs via `Icon.svelte` in `src/lib/primitives/`
+- **Switch**: pure CSS (no Bits UI needed)
+- **InputChips**: pure Svelte (Bits UI v2 has no TagsInput)
+- **RichSelect**: `@floating-ui/dom` with custom `sameWidth` middleware
+- **Toast**: `toaster.svelte.ts` ($state store) + `Toast.svelte` renderer, no library
+- **Toaster import**: `import { toaster } from '$lib/toaster.svelte'` (not `.ts`)
+- **FieldWrapper**: base component for label/hint/validation — TextInput and NumberInput compose from it
+- **Select.svelte**: native `<select>` wrapper — keep as-is (used for simple enums)
+- **RichSelect.svelte**: custom Floating UI dropdown for rich-content options (flavors, images)
 
-## Library decisions
-
-- **bits-ui 2.18.0**: installed, use for Dialog, Accordion, Switch, Slider, Combobox, TagsInput
-- **@floating-ui/dom**: already in deps, use for RichSelect popover and ScopePicker
-- **Tailwind**: stays until final cleanup commit
-- **Skeleton**: stays until final cleanup commit
-
-## File structure so far
+## Important file locations
 
 ```
 src/
-  styles/design.css       ← verbatim design CSS + @font-face (do not Prettier-format)
+  styles/design.css           ← verbatim design CSS + @font-face (Prettier-ignored)
   lib/
-    loadutil.ts           ← startAutoRefresh() added
-    loadutil.test.ts      ← tests added
+    toaster.svelte.ts         ← $state toast store (.svelte.ts for runes)
+    primitives/
+      Icon.svelte             ← 45 inline SVGs, design names (plus, trash, edit…)
+      Spinner.svelte          ← CSS @keyframes bars animation
+      FieldWrapper.svelte     ← label/hint/validation wrapper for inputs
+      Toast.svelte            ← renders toasts.list from toaster store
     forms/
-      RichSelect.svelte   ← was SelectNew.svelte
-      [all others unchanged]
-static/fonts/             ← 6 woff2 files (Inter Tight 300/400/500/600, JetBrains Mono 400/500)
+      Button.svelte           ← .btn
+      ButtonIcon.svelte       ← .btn.btn--icon
+      SubtleButton.svelte     ← .btn.btn--ghost
+      TextInput.svelte        ← composes FieldWrapper
+      NumberInput.svelte      ← composes FieldWrapper
+      Switch.svelte           ← pure CSS toggle, bind:checked + onCheckedChange legacy
+      RangeSlider.svelte      ← Bits UI Slider, type="multiple"
+      MultiSelect.svelte      ← Bits UI Combobox
+      InputChips.svelte       ← custom tags input
+      RichSelect.svelte       ← Floating UI custom dropdown
+      Select.svelte           ← native <select> wrapper (unchanged)
+    layouts/
+      ModalIcon.svelte        ← Bits UI Dialog
+      Badge.svelte            ← uses Icon.svelte, needs design token reskin
+static/fonts/                 ← 6 woff2 files
 ```
+
+## Remaining Skeleton usage (still active, to be removed in final commit)
+
+Search: `grep -rn "skeletonlabs" src --include="*.svelte" --include="*.ts"`
+
+Currently remaining in:
+- `src/routes/(shell)/+layout.svelte` — AppBar, Avatar, Modal (hamburger drawer), Popover (user menu)
+- `src/lib/shell/SideBar.svelte` — Navigation, Accordion (will be replaced in shell commit)
+- `src/lib/forms/PopupButton.svelte` — Skeleton Popover (commit 21 area or shell commit)
