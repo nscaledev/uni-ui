@@ -96,46 +96,42 @@
 	let style = $derived('grid-template-columns:' + ' max-content'.repeat(columns) + ' 1fr;');
 </script>
 
-<div class="flex justify-between items-center">
+<div class="rl-header">
 	<div class={titleClass}>{title}</div>
 	<Button icon="plus" label="Add" clicked={itemAdd} disabled={active} />
 </div>
 
 {@render description?.()}
 
-<div class="flex flex-col lg:grid lg:grid-cols-[repeat(6,max-content)_1fr] gap-2" {style}>
+<div class="rl-list" {style}>
 	{#each items as item, index}
 		{#if activeItem == index}
-			<div
-				class="col-span-full flex flex-col gap-4 p-2 lg:p-4 card preset-outlined-surface-500 shadow-lg"
-			>
+			<div class="rl-item rl-item--expanded col-span-full">
 				{@render expanded(item, index)}
 
-				<div class="flex justify-between">
+				<div class="rl-item__actions">
 					<Button
 						icon="trash"
 						label="Delete"
-						class="preset-outlined-error-500 shadow-lg"
+						class="btn--danger"
 						clicked={() => itemRemove(index)}
 					/>
 					<Button
 						icon="check"
 						label="Update"
-						class="preset-filled-primary-500 shadow-lg"
+						class="btn--primary"
 						clicked={() => itemDeactivate(index)}
 						disabled={!valid}
 					/>
 				</div>
 			</div>
 		{:else}
-			<div
-				class="flex gap-2 items-start lg:gap-6 lg:col-span-full lg:grid lg:grid-cols-subgrid lg:items-center card preset-outlined-surface-500 shadow-lg p-4"
-			>
-				<div class="flex flex-col gap-4 lg:contents overflow-hidden">
+			<div class="rl-item col-span-full">
+				<div class="rl-item__content">
 					{@render normal(item, index)}
 				</div>
 
-				<div class="flex ml-auto gap-2 lg:justify-self-end lg:col-start-[-1]">
+				<div class="rl-item__controls">
 					<ButtonIcon icon="edit" clicked={() => itemActivate(index)} disabled={active} />
 					<ButtonIcon icon="trash" clicked={() => itemRemove(index)} disabled={active} />
 				</div>
@@ -143,3 +139,57 @@
 		{/if}
 	{/each}
 </div>
+
+<style>
+	.rl-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 8px;
+	}
+
+	.rl-list {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+	}
+
+	.rl-item {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		padding: 12px 14px;
+		background: var(--bg-2);
+		border: 1px solid var(--line);
+		border-radius: var(--r-md);
+		box-shadow: var(--shadow-inset);
+	}
+
+	.rl-item--expanded {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 16px;
+		background: var(--bg-1);
+		border-color: color-mix(in oklch, var(--accent) 40%, var(--line));
+	}
+
+	.rl-item__content {
+		flex: 1;
+		min-width: 0;
+		display: contents;
+	}
+
+	.rl-item__controls {
+		display: flex;
+		gap: 6px;
+		margin-left: auto;
+		flex-shrink: 0;
+	}
+
+	.rl-item__actions {
+		display: flex;
+		justify-content: space-between;
+		padding-top: 4px;
+		border-top: 1px solid var(--line-weak);
+	}
+</style>
