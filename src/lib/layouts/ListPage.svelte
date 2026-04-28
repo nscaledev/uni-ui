@@ -144,23 +144,24 @@
 		<span class="dot dot--warn"></span>Needs attention
 	</button>
 
-	{#if query && filtered.length !== resources.length}
-		<span class="match-count">{filtered.length} of {resources.length}</span>
-	{/if}
-
 	<div class="spacer"></div>
+
+	<!-- Item count -->
+	<span class="item-count">
+		{filtered.length} item{filtered.length === 1 ? '' : 's'}
+	</span>
 
 	<!-- View switcher: list + table always; grouped when groupKey provided -->
 	<div class="seg" role="group" aria-label="View">
-		<button class:active={view === 'list'} onclick={() => (view = 'list')} title="List">
-			<Icon name="rows" size={14} />
+		<button class:active={view === 'list'} onclick={() => (view = 'list')}>
+			<Icon name="rows" size={14} />List
 		</button>
-		<button class:active={view === 'table'} onclick={() => (view = 'table')} title="Table">
-			<Icon name="table" size={14} />
+		<button class:active={view === 'table'} onclick={() => (view = 'table')}>
+			<Icon name="table" size={14} />Table
 		</button>
 		{#if groupKey}
-			<button class:active={view === 'grouped'} onclick={() => (view = 'grouped')} title="Grouped">
-				<Icon name="cards" size={14} />
+			<button class:active={view === 'grouped'} onclick={() => (view = 'grouped')}>
+				<Icon name="cards" size={14} />Grouped
 			</button>
 		{/if}
 	</div>
@@ -291,9 +292,17 @@
 		background: oklch(0.75 0.15 60);
 	}
 
-	.match-count {
+	.item-count {
 		font-size: 11.5px;
 		color: var(--text-3);
+		white-space: nowrap;
+	}
+
+	/* Icon + label gap inside .seg buttons */
+	:global(.seg button) {
+		display: inline-flex;
+		align-items: center;
+		gap: 5px;
 	}
 
 	.empty-filter {
