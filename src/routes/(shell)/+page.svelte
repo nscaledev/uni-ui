@@ -3,8 +3,7 @@
 
 	let { data }: { data: PageData } = $props();
 
-	import { ProgressRing } from '@skeletonlabs/skeleton-svelte';
-
+	import ProgressRing from '$lib/primitives/ProgressRing.svelte';
 	import type { ShellPageSettings } from '$lib/layouts/types.ts';
 	import ShellPageHeader from '$lib/layouts/ShellPageHeader.svelte';
 	import ShellSection from '$lib/layouts/ShellSection.svelte';
@@ -19,37 +18,28 @@
 
 <ShellPageHeader {settings}></ShellPageHeader>
 <ShellSection title="Resource Utilization">
-	<div class="flex flex-col lg:grid lg:grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-4">
+	<div class="quota-grid">
 		{#each data.quotas.quotas as quota}
-			<div
-				class="flex flex-col gap-4 card bg-surface-50-950 border border-surface-200-800 shadow p-4"
-			>
-				<div class="flex flex-col gap-2">
-					<div class="h4">{quota.displayName}</div>
-					<div class="italic text-sm text-surface-700-300">{quota.description}</div>
+			<div class="quota-card">
+				<div class="quota-card__header">
+					<div class="quota-card__name">{quota.displayName}</div>
+					<div class="quota-card__desc">{quota.description}</div>
 				</div>
-				<div class="flex items-center gap-4">
-					<!-- the default is to treat the value as a pencentage -->
+				<div class="quota-card__body">
 					<ProgressRing
 						value={Math.round(quota.quantity <= 0 ? 0 : (quota.used / quota.quantity) * 100)}
+						size={80}
 						showLabel
-						trackStroke="stroke-primary-500/20"
-						strokeWidth="0.75rem"
-						labelFontSize={32}
-					></ProgressRing>
-
-					<div class="grid grid-cols-[auto_auto] gap-x-4">
-						<div class="font-bold">Total</div>
-						<div>{quota.quantity}</div>
-						<div class="font-bold">Used</div>
-						<div>{quota.used}</div>
-						<div class="font-bold">Free</div>
-						<div>{quota.free}</div>
-						<div class="contents text-surface-700-300">
-							<div class="font-bold">Committed</div>
-							<div>{quota.committed}</div>
-							<div class="font-bold">Reserved</div>
-							<div>{quota.reserved}</div>
+					/>
+					<div class="quota-stats">
+						<div class="quota-stats__row"><span>Total</span><span>{quota.quantity}</span></div>
+						<div class="quota-stats__row"><span>Used</span><span>{quota.used}</span></div>
+						<div class="quota-stats__row"><span>Free</span><span>{quota.free}</span></div>
+						<div class="quota-stats__row quota-stats__row--muted">
+							<span>Committed</span><span>{quota.committed}</span>
+						</div>
+						<div class="quota-stats__row quota-stats__row--muted">
+							<span>Reserved</span><span>{quota.reserved}</span>
 						</div>
 					</div>
 				</div>
@@ -57,3 +47,64 @@
 		{/each}
 	</div>
 </ShellSection>
+
+<style>
+	.quota-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+		gap: 12px;
+	}
+
+	.quota-card {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		padding: 16px;
+		background: var(--bg-2);
+		border: 1px solid var(--line);
+		border-radius: var(--r-md);
+	}
+
+	.quota-card__name {
+		font-size: 14px;
+		font-weight: 600;
+		color: var(--text-1);
+	}
+
+	.quota-card__desc {
+		font-size: 12px;
+		color: var(--text-3);
+		margin-top: 2px;
+		font-style: italic;
+	}
+
+	.quota-card__body {
+		display: flex;
+		align-items: center;
+		gap: 20px;
+	}
+
+	.quota-stats {
+		display: grid;
+		grid-template-columns: auto auto;
+		gap: 2px 16px;
+		font-size: 13px;
+	}
+
+	.quota-stats__row {
+		display: contents;
+	}
+
+	.quota-stats__row span:first-child {
+		font-weight: 600;
+		color: var(--text-2);
+	}
+
+	.quota-stats__row span:last-child {
+		color: var(--text-1);
+	}
+
+	.quota-stats__row--muted span {
+		color: var(--text-3);
+	}
+</style>
