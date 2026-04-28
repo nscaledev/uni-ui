@@ -2,16 +2,10 @@
 	import { browser } from '$app/environment';
 	import { invalidate } from '$app/navigation';
 	import { page } from '$app/stores';
+	import { Accordion } from 'bits-ui';
 
-	import { Navigation, Accordion } from '@skeletonlabs/skeleton-svelte';
 	import Icon from '$lib/primitives/Icon.svelte';
-
-	import type { InternalToken } from '$lib/oauth2';
-	import { logout } from '$lib/credentials';
-	import * as Clients from '$lib/clients';
 	import * as Identity from '$lib/openapi/identity';
-	import * as OIDC from '$lib/oidc';
-	import * as Stores from '$lib/stores';
 	import * as RBAC from '$lib/rbac';
 
 	interface Props {
@@ -27,15 +21,11 @@
 	type Nav = Array<{ base: string; title: string; icon: string; items: NavItems }>;
 
 	const navStatic: Array<{ href: string; title: string; icon: string }> = [
-		{
-			href: '/',
-			title: 'Dashboard',
-			icon: 'dashboard'
-		}
+		{ href: '/', title: 'Dashboard', icon: 'dashboard' }
 	];
 
 	const nav: Nav = $derived.by(() => {
-		const nav = [
+		const all: Nav = [
 			{
 				base: '/identity',
 				title: 'Identity',
@@ -45,68 +35,49 @@
 						label: 'Organization',
 						href: 'organizations',
 						rbac: [
-							{
-								endpoint: 'identity:organizations',
-								operations: [Identity.AclOperation.Update]
-							}
+							{ endpoint: 'identity:organizations', operations: [Identity.AclOperation.Update] }
 						]
 					},
 					{
 						label: 'OAuth2 Providers',
 						href: 'oauth2providers',
 						rbac: [
-							{
-								endpoint: 'identity:oauth2providers',
-								operations: [Identity.AclOperation.Read]
-							}
+							{ endpoint: 'identity:oauth2providers', operations: [Identity.AclOperation.Read] }
 						]
 					},
 					{
 						label: 'Quotas',
 						href: 'quotas',
-						rbac: [
-							{
-								endpoint: 'identity:quotas',
-								operations: [Identity.AclOperation.Update]
-							}
-						]
+						rbac: [{ endpoint: 'identity:quotas', operations: [Identity.AclOperation.Update] }]
 					},
 					{
 						label: 'Users',
 						href: 'users',
-						rbac: [
-							{
-								endpoint: 'identity:users',
-								operations: [Identity.AclOperation.Read]
-							}
-						]
+						rbac: [{ endpoint: 'identity:users', operations: [Identity.AclOperation.Read] }]
 					},
 					{
 						label: 'Service Accounts',
 						href: 'serviceaccounts',
 						rbac: [
-							{
-								endpoint: 'identity:serviceaccounts',
-								operations: [Identity.AclOperation.Read]
-							}
+							{ endpoint: 'identity:serviceaccounts', operations: [Identity.AclOperation.Read] }
 						]
 					},
 					{
 						label: 'Groups',
 						href: 'groups',
-						rbac: [
-							{
-								endpoint: 'identity:groups',
-								operations: [Identity.AclOperation.Read]
-							}
-						]
+						rbac: [{ endpoint: 'identity:groups', operations: [Identity.AclOperation.Read] }]
 					},
 					{
 						label: 'Projects',
 						href: 'projects',
+						rbac: [{ endpoint: 'identity:projects', operations: [Identity.AclOperation.Read] }]
+					},
+					{
+						label: 'SSH Certificate CAs',
+						href: 'sshcertificateauthorities',
 						rbac: [
 							{
-								endpoint: 'identity:projects',
+								endpoint: 'region:sshcertificateauthorities:v2',
 								operations: [Identity.AclOperation.Read]
 							}
 						]
@@ -131,21 +102,13 @@
 					{
 						label: 'Networks',
 						href: 'networks',
-						rbac: [
-							{
-								endpoint: 'region:networks:v2',
-								operations: [Identity.AclOperation.Read]
-							}
-						]
+						rbac: [{ endpoint: 'region:networks:v2', operations: [Identity.AclOperation.Read] }]
 					},
 					{
 						label: 'Security Groups',
 						href: 'securitygroups',
 						rbac: [
-							{
-								endpoint: 'region:securitygroups:v2',
-								operations: [Identity.AclOperation.Read]
-							}
+							{ endpoint: 'region:securitygroups:v2', operations: [Identity.AclOperation.Read] }
 						]
 					},
 					{
@@ -168,12 +131,7 @@
 					{
 						label: 'Instances',
 						href: 'instances',
-						rbac: [
-							{
-								endpoint: 'compute:instances',
-								operations: [Identity.AclOperation.Read]
-							}
-						]
+						rbac: [{ endpoint: 'compute:instances', operations: [Identity.AclOperation.Read] }]
 					}
 				]
 			},
@@ -185,144 +143,194 @@
 					{
 						label: 'Clusters',
 						href: 'clusters',
-						rbac: [
-							{
-								endpoint: 'kubernetes:clusters',
-								operations: [Identity.AclOperation.Read]
-							}
-						]
+						rbac: [{ endpoint: 'kubernetes:clusters', operations: [Identity.AclOperation.Read] }]
 					},
 					{
 						label: 'Cluster Managers',
 						href: 'clustermanagers',
 						rbac: [
-							{
-								endpoint: 'kubernetes:clustermanagers',
-								operations: [Identity.AclOperation.Read]
-							}
+							{ endpoint: 'kubernetes:clustermanagers', operations: [Identity.AclOperation.Read] }
 						]
 					}
 				]
 			}
 		];
 
-		let filteredNav: Nav = [];
-
-		for (const item of nav) {
-			const filtered = item.items.filter(
-				(x) => !x.rbac || RBAC.organizationScopesAllowed(acl, organizationID, x.rbac)
-			);
-			if (!filtered.length) continue;
-
-			filteredNav.push({
-				base: item.base,
-				title: item.title,
-				icon: item.icon,
-				items: filtered
-			});
-		}
-
-		return filteredNav;
+		return all
+			.map((section) => ({
+				...section,
+				items: section.items.filter(
+					(item) => !item.rbac || RBAC.organizationScopesAllowed(acl, organizationID, item.rbac)
+				)
+			}))
+			.filter((section) => section.items.length > 0);
 	});
 
-	let activeTitle = $state([] as Array<string>);
+	// Track which accordion section is open based on current URL
+	let openSection = $state('');
 
 	$effect.pre(() => {
-		if (!nav || activeTitle.length > 0) return;
-
-		const item = nav.find((x) => $page.url.pathname.startsWith(x.base));
-		if (!item) return;
-
-		activeTitle = [item.title];
+		if (openSection) return;
+		const match = nav.find((s) => $page.url.pathname.startsWith(s.base));
+		if (match) openSection = match.title;
 	});
 
-	let activeItem = $derived.by(() => {
-		if (!nav) return;
-
-		const item = nav.find((x) => $page.url.pathname.startsWith(x.base));
-		if (!item) return;
-
-		return item.items?.find((x) => $page.url.pathname.startsWith(item.base + '/' + x.href));
+	// Active sub-item
+	const activeItem = $derived.by(() => {
+		const section = nav.find((s) => $page.url.pathname.startsWith(s.base));
+		if (!section) return null;
+		return section.items.find((item) =>
+			$page.url.pathname.startsWith(section.base + '/' + item.href)
+		);
 	});
 
-	let previousOrganizationID = $state('');
-	let selectedOrganizationID = $state('');
-
-	$effect.pre(() => {
-		if (previousOrganizationID === organizationID) return;
-
-		previousOrganizationID = organizationID;
-		selectedOrganizationID = organizationID;
-	});
+	// Org switching
+	let selectedOrganizationID = $state(organizationID);
 
 	$effect(() => {
 		if (!browser) return;
-
-		if (selectedOrganizationID != organizationID) {
+		if (selectedOrganizationID !== organizationID) {
 			window.localStorage.setItem('organization_id', selectedOrganizationID);
-
 			invalidate('app:organization_id');
 		}
 	});
 </script>
 
-<div class="flex flex-col overflow-y-auto min-h-full border-r border-surface-200-800">
-	<!-- Oragnization -->
-	<div class="p-4 flex flex-col gap-4 text-sm">
-		<div class="font-bold">Organization</div>
-
-		<div class="input-group grid-cols-[auto_1fr] shadow-lg">
-			<div class="ig-cell">
-				<Icon name="building" size={18} />
-			</div>
-			<select class="ig-select" bind:value={selectedOrganizationID}>
-				{#each organizations || [] as organization}
-					<option value={organization.metadata.id}>{organization.metadata.name}</option>
-				{/each}
-			</select>
-		</div>
-	</div>
-
-	<div class="flex flex-col">
-		<div class="p-4 font-bold text-sm">Main Menu</div>
-
-		{#each navStatic as entry}
-			<a href={entry.href} class="flex gap-4 hover:preset-tonal-primary p-2 px-4 mb-2">
-				<Icon name={entry.icon} size={20} />
-				{entry.title}
-			</a>
-		{/each}
-
-		<Accordion
-			rounded="none"
-			value={activeTitle}
-			onValueChange={(e) => (activeTitle = e.value)}
-			collapsible
-		>
-			{#each nav as entry}
-				<Accordion.Item value={entry.title} panelPadding="">
-					{#snippet lead()}
-						<Icon name={entry.icon} size={20} />
-					{/snippet}
-					{#snippet control()}
-						{entry.title}
-					{/snippet}
-					{#snippet panel()}
-						<ul class="ml-12 mr-2 text-sm">
-							{#each entry.items as item}
-								<a href={entry.base + '/' + item.href} onclick={() => onClicked?.()}>
-									<li
-										class="p-2 hover:preset-tonal-primary rounded"
-										class:preset-tonal-primary={activeItem == item}
-									>
-										{item.label}
-									</li>
-								</a>
-							{/each}
-						</ul>
-					{/snippet}
-				</Accordion.Item>
+<aside class="sidebar">
+	<!-- Org selector -->
+	<div class="sidebar-org">
+		<Icon name="building" size={14} class="sidebar-org__icon" />
+		<select class="sidebar-org__select" bind:value={selectedOrganizationID}>
+			{#each organizations as org}
+				<option value={org.metadata.id}>{org.metadata.name}</option>
 			{/each}
-		</Accordion>
+		</select>
 	</div>
-</div>
+
+	<!-- Static nav (Dashboard) -->
+	{#each navStatic as entry}
+		<a
+			href={entry.href}
+			class="nav-item"
+			class:active={$page.url.pathname === entry.href}
+			onclick={onClicked}
+		>
+			<Icon name={entry.icon} size={15} />
+			<span class="label">{entry.title}</span>
+		</a>
+	{/each}
+
+	<!-- Grouped nav via Accordion -->
+	<Accordion.Root type="single" value={openSection} onValueChange={(v) => (openSection = v)}>
+		{#each nav as section}
+			<Accordion.Item value={section.title}>
+				<Accordion.Header>
+					<Accordion.Trigger class="nav-item nav-trigger">
+						<Icon name={section.icon} size={15} />
+						<span class="label">{section.title}</span>
+						<Icon name="chevronDown" size={12} class="nav-chevron" />
+					</Accordion.Trigger>
+				</Accordion.Header>
+				<Accordion.Content>
+					<div class="nav-sub-group">
+						{#each section.items as item}
+							<a
+								href={section.base + '/' + item.href}
+								class="nav-item nav-sub"
+								class:active={activeItem === item}
+								onclick={onClicked}
+							>
+								<span class="label">{item.label}</span>
+							</a>
+						{/each}
+					</div>
+				</Accordion.Content>
+			</Accordion.Item>
+		{/each}
+	</Accordion.Root>
+
+	<!-- Health indicator -->
+	<div class="sidebar-health">
+		<span class="sidebar-health__dot"></span>
+		<span class="sidebar-health__label">All regions healthy</span>
+	</div>
+</aside>
+
+<style>
+	.sidebar-org {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 4px 8px;
+		background: var(--bg-2);
+		border: 1px solid var(--line);
+		border-radius: var(--r-md);
+		box-shadow: var(--shadow-inset);
+	}
+
+	:global(.sidebar-org__icon) {
+		color: var(--text-3);
+		flex-shrink: 0;
+	}
+
+	.sidebar-org__select {
+		flex: 1;
+		background: transparent;
+		border: 0;
+		outline: 0;
+		color: var(--text-1);
+		font: 500 13px/1 var(--font-sans);
+		cursor: pointer;
+		min-width: 0;
+	}
+
+	/* Accordion trigger inherits nav-item but also needs full-width button reset */
+	:global(.nav-trigger) {
+		background: none;
+		border: none;
+		padding: 0 10px;
+		cursor: pointer;
+		width: 100%;
+	}
+
+	:global(.nav-chevron) {
+		margin-left: auto;
+		color: var(--text-4);
+		transition: transform 200ms var(--ease);
+	}
+
+	:global([data-state='open'] .nav-chevron) {
+		transform: rotate(180deg);
+	}
+
+	.nav-sub-group {
+		margin: 2px 0 6px;
+	}
+
+	.sidebar-health {
+		margin-top: auto;
+		padding-top: 14px;
+		border-top: 1px solid var(--line-weak);
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding-left: 10px;
+	}
+
+	.sidebar-health__dot {
+		width: 6px;
+		height: 6px;
+		border-radius: 999px;
+		background: var(--accent);
+		box-shadow: 0 0 8px var(--accent);
+		flex-shrink: 0;
+	}
+
+	.sidebar-health__label {
+		font-size: 11.5px;
+		color: var(--text-3);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+</style>
