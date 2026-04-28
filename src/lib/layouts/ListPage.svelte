@@ -7,6 +7,7 @@
 	import type { ShellPageSettings } from '$lib/layouts/types';
 	import ShellPageHeader from '$lib/layouts/ShellPageHeader.svelte';
 	import Icon from '$lib/primitives/Icon.svelte';
+	import * as Identity from '$lib/openapi/identity';
 
 	interface Props {
 		settings: ShellPageSettings;
@@ -14,20 +15,44 @@
 		// Override the default name-based filter with a custom predicate.
 		filterFn?: (r: T, query: string) => boolean;
 		tools?: Snippet;
-		// Receives the filtered array so callers keep full type information.
+		// Card list view (required).
 		list: Snippet<[Array<T>]>;
+		// Optional table view — presence enables the view switcher.
+		tableRow?: Snippet<[T]>;
+		// Table column headers (only used when tableRow is provided).
+		tableHeaders?: Array<string>;
 		empty?: Snippet;
 	}
 
-	let { settings, resources, filterFn, tools, list, empty }: Props = $props();
+	let { settings, resources, filterFn, tools, list, tableRow, tableHeaders, empty }: Props =
+		$props();
 
 	let query = $state('');
+	let statusFilter = $state<'all' | 'provisioned' | 'attention'>('all');
+	let view = $state<'cards' | 'table'>('cards');
 
 	const filtered = $derived.by(() => {
-		if (!query.trim()) return resources;
-		const q = query.toLowerCase();
-		const fn = filterFn ?? ((r: T) => r.metadata.name.toLowerCase().includes(q));
-		return resources.filter((r) => fn(r, q));
+		let r = resources;
+
+		// Status filter
+		if (statusFilter === 'provisioned') {
+			r = r.filter(
+				(x) => x.metadata.provisioningStatus === Identity.ResourceProvisioningStatus.Provisioned
+			);
+		} else if (statusFilter === 'attention') {
+			r = r.filter(
+				(x) => x.metadata.provisioningStatus !== Identity.ResourceProvisioningStatus.Provisioned
+			);
+		}
+
+		// Name search
+		if (query.trim()) {
+			const q = query.toLowerCase();
+			const fn = filterFn ?? ((x: T) => x.metadata.name.toLowerCase().includes(q));
+			r = r.filter((x) => fn(x, q));
+		}
+
+		return r;
 	});
 
 	const stats = $derived(computeStats(resources));
@@ -61,8 +86,9 @@
 	</div>
 </div>
 
-<!-- Filter bar -->
-<div class="filter-bar">
+<!-- Toolbar: search + filters + view switcher -->
+<div class="toolbar">
+	<!-- Search -->
 	<div class="filter-bar__search">
 		<Icon name="search" size={14} class="filter-bar__icon" />
 		<input
@@ -77,18 +103,78 @@
 			</button>
 		{/if}
 	</div>
+
+	<!-- Status filter chips -->
+	<button
+		class="filter-chip"
+		class:active={statusFilter === 'provisioned'}
+		onclick={() => (statusFilter = statusFilter === 'provisioned' ? 'all' : 'provisioned')}
+	>
+		<span class="chip-dot chip-dot--ok"></span>
+		Provisioned
+	</button>
+	<button
+		class="filter-chip"
+		class:active={statusFilter === 'attention'}
+		onclick={() => (statusFilter = statusFilter === 'attention' ? 'all' : 'attention')}
+	>
+		<span class="chip-dot chip-dot--warn"></span>
+		Needs attention
+	</button>
+
 	{#if query && filtered.length !== resources.length}
-		<span class="filter-bar__count">{filtered.length} of {resources.length}</span>
+		<span class="filter-count">{filtered.length} of {resources.length}</span>
+	{/if}
+
+	<div class="spacer"></div>
+
+	<!-- View switcher (only when table view is provided) -->
+	{#if tableRow}
+		<div class="seg">
+			<button class:active={view === 'cards'} onclick={() => (view = 'cards')} title="Card view">
+				<Icon name="cards" size={14} />
+			</button>
+			<button class:active={view === 'table'} onclick={() => (view = 'table')} title="Table view">
+				<Icon name="table" size={14} />
+			</button>
+		</div>
 	{/if}
 </div>
 
-<!-- List content or empty state -->
+<!-- Content -->
 {#if filtered.length > 0}
-	{@render list(filtered)}
-{:else if empty && resources.length === 0}
+	{#if view === 'table' && tableRow}
+		<div class="table-wrap">
+			<table class="table">
+				{#if tableHeaders?.length}
+					<thead>
+						<tr>
+							{#each tableHeaders as h}
+								<th>{h}</th>
+							{/each}
+						</tr>
+					</thead>
+				{/if}
+				<tbody>
+					{#each filtered as resource}
+						{@render tableRow(resource)}
+					{/each}
+				</tbody>
+			</table>
+		</div>
+	{:else}
+		{@render list(filtered)}
+	{/if}
+{:else if empty && resources.length === 0 && statusFilter === 'all' && !query}
 	{@render empty()}
-{:else if query}
-	<div class="filter-empty">No resources match "<strong>{query}</strong>"</div>
+{:else}
+	<div class="filter-empty">
+		{#if query}
+			No resources match "<strong>{query}</strong>"
+		{:else}
+			No resources match the current filter.
+		{/if}
+	</div>
 {/if}
 
 <style>
@@ -101,13 +187,6 @@
 		flex-shrink: 0;
 	}
 
-	.filter-bar {
-		display: flex;
-		align-items: center;
-		gap: 12px;
-		margin-bottom: 12px;
-	}
-
 	.filter-bar__search {
 		display: flex;
 		align-items: center;
@@ -118,8 +197,9 @@
 		border: 1px solid var(--line);
 		border-radius: var(--r-md);
 		box-shadow: var(--shadow-inset);
+		min-width: 200px;
+		max-width: 280px;
 		flex: 1;
-		max-width: 320px;
 	}
 
 	.filter-bar__search:focus-within {
@@ -151,13 +231,28 @@
 		color: var(--text-2);
 	}
 
-	.filter-bar__count {
+	.filter-count {
 		font-size: 12px;
 		color: var(--text-3);
 	}
 
+	.chip-dot {
+		width: 6px;
+		height: 6px;
+		border-radius: 999px;
+		flex-shrink: 0;
+	}
+
+	.chip-dot--ok {
+		background: var(--accent);
+	}
+
+	.chip-dot--warn {
+		background: var(--warning, #f59e0b);
+	}
+
 	.filter-empty {
-		padding: 24px;
+		padding: 32px;
 		text-align: center;
 		font-size: 13px;
 		color: var(--text-3);

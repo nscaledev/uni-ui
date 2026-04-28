@@ -315,6 +315,19 @@
 		<path d="M8 5.5L10 3l2 2.5" />
 		<path d="M8 7.5h4M8 7.5v2M12 7.5v1.5" />
 	</svg>
+{:else if name === 'cards'}
+	<svg width={size} height={size} viewBox="0 0 20 20" aria-hidden="true" class={cls}>
+		<rect x="3" y="3" width="6" height="6" rx="1.5" />
+		<rect x="11" y="3" width="6" height="6" rx="1.5" />
+		<rect x="3" y="11" width="6" height="6" rx="1.5" />
+		<rect x="11" y="11" width="6" height="6" rx="1.5" />
+	</svg>
+{:else if name === 'table'}
+	<svg width={size} height={size} viewBox="0 0 20 20" aria-hidden="true" class={cls}>
+		<rect x="3" y="3" width="14" height="14" rx="2" />
+		<line x1="3" y1="8" x2="17" y2="8" />
+		<line x1="9" y1="8" x2="9" y2="17" />
+	</svg>
 {:else}
 	<!-- Unknown icon: render a small placeholder square so missing icons are obvious -->
 	<svg width={size} height={size} viewBox="0 0 20 20" aria-hidden="true" class={cls}>

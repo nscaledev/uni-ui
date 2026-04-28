@@ -11,20 +11,15 @@
 	let { settings, tools, children }: Props = $props();
 </script>
 
-<div class="flex flex-col gap-4 lg:flex-row lg:jusify-between">
-	<div class="flex gap-4 grow">
-		<div class="flex flex-col gap-4">
-			<div class="flex gap-4 items-center">
-				{#if settings.icon}
-					<Icon name={settings.icon} size={48} />
-				{/if}
-				<h1 class="text-3xl lg:text-5xl">{settings.name}</h1>
-			</div>
-			<p class="text-surface-700-300">{settings.description}</p>
-		</div>
+<div class="page-head">
+	<div>
+		<h1>{settings.name}</h1>
+		{#if settings.description}
+			<div class="sub">{settings.description}</div>
+		{/if}
 	</div>
-
-	<div class="self-start lg:self-end flex gap-4">
+	<div class="actions">
 		{@render tools?.()}
+		{@render children?.()}
 	</div>
 </div>

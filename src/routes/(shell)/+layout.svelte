@@ -32,10 +32,6 @@
 	let loading = $state(false);
 	beforeNavigate(() => (loading = true));
 	afterNavigate(() => (loading = false));
-
-	const organization = $derived(
-		data.organizations.find((o) => o.metadata.id === data.organizationID)
-	);
 </script>
 
 {#if loading}
@@ -49,7 +45,11 @@
 <div class="shell">
 	<Brand />
 
-	<Header profile={data.profile} {organization} />
+	<Header
+		profile={data.profile}
+		organizations={data.organizations}
+		organizationID={data.organizationID}
+	/>
 
 	<SideBar organizations={data.organizations} organizationID={data.organizationID} acl={data.acl} />
 

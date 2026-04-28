@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
+	import { invalidate } from '$app/navigation';
 	import { computePosition, flip, offset, shift } from '@floating-ui/dom';
 	import Icon from '$lib/primitives/Icon.svelte';
 	import { logout } from '$lib/credentials';
@@ -7,13 +9,50 @@
 
 	interface Props {
 		profile: IDToken;
-		organization?: OrganizationRead;
+		organizations: Array<OrganizationRead>;
+		organizationID: string;
 	}
 
-	let { profile, organization }: Props = $props();
+	let { profile, organizations, organizationID }: Props = $props();
 
+	const organization = $derived(organizations.find((o) => o.metadata.id === organizationID));
+
+	// ── scope picker ──────────────────────────────────────────
+	let scopeOpen = $state(false);
+	let scopeTriggerEl: HTMLButtonElement;
+	let scopeMenuEl: HTMLDivElement;
+
+	async function repositionScope() {
+		if (!scopeTriggerEl || !scopeMenuEl) return;
+		const { x, y } = await computePosition(scopeTriggerEl, scopeMenuEl, {
+			placement: 'bottom-start',
+			middleware: [offset(6), flip(), shift({ padding: 8 })]
+		});
+		Object.assign(scopeMenuEl.style, { left: `${x}px`, top: `${y}px` });
+	}
+
+	$effect(() => {
+		if (scopeOpen) repositionScope();
+	});
+
+	function switchOrg(id: string) {
+		if (!browser) return;
+		scopeOpen = false;
+		if (id === organizationID) return;
+		window.localStorage.setItem('organization_id', id);
+		invalidate('app:organization_id');
+	}
+
+	const orgInitials = $derived.by(() => {
+		const name = organization?.metadata.name ?? '';
+		const words = name.trim().split(/\s+/);
+		if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
+		return name.slice(0, 2).toUpperCase();
+	});
+
+	// ── user menu ─────────────────────────────────────────────
 	let menuOpen = $state(false);
-	let triggerEl: HTMLButtonElement;
+	let avatarTriggerEl: HTMLButtonElement;
 	let menuEl: HTMLDivElement;
 
 	const initials = $derived.by(() => {
@@ -29,9 +68,9 @@
 			: (profile.email ?? '')
 	);
 
-	async function reposition() {
-		if (!triggerEl || !menuEl) return;
-		const { x, y } = await computePosition(triggerEl, menuEl, {
+	async function repositionMenu() {
+		if (!avatarTriggerEl || !menuEl) return;
+		const { x, y } = await computePosition(avatarTriggerEl, menuEl, {
 			placement: 'bottom-end',
 			middleware: [offset(6), flip(), shift({ padding: 8 })]
 		});
@@ -39,35 +78,47 @@
 	}
 
 	$effect(() => {
-		if (menuOpen) reposition();
+		if (menuOpen) repositionMenu();
 	});
 
+	// ── shared close on outside click ─────────────────────────
 	function onwindowpointerdown(e: PointerEvent) {
-		if (!menuOpen) return;
 		const t = e.target as Node;
-		if (!triggerEl?.contains(t) && !menuEl?.contains(t)) menuOpen = false;
+		if (scopeOpen && !scopeTriggerEl?.contains(t) && !scopeMenuEl?.contains(t)) scopeOpen = false;
+		if (menuOpen && !avatarTriggerEl?.contains(t) && !menuEl?.contains(t)) menuOpen = false;
 	}
 
 	function onwindowkeydown(e: KeyboardEvent) {
-		if (e.key === 'Escape') menuOpen = false;
+		if (e.key === 'Escape') {
+			scopeOpen = false;
+			menuOpen = false;
+		}
 	}
 </script>
 
 <svelte:window onpointerdown={onwindowpointerdown} onkeydown={onwindowkeydown} />
 
 <header class="header">
-	<!-- Scope / org indicator -->
-	<div class="scope">
-		<Icon name="building" size={14} />
+	<!-- Scope / org picker -->
+	<button
+		bind:this={scopeTriggerEl}
+		class="scope"
+		onclick={() => (scopeOpen = !scopeOpen)}
+		aria-haspopup="listbox"
+		aria-expanded={scopeOpen}
+		aria-label="Switch organization"
+	>
+		<span class="scope__avatar">{orgInitials}</span>
 		<span class="scope__label">{organization?.metadata.name ?? 'Loading…'}</span>
-	</div>
+		<Icon name="chevronDown" size={12} />
+	</button>
 
 	<div style="flex:1"></div>
 
-	<!-- User avatar trigger -->
+	<!-- User avatar -->
 	<button
-		bind:this={triggerEl}
-		class="avatar-btn"
+		bind:this={avatarTriggerEl}
+		class="avatar"
 		onclick={() => (menuOpen = !menuOpen)}
 		aria-label="User menu"
 		aria-haspopup="menu"
@@ -76,11 +127,45 @@
 		{#if profile.picture}
 			<img src={profile.picture} alt={displayName} class="avatar-img" />
 		{:else}
-			<span class="avatar-initials">{initials}</span>
+			{initials}
 		{/if}
 	</button>
 </header>
 
+<!-- Org picker popover -->
+{#if scopeOpen}
+	<div
+		bind:this={scopeMenuEl}
+		class="menu"
+		role="listbox"
+		style="position:fixed;z-index:200;min-width:200px;"
+	>
+		<div class="menu__title">Organization</div>
+		{#each organizations as org}
+			<button
+				class="menu__item"
+				class:menu__item--active={org.metadata.id === organizationID}
+				role="option"
+				aria-selected={org.metadata.id === organizationID}
+				onclick={() => switchOrg(org.metadata.id)}
+			>
+				<span class="scope__avatar scope__avatar--sm"
+					>{(org.metadata.name.trim().split(/\s+/).length >= 2
+						? org.metadata.name.trim().split(/\s+/)[0][0] +
+							org.metadata.name.trim().split(/\s+/)[1][0]
+						: org.metadata.name.slice(0, 2)
+					).toUpperCase()}</span
+				>
+				{org.metadata.name}
+				{#if org.metadata.id === organizationID}
+					<Icon name="check" size={14} class="check-icon" />
+				{/if}
+			</button>
+		{/each}
+	</div>
+{/if}
+
+<!-- User menu popover -->
 {#if menuOpen}
 	<div bind:this={menuEl} class="menu" role="menu" style="position:fixed;z-index:200;">
 		<div class="menu-user">
@@ -89,7 +174,7 @@
 		</div>
 		<hr class="menu__sep" />
 		<button
-			class="menu__item"
+			class="menu__item menu__item--danger"
 			role="menuitem"
 			onclick={() => {
 				menuOpen = false;
@@ -103,33 +188,11 @@
 {/if}
 
 <style>
-	.avatar-btn {
-		width: 32px;
-		height: 32px;
-		border-radius: 50%;
-		overflow: hidden;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		background: var(--accent);
-		color: var(--accent-ink);
-		font: 600 12px/1 var(--font-sans);
-		flex-shrink: 0;
-		transition: box-shadow 120ms var(--ease);
-	}
-
-	.avatar-btn:hover {
-		box-shadow: 0 0 0 3px var(--accent-glow);
-	}
-
 	.avatar-img {
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
-	}
-
-	.avatar-initials {
-		pointer-events: none;
+		border-radius: 999px;
 	}
 
 	.menu-user {
@@ -146,5 +209,20 @@
 		font-size: 11.5px;
 		color: var(--text-3);
 		margin-top: 2px;
+	}
+
+	.menu__item--active {
+		color: var(--text-1);
+	}
+
+	.menu__item--danger {
+		color: var(--danger);
+	}
+
+	.scope__avatar--sm {
+		width: 18px;
+		height: 18px;
+		font-size: 9px;
+		border-radius: 4px;
 	}
 </style>

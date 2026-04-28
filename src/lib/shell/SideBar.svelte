@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
-	import { invalidate } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { Accordion } from 'bits-ui';
 
@@ -183,30 +181,9 @@
 			$page.url.pathname.startsWith(section.base + '/' + item.href)
 		);
 	});
-
-	// Org switching
-	let selectedOrganizationID = $state(organizationID);
-
-	$effect(() => {
-		if (!browser) return;
-		if (selectedOrganizationID !== organizationID) {
-			window.localStorage.setItem('organization_id', selectedOrganizationID);
-			invalidate('app:organization_id');
-		}
-	});
 </script>
 
 <aside class="sidebar">
-	<!-- Org selector -->
-	<div class="sidebar-org">
-		<Icon name="building" size={14} class="sidebar-org__icon" />
-		<select class="sidebar-org__select" bind:value={selectedOrganizationID}>
-			{#each organizations as org}
-				<option value={org.metadata.id}>{org.metadata.name}</option>
-			{/each}
-		</select>
-	</div>
-
 	<!-- Static nav (Dashboard) -->
 	{#each navStatic as entry}
 		<a
@@ -257,33 +234,6 @@
 </aside>
 
 <style>
-	.sidebar-org {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		padding: 4px 8px;
-		background: var(--bg-2);
-		border: 1px solid var(--line);
-		border-radius: var(--r-md);
-		box-shadow: var(--shadow-inset);
-	}
-
-	:global(.sidebar-org__icon) {
-		color: var(--text-3);
-		flex-shrink: 0;
-	}
-
-	.sidebar-org__select {
-		flex: 1;
-		background: transparent;
-		border: 0;
-		outline: 0;
-		color: var(--text-1);
-		font: 500 13px/1 var(--font-sans);
-		cursor: pointer;
-		min-width: 0;
-	}
-
 	/* Accordion trigger inherits nav-item but also needs full-width button reset */
 	:global(.nav-trigger) {
 		background: none;
