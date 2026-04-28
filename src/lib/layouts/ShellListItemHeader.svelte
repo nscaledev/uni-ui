@@ -33,13 +33,13 @@
 {#snippet header()}
 	<header class="flex flex-col gap-1">
 		{#if project}
-			<div class="flex gap-2 items-center tex-sm overflow-hidden text-ellipsis whitespace-nowrap">
+			<div class="list-item-project">
 				<Icon name="folder" size={16} />
 				{project}
 			</div>
 		{/if}
 
-		<div class="h5 font-bold overflow-hidden text-ellipsis whitespace-nowrap">
+		<div class="list-item-name">
 			{#if title}
 				{title}
 			{:else if metadata}
@@ -48,7 +48,7 @@
 		</div>
 
 		{#if metadata?.description}
-			<div class="text-sm italic text-surface-700-300 whitespace-nowrap">
+			<div class="list-item-desc">
 				{metadata.description}
 			</div>
 		{/if}
@@ -62,3 +62,44 @@
 {:else}
 	{@render header()}
 {/if}
+
+<style>
+	:global(.list-item-name) {
+		font-size: 14px;
+		font-weight: 600;
+		color: var(--text-1);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	:global(.list-item-project) {
+		display: flex;
+		align-items: center;
+		gap: 5px;
+		font-size: 11.5px;
+		color: var(--text-3);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	:global(.list-item-desc) {
+		font-size: 12px;
+		color: var(--text-3);
+		font-style: italic;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	/* Make the header a link when href is provided */
+	a {
+		text-decoration: none;
+		color: inherit;
+	}
+
+	a:hover :global(.list-item-name) {
+		color: var(--accent);
+	}
+</style>

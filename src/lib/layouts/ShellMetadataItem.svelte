@@ -10,14 +10,27 @@
 	let { icon, label, value }: Props = $props();
 </script>
 
-<div class="col-span-3 grid grid-cols-subgrid items-center text-sm">
-	<Icon name={icon} size={18} />
-
-	<div class="font-bold">
-		{label}
-	</div>
-
-	<div>
-		{value}
-	</div>
+<div class="meta-item">
+	<Icon name={icon} size={14} />
+	<span class="meta-item__label">{label}</span>
+	<span class="meta-item__value">{value}</span>
 </div>
+
+<style>
+	.meta-item {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		font-size: 12px;
+		color: var(--text-3);
+	}
+
+	.meta-item__label {
+		font-weight: 500;
+		color: var(--text-3);
+	}
+
+	.meta-item__value {
+		color: var(--text-2);
+	}
+</style>

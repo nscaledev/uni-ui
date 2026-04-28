@@ -11,31 +11,69 @@
 	let { main, badges, trail, children }: Props = $props();
 </script>
 
-<article
-	class="flex flex-col gap-4 lg:gap-[unset] lg:col-span-full lg:grid lg:grid-cols-subgrid lg:auto-rows-min card shadow-md p-4 bg-surface-50-950 border border-surface-200-800"
->
-	<div class="contents lg:col-span-full lg:flex lg:pb-4 justify-between">
-		{#if badges}
-			{@render badges()}
-		{/if}
-		<div class="hidden lg:flex gap-4">
+<article class="list-item">
+	<div class="list-item__header">
+		<div class="list-item__main">
+			{@render main()}
+		</div>
+		<div class="list-item__trail">
 			{@render trail?.()}
 		</div>
 	</div>
 
-	<div class="flex gap-4 lg:pr-4">
-		<div class="overflow-hidden text-ellipsis">
-			{@render main()}
+	{#if badges}
+		<div class="list-item__badges">
+			{@render badges()}
 		</div>
-	</div>
+	{/if}
 
-	<div
-		class="grid grid-cols-[repeat(3,max-content)] gap-2 lg:col-span-6 lg:grid-cols-subgrid lg:grid-rows-2 lg:grid-flow-col lg:place-self-start"
-	>
-		{@render children?.()}
-	</div>
-
-	<div class="flex flex-col items-start gap-4 flex-wrap lg:hidden">
-		{@render trail?.()}
-	</div>
+	{#if children}
+		<div class="list-item__meta">
+			{@render children()}
+		</div>
+	{/if}
 </article>
+
+<style>
+	.list-item {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		padding: 14px 16px;
+		background: var(--bg-2);
+		border: 1px solid var(--line);
+		border-radius: var(--r-md);
+		box-shadow: var(--shadow-inset);
+	}
+
+	.list-item__header {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 12px;
+	}
+
+	.list-item__main {
+		flex: 1;
+		min-width: 0;
+	}
+
+	.list-item__trail {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		flex-shrink: 0;
+	}
+
+	.list-item__badges {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+	}
+
+	.list-item__meta {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+</style>
