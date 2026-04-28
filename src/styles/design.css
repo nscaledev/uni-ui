@@ -1670,3 +1670,8 @@ tr.has-warn td:first-child,
 :root:not([data-surface="glass"]) .menu {
   background: var(--bg-1);
 }
+
+/* Glass: shell wrapper must be transparent so the body aurora shows through */
+:root[data-surface="glass"] .shell {
+  background: transparent;
+}

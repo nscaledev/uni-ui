@@ -315,6 +315,15 @@
 		<path d="M8 5.5L10 3l2 2.5" />
 		<path d="M8 7.5h4M8 7.5v2M12 7.5v1.5" />
 	</svg>
+{:else if name === 'sliders'}
+	<svg width={size} height={size} viewBox="0 0 20 20" aria-hidden="true" class={cls}>
+		<line x1="4" y1="6" x2="16" y2="6" />
+		<line x1="4" y1="10" x2="16" y2="10" />
+		<line x1="4" y1="14" x2="16" y2="14" />
+		<circle cx="7" cy="6" r="2" fill="currentColor" stroke="none" />
+		<circle cx="13" cy="10" r="2" fill="currentColor" stroke="none" />
+		<circle cx="8" cy="14" r="2" fill="currentColor" stroke="none" />
+	</svg>
 {:else if name === 'cards'}
 	<svg width={size} height={size} viewBox="0 0 20 20" aria-hidden="true" class={cls}>
 		<rect x="3" y="3" width="6" height="6" rx="1.5" />

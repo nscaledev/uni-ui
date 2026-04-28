@@ -6,6 +6,7 @@
 	import { logout } from '$lib/credentials';
 	import type { IDToken } from '$lib/oidc';
 	import type { OrganizationRead } from '$lib/openapi/identity';
+	import { tweaksOpen } from '$lib/stores/theme';
 
 	interface Props {
 		profile: IDToken;
@@ -115,6 +116,17 @@
 
 	<div style="flex:1"></div>
 
+	<!-- Tweaks toggle -->
+	<button
+		class="header-icon-btn"
+		class:header-icon-btn--active={$tweaksOpen}
+		onclick={() => tweaksOpen.update((v) => !v)}
+		aria-label="Toggle display settings"
+		title="Display settings"
+	>
+		<Icon name="sliders" size={16} />
+	</button>
+
 	<!-- User avatar -->
 	<button
 		bind:this={avatarTriggerEl}
@@ -188,6 +200,29 @@
 {/if}
 
 <style>
+	.header-icon-btn {
+		width: 32px;
+		height: 32px;
+		border-radius: var(--r-md);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: var(--text-3);
+		transition:
+			background 120ms var(--ease),
+			color 120ms var(--ease);
+	}
+
+	.header-icon-btn:hover {
+		background: var(--bg-2);
+		color: var(--text-1);
+	}
+
+	.header-icon-btn--active {
+		background: var(--bg-2);
+		color: var(--accent);
+	}
+
 	.avatar-img {
 		width: 100%;
 		height: 100%;
@@ -224,5 +259,10 @@
 		height: 18px;
 		font-size: 9px;
 		border-radius: 4px;
+	}
+
+	:global(.check-icon) {
+		margin-left: auto;
+		color: var(--accent);
 	}
 </style>
