@@ -22,7 +22,7 @@
 		feature: 'Infrastructure',
 		name: 'Kubernetes Cluster Managers',
 		description: 'Manage your Kubernetes cluster life-cycle managers.',
-		icon: 'mdi:kubernetes'
+		icon: 'k8s'
 	};
 
 	onMount(() => startAutoRefresh('layout:clustermanagers'));
@@ -59,7 +59,7 @@
 
 			{#snippet trail()}
 				<ModalIcon
-					icon="mdi:trash-can-outline"
+					icon="trash"
 					label="Delete"
 					title="Are you sure?"
 					confirm={() => confirm(resource)}

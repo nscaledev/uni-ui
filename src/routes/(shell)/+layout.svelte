@@ -29,6 +29,8 @@
 	import { toaster } from '$lib/toaster';
 	import Logo from '$lib/logos/Logo.svelte';
 	import SideBar from '$lib/shell/SideBar.svelte';
+	import Icon from '$lib/primitives/Icon.svelte';
+	import Spinner from '$lib/primitives/Spinner.svelte';
 
 	/* Loading spinner */
 	let loading = $state(false);
@@ -64,8 +66,7 @@
 		in:fade={{ duration: 1000 }}
 		out:fade={{ duration: 200 }}
 	>
-		<iconify-icon icon="svg-spinners:bars-scale-fade" class="text-primary-600-400 text-5xl">
-		</iconify-icon>
+		<Spinner class="text-primary-600-400 text-5xl" />
 	</div>
 {/if}
 
@@ -88,8 +89,7 @@
 					transitionsPositionerOut={{ x: -320, duration: 200 }}
 				>
 					{#snippet trigger()}
-						<iconify-icon icon="material-symbols:menu" class="text-3xl lg:!hidden align-center"
-						></iconify-icon>
+						<Icon name="menu" size={20} class="text-3xl lg:!hidden align-center" />
 					{/snippet}
 					{#snippet content()}
 						<SideBar
@@ -127,8 +127,7 @@
 				{#snippet content()}
 					<div class="card bg-surface-50-950 shadow-lg p-4 flex flex-col gap-4">
 						<section class="flex gap-2 items-center">
-							<iconify-icon icon="mdi:perm-identity" class="text-2xl text-primary-600-400"
-							></iconify-icon>
+							<Icon name="user" size={20} class="text-2xl text-primary-600-400" />
 							{email}
 						</section>
 
@@ -136,8 +135,7 @@
 
 						<button class="btn hover:preset-tonal-primary justify-start" onclick={logout}>
 							<div class="flex gap-2 items-center">
-								<iconify-icon icon="material-symbols:logout" class="text-2xl text-primary-600-400"
-								></iconify-icon>
+								<Icon name="logout" size={20} class="text-2xl text-primary-600-400" />
 								Logout
 							</div>
 						</button>

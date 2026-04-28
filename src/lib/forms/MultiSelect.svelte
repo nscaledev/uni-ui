@@ -2,6 +2,7 @@
 	import type { Snippet } from 'svelte';
 
 	import { Combobox } from '@skeletonlabs/skeleton-svelte';
+	import Icon from '$lib/primitives/Icon.svelte';
 
 	interface ComboData {
 		label: string;
@@ -52,8 +53,7 @@
 			<div class="card shadow-lg bg-surface-50-950 flex justify-between items-center p-3">
 				{@render selected(v)}
 				<button onclick={() => remove(i)} aria-label="Remove item">
-					<iconify-icon icon="mdi:trash-can-outline" class="text-xl text-primary-600-400"
-					></iconify-icon>
+					<Icon name="trash" size={18} />
 				</button>
 			</div>
 		{/each}

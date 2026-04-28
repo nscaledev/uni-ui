@@ -15,7 +15,7 @@
 		feature: 'Identity',
 		name: 'Manage Quotas',
 		description: 'Manage quotas for the organization.',
-		icon: 'mdi:gauge'
+		icon: 'dashboard'
 	};
 
 	let quotas = $derived.by(() => {
@@ -43,5 +43,5 @@
 </ShellSection>
 
 <div class="flex justify-end">
-	<Button icon="mdi:tick" label="Update" class="preset-filled-primary-500" clicked={submit} />
+	<Button icon="check" label="Update" class="preset-filled-primary-500" clicked={submit} />
 </div>

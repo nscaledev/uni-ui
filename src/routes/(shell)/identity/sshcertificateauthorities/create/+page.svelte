@@ -19,7 +19,7 @@
 		feature: 'Identity',
 		name: 'Create SSH Certificate CA',
 		description: 'Create a new SSH certificate authority for a project.',
-		icon: 'mdi:key-chain-variant'
+		icon: 'key'
 	};
 
 	let names = $derived(data.sshCertificateAuthorities.map((x) => x.metadata.name));
@@ -96,13 +96,13 @@
 
 <div class="flex justify-between">
 	<Button
-		icon="mdi:cancel-bold"
+		icon="x"
 		label="Cancel"
 		class="preset-outlined-surface-600-400"
 		href="/identity/sshcertificateauthorities"
 	/>
 	<Button
-		icon="mdi:tick"
+		icon="check"
 		label="Create"
 		class="preset-filled-primary-500"
 		clicked={submit}

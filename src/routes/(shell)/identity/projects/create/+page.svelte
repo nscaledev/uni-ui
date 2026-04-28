@@ -17,7 +17,7 @@
 		feature: 'Identity',
 		name: 'Create Project',
 		description: 'Create a new project.',
-		icon: 'mdi:folder-open-outline'
+		icon: 'folder'
 	};
 
 	let names: Array<string> = $derived(data.projects.map((x) => x.metadata.name));
@@ -72,13 +72,13 @@
 
 <div class="flex justify-between">
 	<Button
-		icon="mdi:cancel-bold"
+		icon="x"
 		label="Cancel"
 		class="preset-outlined-surface-600-400"
 		href="/identity/projects"
 	/>
 	<Button
-		icon="mdi:tick"
+		icon="check"
 		label="Create"
 		class="preset-filled-primary-500"
 		clicked={submit}

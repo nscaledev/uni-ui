@@ -26,7 +26,7 @@
 		feature: 'Identity',
 		name: 'Users',
 		description: 'Known user accounts who are permitted access to the organization.',
-		icon: 'mdi:user-outline'
+		icon: 'user'
 	};
 
 	onMount(() => startAutoRefresh('layout:users'));
@@ -76,7 +76,7 @@
 
 <ShellPageHeader {settings}>
 	{#snippet tools()}
-		<SubtleButton icon="mdi:add" label="Create" href="/identity/users/create" />
+		<SubtleButton icon="plus" label="Create" href="/identity/users/create" />
 	{/snippet}
 </ShellPageHeader>
 
@@ -99,12 +99,12 @@
 
 			<ShellListItemMetadata metadata={resource.metadata}></ShellListItemMetadata>
 			<ShellListItemMetadata>
-				<ShellMetadataItem icon="mdi:run" label="Last Active" value={userLastActive(resource)} />
+				<ShellMetadataItem icon="bolt" label="Last Active" value={userLastActive(resource)} />
 			</ShellListItemMetadata>
 
 			{#snippet trail()}
 				<ModalIcon
-					icon="mdi:trash-can-outline"
+					icon="trash"
 					label="Delete"
 					title="Are you sure?"
 					confirm={() => confirm(resource.metadata.id)}

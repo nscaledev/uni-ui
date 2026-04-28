@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Icon from '$lib/primitives/Icon.svelte';
 	import * as Region from '$lib/openapi/region';
 	import * as Compute from '$lib/openapi/compute';
 
@@ -47,7 +48,7 @@
 
 {#if distro && version}
 	<div class="flex items-center gap-2">
-		<iconify-icon class="pr-1 text-2xl" icon={getIcon()}></iconify-icon>
+		<Icon name="" size={20} class="pr-1 text-2xl" />
 
 		{toTitleCase(distro)}
 

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Icon from '$lib/primitives/Icon.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -81,7 +82,7 @@
 								onclick={() => login(provider.type)}
 								aria-label={provider.label}
 							>
-								<iconify-icon icon={provider.icon} class="p-1 text-xl"></iconify-icon>
+								<Icon name="" size={20} class="p-1 text-xl" />
 							</button>
 						{/if}
 					{/each}

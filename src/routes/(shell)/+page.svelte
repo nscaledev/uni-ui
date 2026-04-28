@@ -13,7 +13,7 @@
 		feature: 'None',
 		name: 'Dashboard',
 		description: 'Summary of your resources.',
-		icon: 'mdi:gauge'
+		icon: 'dashboard'
 	};
 </script>
 

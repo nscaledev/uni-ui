@@ -23,12 +23,13 @@
 	import SubtleButton from '$lib/forms/SubtleButton.svelte';
 	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
 	import Placeholder from '$lib/layouts/Placeholder.svelte';
+	import Icon from '$lib/primitives/Icon.svelte';
 
 	const settings: ShellPageSettings = {
 		feature: 'Infrastructure',
 		name: 'Kubernetes Clusters',
 		description: 'Manage your Kubernetes clusters.',
-		icon: 'mdi:kubernetes'
+		icon: 'k8s'
 	};
 
 	onMount(() => startAutoRefresh('layout:clusters'));
@@ -91,13 +92,13 @@
 <ShellPageHeader {settings}>
 	{#snippet tools()}
 		{#if data.projects.length}
-			<PopupButton icon="mdi:add" label="Create">
+			<PopupButton icon="plus" label="Create">
 				{#snippet contents()}
 					<div class="flex flex-col gap-4">
 						<div class="font-bold">Project</div>
 
 						<div class="input-group grid grid-cols-[auto_1fr]">
-							<iconify-icon icon="mdi:folder-open-outline" class="ig-cell"></iconify-icon>
+							<Icon name="folder" size={20} class="ig-cell" />
 
 							<select class="ig-select" bind:value={createProjectID}>
 								{#each data.projects as p}
@@ -109,10 +110,7 @@
 						<div class="font-bold">Region</div>
 
 						<div class="input-group grid grid-cols-[auto_1fr]">
-							<iconify-icon
-								icon={RegionUtil.icon(data.regions, createRegionID || '')}
-								class="ig-cell"
-							></iconify-icon>
+							<Icon name="" size={20} class="ig-cell" />
 
 							<select class="ig-select" bind:value={createRegionID}>
 								{#each data.regions as r}
@@ -149,7 +147,8 @@
 				{#snippet badges()}
 					<ShellListItemBadges metadata={resource.metadata}>
 						{#snippet extra()}
-							<Badge icon={RegionUtil.icon(data.regions, resource.spec.regionId)}>
+							<Badge>
+								{RegionUtil.flag(data.regions, resource.spec.regionId)}
 								{RegionUtil.name(data.regions, resource.spec.regionId)}
 							</Badge>
 						{/snippet}
@@ -160,12 +159,12 @@
 
 				{#snippet trail()}
 					<SubtleButton
-						icon="mdi:connection"
+						icon="connection"
 						label="Kubeconfig"
 						clicked={() => getKubeconfig(resource)}
 					/>
 					<ModalIcon
-						icon="mdi:trash-can-outline"
+						icon="trash"
 						label="Delete"
 						title="Are you sure?"
 						confirm={() => confirm(resource)}

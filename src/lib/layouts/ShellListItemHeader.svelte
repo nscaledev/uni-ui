@@ -1,5 +1,6 @@
 <script lang="ts">
 	import * as Identity from '$lib/openapi/identity';
+	import Icon from '$lib/primitives/Icon.svelte';
 	import * as Kubernetes from '$lib/openapi/kubernetes';
 
 	interface Props {
@@ -33,7 +34,7 @@
 	<header class="flex flex-col gap-1">
 		{#if project}
 			<div class="flex gap-2 items-center tex-sm overflow-hidden text-ellipsis whitespace-nowrap">
-				<iconify-icon icon="mdi:folder-open-outline"></iconify-icon>
+				<Icon name="folder" size={16} />
 				{project}
 			</div>
 		{/if}

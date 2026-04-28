@@ -22,7 +22,7 @@
 		feature: 'Identity',
 		name: 'OAuth2 Providers',
 		description: 'Manage your OAuth2 providers.',
-		icon: 'mdi:key-outline'
+		icon: 'key'
 	};
 
 	onMount(() => startAutoRefresh('layout:oauth2providers'));
@@ -42,7 +42,7 @@
 
 <ShellPageHeader {settings}>
 	{#snippet tools()}
-		<SubtleButton icon="mdi:add" label="Create" href="/identity/oauth2providers/create" />
+		<SubtleButton icon="plus" label="Create" href="/identity/oauth2providers/create" />
 	{/snippet}
 </ShellPageHeader>
 
@@ -64,7 +64,7 @@
 
 			{#snippet trail()}
 				<ModalIcon
-					icon="mdi:trash-can-outline"
+					icon="trash"
 					label="Delete"
 					title="Are you sure?"
 					confirm={() => confirm(resource.metadata.id)}

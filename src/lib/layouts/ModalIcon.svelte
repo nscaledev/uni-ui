@@ -14,6 +14,7 @@
 	let { icon, label, title, children, confirm, disabled = false, ...props }: Props = $props();
 
 	import { Modal } from '@skeletonlabs/skeleton-svelte';
+	import Icon from '$lib/primitives/Icon.svelte';
 
 	let open = $state(false);
 
@@ -37,7 +38,7 @@
 	triggerBase="btn flex items-center p-0 {disabled ? 'disabled' : ''} {props.class || ''}"
 >
 	{#snippet trigger()}
-		<iconify-icon {icon} class="text-2xl"></iconify-icon>
+		<Icon name={icon} size={22} />
 		{#if label}
 			{label}
 		{/if}

@@ -23,7 +23,7 @@
 		feature: 'Identity',
 		name: 'SSH Certificate CAs',
 		description: 'Manage SSH certificate authorities available to projects.',
-		icon: 'mdi:key-chain-variant'
+		icon: 'key'
 	};
 
 	onMount(() => startAutoRefresh('layout:sshcertificateauthorities'));
@@ -40,7 +40,7 @@
 
 <ShellPageHeader {settings}>
 	{#snippet tools()}
-		<SubtleButton icon="mdi:add" label="Create" href="/identity/sshcertificateauthorities/create" />
+		<SubtleButton icon="plus" label="Create" href="/identity/sshcertificateauthorities/create" />
 	{/snippet}
 </ShellPageHeader>
 
@@ -62,16 +62,12 @@
 			<ShellListItemMetadata metadata={resource.metadata} />
 
 			<ShellListItemMetadata>
-				<ShellMetadataItem
-					icon="mdi:key-variant"
-					label="Public Key"
-					value={resource.spec.publicKey}
-				/>
+				<ShellMetadataItem icon="key" label="Public Key" value={resource.spec.publicKey} />
 			</ShellListItemMetadata>
 
 			{#snippet trail()}
 				<ModalIcon
-					icon="mdi:trash-can-outline"
+					icon="trash"
 					label="Delete"
 					title="Are you sure?"
 					confirm={() => confirm(resource.metadata.id)}

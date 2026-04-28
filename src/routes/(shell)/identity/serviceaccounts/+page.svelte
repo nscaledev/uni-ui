@@ -43,7 +43,7 @@
 
 <ShellPageHeader {settings}>
 	{#snippet tools()}
-		<SubtleButton icon="mdi:add" label="Create" href="/identity/serviceaccounts/create" />
+		<SubtleButton icon="plus" label="Create" href="/identity/serviceaccounts/create" />
 	{/snippet}
 </ShellPageHeader>
 
@@ -61,16 +61,12 @@
 			<ShellListItemMetadata metadata={resource.metadata}></ShellListItemMetadata>
 
 			<ShellListItemMetadata>
-				<ShellMetadataItem
-					icon="mdi:key-outline"
-					label="Expiry"
-					value={resource.status.expiry.toUTCString()}
-				/>
+				<ShellMetadataItem icon="key" label="Expiry" value={resource.status.expiry.toUTCString()} />
 			</ShellListItemMetadata>
 
 			{#snippet trail()}
 				<ModalIcon
-					icon="mdi:trash-can-outline"
+					icon="trash"
 					label="Delete"
 					title="Are you sure?"
 					confirm={() => confirm(resource.metadata.id)}

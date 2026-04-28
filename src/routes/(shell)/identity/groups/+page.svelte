@@ -42,7 +42,7 @@
 
 <ShellPageHeader {settings}>
 	{#snippet tools()}
-		<SubtleButton icon="mdi:add" label="Create" href="/identity/groups/create" />
+		<SubtleButton icon="plus" label="Create" href="/identity/groups/create" />
 	{/snippet}
 </ShellPageHeader>
 
@@ -64,7 +64,7 @@
 
 			{#snippet trail()}
 				<ModalIcon
-					icon="mdi:trash-can-outline"
+					icon="trash"
 					label="Delete"
 					title="Are you sure?"
 					confirm={() => confirm(resource.metadata.id)}

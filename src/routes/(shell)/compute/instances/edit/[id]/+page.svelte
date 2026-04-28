@@ -179,23 +179,19 @@
 	/>
 
 	{#if sshCertificateAuthorityName}
-		<ShellMetadataItem
-			icon="mdi:key-chain-variant"
-			label="SSH Certificate CA"
-			value={sshCertificateAuthorityName}
-		/>
+		<ShellMetadataItem icon="key" label="SSH Certificate CA" value={sshCertificateAuthorityName} />
 	{/if}
 </ShellSection>
 
 <div class="flex justify-between">
 	<Button
-		icon="mdi:cancel-bold"
+		icon="x"
 		label="Cancel"
 		class="preset-outlined-surface-600-400"
 		href="/network/networks"
 	/>
 	<Button
-		icon="mdi:tick"
+		icon="check"
 		label="Update"
 		class="preset-filled-primary-500"
 		clicked={submit}

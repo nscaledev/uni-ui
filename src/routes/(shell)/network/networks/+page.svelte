@@ -21,12 +21,13 @@
 	import Badge from '$lib/layouts/Badge.svelte';
 	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
 	import PopupButton from '$lib/forms/PopupButton.svelte';
+	import Icon from '$lib/primitives/Icon.svelte';
 
 	const settings: ShellPageSettings = {
 		feature: 'Regions',
 		name: 'Networks',
 		description: 'Manage your networks',
-		icon: 'mdi:network-outline'
+		icon: 'network'
 	};
 
 	onMount(() => startAutoRefresh('layout:networks'));
@@ -57,13 +58,13 @@
 <ShellPageHeader {settings}>
 	{#snippet tools()}
 		{#if data.projects.length}
-			<PopupButton icon="mdi:add" class="self-end" label="Create">
+			<PopupButton icon="plus" class="self-end" label="Create">
 				{#snippet contents()}
 					<div class="flex flex-col gap-4">
 						<div class="font-bold">Project</div>
 
 						<div class="input-group grid grid-cols-[auto_1fr]">
-							<iconify-icon icon="mdi:folder-open-outline" class="ig-cell"></iconify-icon>
+							<Icon name="folder" size={20} class="ig-cell" />
 
 							<select class="ig-select" bind:value={createProjectID}>
 								{#each data.projects as p}
@@ -75,10 +76,7 @@
 						<div class="font-bold">Region</div>
 
 						<div class="input-group grid grid-cols-[auto_1fr]">
-							<iconify-icon
-								icon={RegionUtil.icon(data.regions, createRegionID || '')}
-								class="ig-cell"
-							></iconify-icon>
+							<Icon name="" size={20} class="ig-cell" />
 
 							<select class="ig-select" bind:value={createRegionID}>
 								{#each data.regions as r}
@@ -108,7 +106,8 @@
 			{#snippet badges()}
 				<ShellListItemBadges metadata={resource.metadata}>
 					{#snippet extra()}
-						<Badge icon={RegionUtil.icon(data.regions, resource.status.regionId)}>
+						<Badge>
+							{RegionUtil.flag(data.regions, resource.status.regionId)}
 							{RegionUtil.name(data.regions, resource.status.regionId)}
 						</Badge>
 					{/snippet}
@@ -117,7 +116,7 @@
 
 			{#snippet trail()}
 				<ModalIcon
-					icon="mdi:trash-can-outline"
+					icon="trash"
 					label="Delete"
 					title="Are you sure?"
 					confirm={() => confirm(resource)}
@@ -127,13 +126,9 @@
 			<ShellListItemMetadata metadata={resource.metadata} />
 
 			<ShellListItemMetadata>
+				<ShellMetadataItem icon="network" label="Prefix" value={resource.status.prefix} />
 				<ShellMetadataItem
-					icon="mdi:network-outline"
-					label="Prefix"
-					value={resource.status.prefix}
-				/>
-				<ShellMetadataItem
-					icon="mdi:dns-outline"
+					icon="dns"
 					label="DNS Nameservers"
 					value={resource.spec.dnsNameservers?.join(', ') || 'internal'}
 				/>

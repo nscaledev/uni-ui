@@ -20,7 +20,7 @@
 		feature: 'Identity',
 		name: 'Create OAuth2 Provider',
 		description: 'Create a new oauth2 provider.',
-		icon: 'mdi:key-outline'
+		icon: 'key'
 	};
 
 	let names = $derived(data.oauth2providers.map((x) => x.metadata.name));
@@ -94,13 +94,13 @@
 
 <div class="flex justify-between">
 	<Button
-		icon="mdi:cancel-bold"
+		icon="x"
 		label="Cancel"
 		class="preset-outlined-surface-600-400"
 		href="/identity/oauth2providers"
 	/>
 	<Button
-		icon="mdi:tick"
+		icon="check"
 		label="Create"
 		class="preset-filled-primary-500"
 		clicked={submit}

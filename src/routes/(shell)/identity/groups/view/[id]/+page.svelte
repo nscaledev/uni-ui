@@ -104,14 +104,9 @@
 </ShellSection>
 
 <div class="flex justify-between">
+	<Button icon="x" label="Cancel" class="preset-outlined-surface-600-400" href="/identity/groups" />
 	<Button
-		icon="mdi:cancel-bold"
-		label="Cancel"
-		class="preset-outlined-surface-600-400"
-		href="/identity/groups"
-	/>
-	<Button
-		icon="mdi:tick"
+		icon="check"
 		label="Update"
 		class="preset-filled-primary-500"
 		clicked={submit}

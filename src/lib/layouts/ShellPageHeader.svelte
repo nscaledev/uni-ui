@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { ShellPageSettings } from '$lib/layouts/types.ts';
+	import Icon from '$lib/primitives/Icon.svelte';
 
 	interface Props {
 		settings: ShellPageSettings;
@@ -15,7 +16,7 @@
 		<div class="flex flex-col gap-4">
 			<div class="flex gap-4 items-center">
 				{#if settings.icon}
-					<iconify-icon icon={settings.icon} class="text-6xl text-primary-600-400"></iconify-icon>
+					<Icon name={settings.icon} size={48} />
 				{/if}
 				<h1 class="text-3xl lg:text-5xl">{settings.name}</h1>
 			</div>

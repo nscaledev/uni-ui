@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Icon from '$lib/primitives/Icon.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -118,19 +119,19 @@
 	<!-- eslint-disable @typescript-eslint/no-unused-vars -->
 	{#snippet normal(rule: Region.SecurityGroupRuleV2, index: number)}
 		<div class="flex gap-2 items-center">
-			<iconify-icon icon="tabler:arrows-down-up" class="text-2xl"></iconify-icon>
+			<Icon name="arrowsUpDown" size={20} class="text-2xl" />
 			{rule.direction}
 		</div>
 		<div class="flex gap-2 items-center">
-			<iconify-icon icon="tabler:protocol" class="text-2xl"></iconify-icon>
+			<Icon name="layers" size={20} class="text-2xl" />
 			{rule.protocol}
 		</div>
 		<div class="flex gap-2 items-center">
-			<iconify-icon icon="fluent:usb-port-24-regular" class="text-2xl"></iconify-icon>
+			<Icon name="usb" size={20} class="text-2xl" />
 			{printPortRange(rule)}
 		</div>
 		<div class="flex gap-2 items-center">
-			<iconify-icon icon="mdi:check-network-outline" class="text-2xl"></iconify-icon>
+			<Icon name="checkNetwork" size={20} class="text-2xl" />
 
 			{printPrefix(rule)}
 		</div>
@@ -146,13 +147,13 @@
 
 <div class="flex justify-between">
 	<Button
-		icon="mdi:cancel-bold"
+		icon="x"
 		label="Cancel"
 		class="preset-outlined-surface-600-400"
 		href="/network/networks"
 	/>
 	<Button
-		icon="mdi:tick"
+		icon="check"
 		label="Create"
 		class="preset-filled-primary-500"
 		clicked={submit}

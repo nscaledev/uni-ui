@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Icon from '$lib/primitives/Icon.svelte';
 	import * as Region from '$lib/openapi/region';
 
 	interface Props {
@@ -11,7 +12,7 @@
 {#if flavor}
 	<div class="flex flex-col lg:flex-row lg:items-center gap-6">
 		<div class="flex items-center gap-2">
-			<iconify-icon icon="mdi:server-outline" class="text-2xl"></iconify-icon>
+			<Icon name="cpu" size={20} class="text-2xl" />
 			<div class="flex flex-col lg:flex-row gap-2 lg:gap-4">
 				<div class="flex flex-col items-start">
 					{flavor.spec.cpus} core, {flavor.spec.memory} GiB RAM
@@ -24,9 +25,9 @@
 						<div class="flex gap-2 items-center">
 							{flavor.spec.gpu.physicalCount}
 							{#if flavor.spec.gpu.vendor == 'AMD'}
-								<iconify-icon icon="file-icons:amd"></iconify-icon>
+								<Icon name="cpu" size={20} />
 							{:else if flavor.spec.gpu.vendor == 'NVIDIA'}
-								<iconify-icon icon="file-icons:nvidia"></iconify-icon>
+								<Icon name="cpu" size={20} />
 							{/if}
 							{flavor.spec.gpu.model}
 						</div>

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import * as Validation from '$lib/validation';
+	import Icon from '$lib/primitives/Icon.svelte';
 
 	interface Props {
 		// Value to bind to.
@@ -45,10 +46,9 @@
 			<input class="ig-input" type="text" {placeholder} bind:value />
 			<div class="ig-cell">
 				{#if valid}
-					<iconify-icon class="text-success-500 text-lg" icon="mdi:tick-circle-outline"
-					></iconify-icon>
+					<Icon name="checkCircle" size={18} class="text-success-500" />
 				{:else}
-					<iconify-icon class="text-error-500 text-lg" icon="mdi:error-outline"></iconify-icon>
+					<Icon name="alert" size={18} class="text-error-500" />
 				{/if}
 			</div>
 		</div>

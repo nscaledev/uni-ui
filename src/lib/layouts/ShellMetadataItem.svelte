@@ -1,4 +1,6 @@
 <script lang="ts">
+	import Icon from '$lib/primitives/Icon.svelte';
+
 	interface Props {
 		icon: string;
 		label: string;
@@ -9,7 +11,7 @@
 </script>
 
 <div class="col-span-3 grid grid-cols-subgrid items-center text-sm">
-	<iconify-icon class="text-lg text-primary-600-400" {icon}></iconify-icon>
+	<Icon name={icon} size={18} />
 
 	<div class="font-bold">
 		{label}

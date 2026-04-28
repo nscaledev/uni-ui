@@ -98,7 +98,7 @@
 
 <div class="flex justify-between items-center">
 	<div class={titleClass}>{title}</div>
-	<Button icon="mdi:add" label="Add" clicked={itemAdd} disabled={active} />
+	<Button icon="plus" label="Add" clicked={itemAdd} disabled={active} />
 </div>
 
 {@render description?.()}
@@ -113,13 +113,13 @@
 
 				<div class="flex justify-between">
 					<Button
-						icon="mdi-trash-can-outline"
+						icon="trash"
 						label="Delete"
 						class="preset-outlined-error-500 shadow-lg"
 						clicked={() => itemRemove(index)}
 					/>
 					<Button
-						icon="mdi:check"
+						icon="check"
 						label="Update"
 						class="preset-filled-primary-500 shadow-lg"
 						clicked={() => itemDeactivate(index)}
@@ -136,16 +136,8 @@
 				</div>
 
 				<div class="flex ml-auto gap-2 lg:justify-self-end lg:col-start-[-1]">
-					<ButtonIcon
-						icon="mdi:edit-outline"
-						clicked={() => itemActivate(index)}
-						disabled={active}
-					/>
-					<ButtonIcon
-						icon="mdi:trash-can-outline"
-						clicked={() => itemRemove(index)}
-						disabled={active}
-					/>
+					<ButtonIcon icon="edit" clicked={() => itemActivate(index)} disabled={active} />
+					<ButtonIcon icon="trash" clicked={() => itemRemove(index)} disabled={active} />
 				</div>
 			</div>
 		{/if}

@@ -25,6 +25,7 @@
 	import SubtleButton from '$lib/forms/SubtleButton.svelte';
 	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
 	import Placeholder from '$lib/layouts/Placeholder.svelte';
+	import Icon from '$lib/primitives/Icon.svelte';
 
 	const settings: ShellPageSettings = {
 		feature: 'Infrastructure',
@@ -144,13 +145,13 @@
 <ShellPageHeader {settings}>
 	{#snippet tools()}
 		{#if data.projects.length}
-			<PopupButton icon="mdi:add" class="self-end" label="Create">
+			<PopupButton icon="plus" class="self-end" label="Create">
 				{#snippet contents()}
 					<div class="flex flex-col gap-4">
 						<div class="font-bold">Network</div>
 
 						<div class="input-group grid grid-cols-[auto_1fr]">
-							<iconify-icon icon="mdi:network-outline" class="ig-cell"></iconify-icon>
+							<Icon name="network" size={20} class="ig-cell" />
 
 							<select class="ig-select" bind:value={networkID}>
 								{#each data.networks as p}
@@ -197,10 +198,11 @@
 				{#snippet badges()}
 					<ShellListItemBadges metadata={resource.metadata}>
 						{#snippet extra()}
-							<Badge icon={RegionUtil.icon(data.regions, resource.status.regionId)}>
+							<Badge>
+								{RegionUtil.flag(data.regions, resource.status.regionId)}
 								{RegionUtil.name(data.regions, resource.status.regionId)}
 							</Badge>
-							<Badge icon="mdi:network-outline">
+							<Badge icon="network">
 								{lookupNetwork(resource.status.networkId).metadata.name}
 							</Badge>
 						{/snippet}
@@ -209,15 +211,13 @@
 
 				<div class="col-span-3 lg:col-span-6 flex flex-wrap gap-x-6 gap-y-2 text-sm">
 					<div class="flex items-center gap-2">
-						<iconify-icon class="text-lg text-primary-600-400" icon="mdi:clock-time-five-outline"
-						></iconify-icon>
+						<Icon name="clock" size={20} class="text-lg text-primary-600-400" />
 						<div class="font-bold">Age</div>
 						<div>{Formatters.ageFormatter(resource.metadata.creationTime)}</div>
 					</div>
 
 					<div class="flex items-center gap-2">
-						<iconify-icon class="text-lg text-primary-600-400" icon="mdi:user-outline"
-						></iconify-icon>
+						<Icon name="user" size={20} class="text-lg text-primary-600-400" />
 						<div class="font-bold">Owner</div>
 						<div>{resource.metadata.createdBy || 'unknown'}</div>
 					</div>
@@ -226,8 +226,7 @@
 				<div class="col-span-3 lg:col-span-6 flex flex-wrap gap-x-6 gap-y-2 text-sm">
 					{#if resource.status.privateIP}
 						<div class="flex items-center gap-2">
-							<iconify-icon class="text-lg text-primary-600-400" icon="mdi:local-area-network"
-							></iconify-icon>
+							<Icon name="network" size={20} class="text-lg text-primary-600-400" />
 							<div class="font-bold">Private IP</div>
 							<div>{resource.status.privateIP}</div>
 						</div>
@@ -235,8 +234,7 @@
 
 					{#if resource.status.publicIP}
 						<div class="flex items-center gap-2">
-							<iconify-icon class="text-lg text-primary-600-400" icon="mdi:local-area-network"
-							></iconify-icon>
+							<Icon name="network" size={20} class="text-lg text-primary-600-400" />
 							<div class="font-bold">Public IP</div>
 							<div>{resource.status.publicIP}</div>
 						</div>
@@ -244,8 +242,7 @@
 
 					{#if sshCertificateAuthorityName(resource)}
 						<div class="flex items-center gap-2">
-							<iconify-icon class="text-lg text-primary-600-400" icon="mdi:key-chain-variant"
-							></iconify-icon>
+							<Icon name="key" size={20} class="text-lg text-primary-600-400" />
 							<div class="font-bold">SSH Certificate CA</div>
 							<div>{sshCertificateAuthorityName(resource) || ''}</div>
 						</div>
@@ -254,7 +251,7 @@
 
 				{#snippet trail()}
 					<SubtleButton
-						icon="mdi:connection"
+						icon="connection"
 						label="SSH Key"
 						clicked={() => getSSHKey(resource)}
 						disabled={sshKeyDownloadDisabled(resource)}
@@ -274,21 +271,21 @@
 						disabled={!MachineStatus.canStopOrStart(resource.status.powerState)}
 					></ModalIcon>
 					<ModalIcon
-						icon="mdi:restart"
+						icon="refresh"
 						label="Soft Reboot"
 						title="Are you sure?"
 						confirm={() => rebootSoft(resource)}
 						disabled={!MachineStatus.canReboot(resource.status.powerState)}
 					></ModalIcon>
 					<ModalIcon
-						icon="mdi:restart-alert"
+						icon="restartAlert"
 						label="Hard Reboot"
 						title="Are you sure?"
 						confirm={() => rebootHard(resource)}
 						disabled={!MachineStatus.canReboot(resource.status.powerState)}
 					></ModalIcon>
 					<ModalIcon
-						icon="mdi:trash-can-outline"
+						icon="trash"
 						label="Delete"
 						title="Are you sure?"
 						confirm={() => confirm(resource)}

@@ -23,7 +23,7 @@
 		name: 'Projects',
 		description:
 			'Projects bind groups of users to projects and allow infrastructure to be provisioned within them.',
-		icon: 'mdi:folder-open-outline'
+		icon: 'folder'
 	};
 
 	onMount(() => startAutoRefresh('layout:projects'));
@@ -43,7 +43,7 @@
 
 <ShellPageHeader {settings}>
 	{#snippet tools()}
-		<SubtleButton icon="mdi:add" label="Create" href="/identity/projects/create" />
+		<SubtleButton icon="plus" label="Create" href="/identity/projects/create" />
 	{/snippet}
 </ShellPageHeader>
 
@@ -62,7 +62,7 @@
 
 			{#snippet trail()}
 				<ModalIcon
-					icon="mdi:trash-can-outline"
+					icon="trash"
 					label="Delete"
 					title="Are you sure?"
 					confirm={() => confirm(resource.metadata.id)}

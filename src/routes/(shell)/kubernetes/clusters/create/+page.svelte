@@ -13,28 +13,24 @@
 	import ShellMetadataSection from '$lib/layouts/ShellMetadataSection.svelte';
 	import ShellSection from '$lib/layouts/ShellSection.svelte';
 	import Select from '$lib/forms/Select.svelte';
-	import Stepper from '$lib/layouts/Stepper.svelte';
 	import TimeWindow from '$lib/layouts/TimeWindow.svelte';
 	import Switch from '$lib/forms/Switch.svelte';
 	import ResourceList from '$lib/layouts/ResourceList.svelte';
 	import KubernetesWorkloadPool from '$lib/KubernetesWorkloadPool.svelte';
 	import Flavor from '$lib/Flavor.svelte';
+	import Button from '$lib/forms/Button.svelte';
 
 	const settings: ShellPageSettings = {
 		feature: 'Infrastructure',
 		name: 'Create Kubernetes Cluster',
 		description: 'Create and deploy a new Kubernetes cluster.',
-		icon: 'mdi:kubernetes'
+		icon: 'k8s'
 	};
 
 	function initialVersions(): Array<string> {
 		return [...new Set(data.images.map((x) => x.spec.softwareVersions?.kubernetes || ''))]
 			.sort()
 			.reverse();
-	}
-
-	function initialRegionID(): string {
-		return data.regionID;
 	}
 
 	const versions = initialVersions();
@@ -51,23 +47,17 @@
 			})
 		},
 		spec: {
-			regionId: initialRegionID(),
+			// data.regionID is fixed at page load — route params don't change
+			// eslint-disable-next-line svelte/valid-compile
+			regionId: data.regionID,
 			version: versions[0],
-			autoUpgrade: {
-				enabled: true
-			},
-			features: {
-				hardwareEnablement: false
-			},
+			autoUpgrade: { enabled: true },
+			features: { hardwareEnablement: false },
 			workloadPools: [
 				{
 					name: 'default',
-					machine: {
-						replicas: 3
-					},
-					autoscaling: {
-						minimumReplicas: 0
-					}
+					machine: { replicas: 3 },
+					autoscaling: { minimumReplicas: 0 }
 				}
 			]
 		}
@@ -80,15 +70,13 @@
 	function autoUpgradeChange(e: { checked: boolean }) {
 		if (!resource.spec.autoUpgrade) {
 			resource.spec.autoUpgrade = { enabled: e.checked };
-			return;
+		} else {
+			resource.spec.autoUpgrade.enabled = e.checked;
 		}
-
-		resource.spec.autoUpgrade.enabled = e.checked;
 	}
 
-	function autoUpgradeOverideChange(e: { checked: boolean }) {
+	function autoUpgradeOverrideChange(e: { checked: boolean }) {
 		if (!resource.spec.autoUpgrade) return;
-
 		if (e.checked) {
 			resource.spec.autoUpgrade.daysOfWeek = {};
 		} else {
@@ -96,100 +84,29 @@
 		}
 	}
 
-	function autoUpgradeChangeSunday(checked: boolean, start: number, end: number) {
+	function autoUpgradeDayChange(
+		day: keyof Kubernetes.KubernetesClusterAutoUpgradeDaysOfWeek,
+		checked: boolean,
+		start: number,
+		end: number
+	) {
 		if (!resource.spec.autoUpgrade?.daysOfWeek) return;
-
 		if (checked) {
-			resource.spec.autoUpgrade.daysOfWeek.sunday = { start: start, end: end };
-			return;
+			resource.spec.autoUpgrade.daysOfWeek[day] = { start, end };
+		} else {
+			delete resource.spec.autoUpgrade.daysOfWeek[day];
 		}
-
-		delete resource.spec.autoUpgrade.daysOfWeek.sunday;
 	}
 
-	function autoUpgradeChangeMonday(checked: boolean, start: number, end: number) {
-		if (!resource.spec.autoUpgrade?.daysOfWeek) return;
-
-		if (checked) {
-			resource.spec.autoUpgrade.daysOfWeek.monday = { start: start, end: end };
-			return;
-		}
-
-		delete resource.spec.autoUpgrade.daysOfWeek.monday;
-	}
-
-	function autoUpgradeChangeTuesday(checked: boolean, start: number, end: number) {
-		if (!resource.spec.autoUpgrade?.daysOfWeek) return;
-
-		if (checked) {
-			resource.spec.autoUpgrade.daysOfWeek.tuesday = { start: start, end: end };
-			return;
-		}
-
-		delete resource.spec.autoUpgrade.daysOfWeek.tuesday;
-	}
-
-	function autoUpgradeChangeWednesday(checked: boolean, start: number, end: number) {
-		if (!resource.spec.autoUpgrade?.daysOfWeek) return;
-
-		if (checked) {
-			resource.spec.autoUpgrade.daysOfWeek.wednesday = { start: start, end: end };
-			return;
-		}
-
-		delete resource.spec.autoUpgrade.daysOfWeek.wednesday;
-	}
-
-	function autoUpgradeChangeThursday(checked: boolean, start: number, end: number) {
-		if (!resource.spec.autoUpgrade?.daysOfWeek) return;
-
-		if (checked) {
-			resource.spec.autoUpgrade.daysOfWeek.thursday = { start: start, end: end };
-			return;
-		}
-
-		delete resource.spec.autoUpgrade.daysOfWeek.thursday;
-	}
-
-	function autoUpgradeChangeFriday(checked: boolean, start: number, end: number) {
-		if (!resource.spec.autoUpgrade?.daysOfWeek) return;
-
-		if (checked) {
-			resource.spec.autoUpgrade.daysOfWeek.friday = { start: start, end: end };
-			return;
-		}
-
-		delete resource.spec.autoUpgrade.daysOfWeek.friday;
-	}
-
-	function autoUpgradeChangeSaturday(checked: boolean, start: number, end: number) {
-		if (!resource.spec.autoUpgrade?.daysOfWeek) return;
-
-		if (checked) {
-			resource.spec.autoUpgrade.daysOfWeek.saturday = { start: start, end: end };
-			return;
-		}
-
-		delete resource.spec.autoUpgrade.daysOfWeek.saturday;
-	}
-
-	let workloadPoolValid: boolean = $state(false);
-
-	let workloadPoolActive: boolean = $state(false);
+	let workloadPoolValid = $state(false);
+	let workloadPoolActive = $state(false);
 
 	function workloadPoolAdd(): number {
-		let pool: Kubernetes.KubernetesClusterWorkloadPool = {
+		resource.spec.workloadPools.push({
 			name: '',
-			machine: {
-				replicas: 3
-			},
-			autoscaling: {
-				minimumReplicas: 0
-			}
-		};
-
-		resource.spec.workloadPools.push(pool);
-
+			machine: { replicas: 3 },
+			autoscaling: { minimumReplicas: 0 }
+		});
 		return resource.spec.workloadPools.length - 1;
 	}
 
@@ -197,194 +114,164 @@
 		resource.spec.workloadPools.splice(index, 1);
 	}
 
-	// A workload pool is valid if all the fields in the pool are valid and
-	// the name is unique among all other pools.
-	let workloadPoolValidFull: boolean = $derived.by(() => {
+	let workloadPoolValidFull = $derived.by(() => {
 		if (!workloadPoolValid) return false;
-
-		const names = resource.spec.workloadPools.map((x) => x.name);
-		const uniqueNames = new Set(names);
-
-		if (names.length != uniqueNames.size) return false;
-
-		return true;
+		const poolNames = resource.spec.workloadPools.map((x) => x.name);
+		return poolNames.length === new Set(poolNames).size;
 	});
 
-	function complete() {
-		const parameters = {
-			organizationID: data.organizationID,
-			projectID: data.projectID,
-			kubernetesClusterWrite: resource
-		};
-
-		Clients.kubernetes()
-			.apiV1OrganizationsOrganizationIDProjectsProjectIDClustersPost(parameters)
-			.then(() => window.location.assign('/kubernetes/clusters'))
-			.catch((e: Error) => Clients.error(e));
-	}
-
-	let step: number = $state(0);
-
-	// Step 1 requires the metadata to be valid and a version to have been selected.
 	let metadataValid = $state(false);
 
-	let step1valid: boolean = $derived.by(() => {
-		if (step != 0) return true;
-
-		if (!metadataValid) return false;
-
-		return true;
-	});
-
-	// Step 2 requires a workload pool to be defined.
-	let step2valid: boolean = $derived.by(() => {
-		if (step != 1) return true;
-
-		// If there is a workload pool active, it is potentially invalid.
-		if (workloadPoolActive) return false;
-
-		if (resource.spec.workloadPools.length == 0) return false;
-
-		return true;
-	});
-
-	// Roll up the overall validity for the stepper to allow progress.
-	let valid = $derived(step1valid && step2valid);
+	let valid = $derived(
+		metadataValid &&
+			!workloadPoolActive &&
+			resource.spec.workloadPools.length > 0 &&
+			workloadPoolValidFull
+	);
 
 	function lookupFlavor(flavorID: string | undefined): Kubernetes.Flavor | undefined {
 		if (!flavorID) return;
-
 		return data.flavors.find((x) => x.metadata.id == flavorID);
 	}
 
 	function replicasString(pool: Kubernetes.KubernetesClusterWorkloadPool): string {
 		let out = '';
-
-		// TODO: should always be set!!
 		if (pool.autoscaling) out += pool.autoscaling.minimumReplicas.toString() + '-';
 		if (pool.machine.replicas) out += pool.machine.replicas.toString();
-
 		out += ' replica';
-
 		if (pool.autoscaling || pool.machine.replicas) out += 's';
-
 		return out;
+	}
+
+	function submit() {
+		Clients.kubernetes()
+			.apiV1OrganizationsOrganizationIDProjectsProjectIDClustersPost({
+				organizationID: data.organizationID,
+				projectID: data.projectID,
+				kubernetesClusterWrite: resource
+			})
+			.then(() => window.location.assign('/kubernetes/clusters'))
+			.catch((e: Error) => Clients.error(e));
 	}
 </script>
 
 <ShellPageHeader {settings} />
-<Stepper steps={3} bind:step {valid} {complete}>
-	{#snippet content(index: number)}
-		{#if index === 0}
-			<h2 class="h2">Basic Configuration</h2>
 
-			<ShellMetadataSection metadata={resource.metadata} {names} bind:valid={metadataValid} />
+<ShellMetadataSection metadata={resource.metadata} {names} bind:valid={metadataValid} />
 
-			<ShellSection title="Kubernetes Configuration">
-				<Select
-					label="Choose a Kubernetes version."
-					hint="Kubernetes provides guarantees backward
-                                                compatibility so choosing the newest is usually the right choice as that provides a rich
-                                                feature set and enhanced security. Certain applications — e.g. Kubeflow —
-                                                may require a specific version."
-					bind:value={resource.spec.version}
-				>
-					{#each versions as version}
-						<option value={version}>{version}</option>
-					{/each}
-				</Select>
-			</ShellSection>
-		{:else if index === 1}
-			<ResourceList
-				title="Workload Pool Configuration"
-				columns={3}
-				items={resource.spec.workloadPools}
-				initialItem={0}
-				bind:active={workloadPoolActive}
-				valid={workloadPoolValidFull}
-				add={workloadPoolAdd}
-				remove={workloadPoolRemove}
-			>
-				{#snippet description()}
-					<p>
-						Workload pools provide compute resouce for your cluster. You may have as many as
-						required for your workload. Each pool has a set of CPU, GPU and memory that can be
-						selected from a defined set of flavours. Workload pools support automatic scaling, thus
-						reducing overall operational cost when not in use.
-					</p>
-				{/snippet}
+<ShellSection title="Kubernetes Configuration">
+	<Select
+		label="Choose a Kubernetes version."
+		hint="Kubernetes provides backward compatibility guarantees so choosing the newest is usually the right choice."
+		bind:value={resource.spec.version}
+	>
+		{#each versions as version}
+			<option value={version}>{version}</option>
+		{/each}
+	</Select>
+</ShellSection>
 
-				<!-- eslint-disable @typescript-eslint/no-unused-vars -->
-				{#snippet normal(pool: Kubernetes.KubernetesClusterWorkloadPool, index: number)}
-					<div class="h5 font-bold">{pool.name}</div>
-
-					<div>{replicasString(pool)}</div>
-
-					<Flavor flavor={lookupFlavor(pool.machine.flavorId)} />
-				{/snippet}
-
-				<!-- eslint-disable @typescript-eslint/no-unused-vars -->
-				{#snippet expanded(pool: Kubernetes.KubernetesClusterWorkloadPool, index: number)}
-					<KubernetesWorkloadPool
-						flavors={data.flavors}
-						bind:pool={resource.spec.workloadPools[index]}
-						bind:valid={workloadPoolValid}
-					/>
-				{/snippet}
-			</ResourceList>
-		{:else if index === 2}
-			<h2 class="h2">Advanced Options</h2>
-
-			<ShellSection title="Hardware Enablement">
-				<p>
-					Installs hardware operators and drivers on the cluster, such as the GPU operator and
-					specialist network configuration.
-				</p>
-
-				<Switch
-					name="hardwareenablement"
-					label="Enable hardware operators"
-					hint="Enable this if your workload pools use GPU flavors."
-					onCheckedChange={hardwareEnablementChange}
-				/>
-			</ShellSection>
-
-			<ShellSection title="Auto Upgrade">
-				<p>
-					Kubernetes clusters are provisioned using pre-defined bundles of applications. These are
-					periodically updated to provide security updates, bug fixes and platorm stability. These
-					are enabled by default to protect you and mitigate any issues that may arise.
-				</p>
-
-				<Switch
-					name="autoupgrade"
-					label="Enable auto-upgrade"
-					hint="Upgrades may still occur as application bundles reach end-of-life even if you choose to opt out."
-					initial={true}
-					onCheckedChange={autoUpgradeChange}
-				/>
-
-				{#if resource.spec.autoUpgrade?.enabled}
-					<Switch
-						name="autoupgradeoverride"
-						label="Override auto-upgrade default time windows"
-						hint="Auto upgrades are scheduled Monday-Friday beween 00:00 and 07:00 UTC.  This provides a good level of support coverage, and upgrades occur outside of European business hours."
-						onCheckedChange={autoUpgradeOverideChange}
-					/>
-
-					{#if resource.spec.autoUpgrade?.daysOfWeek}
-						<div class="grid grid-cols-[auto_auto_1fr] gap-4">
-							<TimeWindow title="Sunday" onChange={autoUpgradeChangeSunday} />
-							<TimeWindow title="Monday" onChange={autoUpgradeChangeMonday} />
-							<TimeWindow title="Tuesday" onChange={autoUpgradeChangeTuesday} />
-							<TimeWindow title="Wednesday" onChange={autoUpgradeChangeWednesday} />
-							<TimeWindow title="Thursday" onChange={autoUpgradeChangeThursday} />
-							<TimeWindow title="Friday" onChange={autoUpgradeChangeFriday} />
-							<TimeWindow title="Saturday" onChange={autoUpgradeChangeSaturday} />
-						</div>
-					{/if}
-				{/if}
-			</ShellSection>
-		{/if}
+<ResourceList
+	title="Workload Pool Configuration"
+	columns={3}
+	items={resource.spec.workloadPools}
+	initialItem={0}
+	bind:active={workloadPoolActive}
+	valid={workloadPoolValidFull}
+	add={workloadPoolAdd}
+	remove={workloadPoolRemove}
+>
+	{#snippet description()}
+		<p>
+			Workload pools provide compute resource for your cluster. Each pool has a set of CPU, GPU and
+			memory selectable from defined flavours, and supports automatic scaling.
+		</p>
 	{/snippet}
-</Stepper>
+
+	{#snippet normal(pool: Kubernetes.KubernetesClusterWorkloadPool)}
+		<div class="h5 font-bold">{pool.name}</div>
+		<div>{replicasString(pool)}</div>
+		<Flavor flavor={lookupFlavor(pool.machine.flavorId)} />
+	{/snippet}
+
+	{#snippet expanded(pool: Kubernetes.KubernetesClusterWorkloadPool, index: number)}
+		<!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
+		{@const _pool = pool}
+		<KubernetesWorkloadPool
+			flavors={data.flavors}
+			bind:pool={resource.spec.workloadPools[index]}
+			bind:valid={workloadPoolValid}
+		/>
+	{/snippet}
+</ResourceList>
+
+<ShellSection title="Hardware Enablement">
+	<p>Installs hardware operators and drivers such as the GPU operator on the cluster.</p>
+	<Switch
+		name="hardwareenablement"
+		label="Enable hardware operators"
+		hint="Enable this if your workload pools use GPU flavors."
+		onCheckedChange={hardwareEnablementChange}
+	/>
+</ShellSection>
+
+<ShellSection title="Auto Upgrade">
+	<p>
+		Kubernetes clusters use pre-defined application bundles that are periodically updated for
+		security and stability.
+	</p>
+	<Switch
+		name="autoupgrade"
+		label="Enable auto-upgrade"
+		hint="Upgrades may still occur as bundles reach end-of-life even if you opt out."
+		initial={true}
+		onCheckedChange={autoUpgradeChange}
+	/>
+
+	{#if resource.spec.autoUpgrade?.enabled}
+		<Switch
+			name="autoupgradeoverride"
+			label="Override auto-upgrade default time windows"
+			hint="Default: Monday–Friday 00:00–07:00 UTC."
+			onCheckedChange={autoUpgradeOverrideChange}
+		/>
+
+		{#if resource.spec.autoUpgrade?.daysOfWeek}
+			<div class="grid grid-cols-[auto_auto_1fr] gap-4">
+				<TimeWindow
+					title="Sunday"
+					onChange={(c, s, e) => autoUpgradeDayChange('sunday', c, s, e)}
+				/>
+				<TimeWindow
+					title="Monday"
+					onChange={(c, s, e) => autoUpgradeDayChange('monday', c, s, e)}
+				/>
+				<TimeWindow
+					title="Tuesday"
+					onChange={(c, s, e) => autoUpgradeDayChange('tuesday', c, s, e)}
+				/>
+				<TimeWindow
+					title="Wednesday"
+					onChange={(c, s, e) => autoUpgradeDayChange('wednesday', c, s, e)}
+				/>
+				<TimeWindow
+					title="Thursday"
+					onChange={(c, s, e) => autoUpgradeDayChange('thursday', c, s, e)}
+				/>
+				<TimeWindow
+					title="Friday"
+					onChange={(c, s, e) => autoUpgradeDayChange('friday', c, s, e)}
+				/>
+				<TimeWindow
+					title="Saturday"
+					onChange={(c, s, e) => autoUpgradeDayChange('saturday', c, s, e)}
+				/>
+			</div>
+		{/if}
+	{/if}
+</ShellSection>
+
+<div class="flex justify-between">
+	<Button icon="x" label="Cancel" href="/kubernetes/clusters" />
+	<Button icon="check" label="Create" clicked={submit} disabled={!valid} />
+</div>

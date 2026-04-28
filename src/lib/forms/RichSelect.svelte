@@ -19,6 +19,7 @@
 	let { label, hint = '', value, onValueChange, options, contents }: Props = $props();
 
 	import { Popover } from '@skeletonlabs/skeleton-svelte';
+	import Icon from '$lib/primitives/Icon.svelte';
 
 	let open = $state(false);
 
@@ -44,7 +45,7 @@
 >
 	{#snippet trigger()}
 		{@render contents(value)}
-		<iconify-icon icon="ph:caret-down-bold"></iconify-icon>
+		<Icon name="chevronDown" size={16} />
 	{/snippet}
 
 	{#snippet content()}

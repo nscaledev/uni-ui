@@ -12,6 +12,7 @@
 	let { icon, label, disabled = $bindable(), contents, ...props }: Props = $props();
 
 	import { Popover } from '@skeletonlabs/skeleton-svelte';
+	import Icon from '$lib/primitives/Icon.svelte';
 
 	let open = $state(false);
 </script>
@@ -23,7 +24,7 @@
 	triggerBase="btn flex items-center gap-2 p-0 {props.class || ''}"
 >
 	{#snippet trigger()}
-		<iconify-icon {icon} class="text-2xl"> </iconify-icon>
+		<Icon name={icon} size={20} />
 		{label}
 	{/snippet}
 

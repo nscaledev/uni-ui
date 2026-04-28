@@ -68,7 +68,7 @@
 
 	<div class="flex">
 		<Button
-			icon="mdi:tick"
+			icon="check"
 			label="Done"
 			class="preset-filled-primary-500"
 			href="/identity/serviceaccounts"
@@ -93,13 +93,13 @@
 
 	<div class="flex justify-between">
 		<Button
-			icon="mdi:cancel-bold"
+			icon="x"
 			label="Cancel"
 			class="preset-outlined-surface-600-400"
 			href="/identity/serviceaccounts"
 		/>
 		<Button
-			icon="mdi:tick"
+			icon="check"
 			label="Create"
 			class="preset-filled-primary-500"
 			clicked={submit}

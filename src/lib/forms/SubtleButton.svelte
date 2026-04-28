@@ -1,4 +1,6 @@
 <script lang="ts">
+	import Icon from '$lib/primitives/Icon.svelte';
+
 	interface Props {
 		icon: string;
 		label: string;
@@ -12,7 +14,7 @@
 </script>
 
 {#snippet content()}
-	<iconify-icon {icon} class="text-2xl"></iconify-icon>
+	<Icon name={icon} size={20} />
 	{#if label}
 		<div>{label}</div>
 	{/if}

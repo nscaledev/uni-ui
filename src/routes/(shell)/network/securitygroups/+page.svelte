@@ -20,6 +20,7 @@
 	import Badge from '$lib/layouts/Badge.svelte';
 	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
 	import PopupButton from '$lib/forms/PopupButton.svelte';
+	import Icon from '$lib/primitives/Icon.svelte';
 
 	const settings: ShellPageSettings = {
 		feature: 'Regions',
@@ -55,13 +56,13 @@
 <ShellPageHeader {settings}>
 	{#snippet tools()}
 		{#if data.projects.length}
-			<PopupButton icon="mdi:add" class="self-end" label="Create">
+			<PopupButton icon="plus" class="self-end" label="Create">
 				{#snippet contents()}
 					<div class="flex flex-col gap-4">
 						<div class="font-bold">Network</div>
 
 						<div class="input-group grid grid-cols-[auto_1fr]">
-							<iconify-icon icon="mdi:network-outline" class="ig-cell"></iconify-icon>
+							<Icon name="network" size={20} class="ig-cell" />
 
 							<select class="ig-select" bind:value={createNetworkID}>
 								{#each data.networks as p}
@@ -95,10 +96,11 @@
 			{#snippet badges()}
 				<ShellListItemBadges metadata={resource.metadata}>
 					{#snippet extra()}
-						<Badge icon={RegionUtil.icon(data.regions, resource.status.regionId)}>
+						<Badge>
+							{RegionUtil.flag(data.regions, resource.status.regionId)}
 							{RegionUtil.name(data.regions, resource.status.regionId)}
 						</Badge>
-						<Badge icon="mdi:network-outline">
+						<Badge icon="network">
 							{lookupNetwork(resource.status.networkId).metadata.name}
 						</Badge>
 					{/snippet}
@@ -107,7 +109,7 @@
 
 			{#snippet trail()}
 				<ModalIcon
-					icon="mdi:trash-can-outline"
+					icon="trash"
 					label="Delete"
 					title="Are you sure?"
 					confirm={() => confirm(resource)}

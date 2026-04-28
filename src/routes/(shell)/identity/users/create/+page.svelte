@@ -18,7 +18,7 @@
 		feature: 'Identity',
 		name: 'Create User',
 		description: 'Create a new user in the organization.',
-		icon: 'mdi:user-outline'
+		icon: 'user'
 	};
 
 	let names = $derived(data.users.map((x) => x.spec.subject));
@@ -77,14 +77,9 @@
 </ShellSection>
 
 <div class="flex justify-between">
+	<Button icon="x" label="Cancel" class="preset-outlined-surface-600-400" href="/identity/users" />
 	<Button
-		icon="mdi:cancel-bold"
-		label="Cancel"
-		class="preset-outlined-surface-600-400"
-		href="/identity/users"
-	/>
-	<Button
-		icon="mdi:tick"
+		icon="check"
 		label="Create"
 		class="preset-filled-primary-500"
 		clicked={submit}

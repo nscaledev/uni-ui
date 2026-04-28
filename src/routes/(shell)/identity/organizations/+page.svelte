@@ -138,7 +138,7 @@
 
 <div class="flex">
 	<Button
-		icon="mdi:tick"
+		icon="check"
 		label="Update"
 		class="preset-filled-primary-500"
 		clicked={submit}

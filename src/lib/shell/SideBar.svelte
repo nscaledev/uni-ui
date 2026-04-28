@@ -4,6 +4,7 @@
 	import { page } from '$app/stores';
 
 	import { Navigation, Accordion } from '@skeletonlabs/skeleton-svelte';
+	import Icon from '$lib/primitives/Icon.svelte';
 
 	import type { InternalToken } from '$lib/oauth2';
 	import { logout } from '$lib/credentials';
@@ -29,7 +30,7 @@
 		{
 			href: '/',
 			title: 'Dashboard',
-			icon: 'mdi:gauge'
+			icon: 'dashboard'
 		}
 	];
 
@@ -38,7 +39,7 @@
 			{
 				base: '/identity',
 				title: 'Identity',
-				icon: 'mdi:perm-identity',
+				icon: 'user',
 				items: [
 					{
 						label: 'Organization',
@@ -125,7 +126,7 @@
 			{
 				base: '/network',
 				title: 'Network',
-				icon: 'mdi:network-outline',
+				icon: 'network',
 				items: [
 					{
 						label: 'Networks',
@@ -162,7 +163,7 @@
 			{
 				base: '/compute',
 				title: 'Compute',
-				icon: 'mdi:computer',
+				icon: 'cpu',
 				items: [
 					{
 						label: 'Instances',
@@ -179,7 +180,7 @@
 			{
 				base: '/kubernetes',
 				title: 'Kubernetes',
-				icon: 'mdi:kubernetes',
+				icon: 'k8s',
 				items: [
 					{
 						label: 'Clusters',
@@ -272,8 +273,7 @@
 
 		<div class="input-group grid-cols-[auto_1fr] shadow-lg">
 			<div class="ig-cell">
-				<iconify-icon icon="mdi:office-building-outline" class="text-lg text-primary-600-400"
-				></iconify-icon>
+				<Icon name="building" size={18} />
 			</div>
 			<select class="ig-select" bind:value={selectedOrganizationID}>
 				{#each organizations || [] as organization}
@@ -288,8 +288,7 @@
 
 		{#each navStatic as entry}
 			<a href={entry.href} class="flex gap-4 hover:preset-tonal-primary p-2 px-4 mb-2">
-				<iconify-icon icon={entry.icon} class="text-2xl text-primary-600-400 align-middle"
-				></iconify-icon>
+				<Icon name={entry.icon} size={20} />
 				{entry.title}
 			</a>
 		{/each}
@@ -303,8 +302,7 @@
 			{#each nav as entry}
 				<Accordion.Item value={entry.title} panelPadding="">
 					{#snippet lead()}
-						<iconify-icon icon={entry.icon} class="text-2xl text-primary-600-400 align-middle"
-						></iconify-icon>
+						<Icon name={entry.icon} size={20} />
 					{/snippet}
 					{#snippet control()}
 						{entry.title}
