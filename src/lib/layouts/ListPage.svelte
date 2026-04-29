@@ -159,13 +159,7 @@
 	const stats = $derived(computeStats(resources));
 </script>
 
-<ShellPageHeader {settings}>
-	{#if tools}
-		{#snippet tools()}
-			{@render tools?.()}
-		{/snippet}
-	{/if}
-</ShellPageHeader>
+<ShellPageHeader {settings} {tools} />
 
 <div class="stats">
 	<div class="stat">
