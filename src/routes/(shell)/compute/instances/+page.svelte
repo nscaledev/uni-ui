@@ -18,6 +18,7 @@
 	import ShellListItemHeader from '$lib/layouts/ShellListItemHeader.svelte';
 	import ShellListItemBadges from '$lib/layouts/ShellListItemBadges.svelte';
 	import ShellListItemMetadata from '$lib/layouts/ShellListItemMetadata.svelte';
+	import ShellMetadataItem from '$lib/layouts/ShellMetadataItem.svelte';
 	import Badge from '$lib/layouts/Badge.svelte';
 	import Placeholder from '$lib/layouts/Placeholder.svelte';
 	import PopupButton from '$lib/forms/PopupButton.svelte';
@@ -131,9 +132,6 @@
 									>{RegionUtil.flag(data.regions, resource.status.regionId)}
 									{RegionUtil.name(data.regions, resource.status.regionId)}</Badge
 								>
-								<Badge icon="network"
-									>{lookupNetwork(resource.status.networkId)?.metadata.name}</Badge
-								>
 							{/snippet}
 						</ShellListItemBadges>
 					{/snippet}
@@ -195,6 +193,11 @@
 						</ModalIcon>
 					{/snippet}
 					<ShellListItemMetadata metadata={resource.metadata}>
+						{#if lookupNetwork(resource.status.networkId)}<ShellMetadataItem
+								icon="network"
+								label="Network"
+								value={lookupNetwork(resource.status.networkId).metadata.name}
+							/>{/if}
 						{#if resource.status.privateIP}<div class="meta-extra">
 								<Icon name="network" size={14} /><span>Private</span><span
 									>{resource.status.privateIP}</span

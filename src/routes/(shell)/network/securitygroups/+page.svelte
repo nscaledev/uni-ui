@@ -14,6 +14,7 @@
 	import ShellListItemHeader from '$lib/layouts/ShellListItemHeader.svelte';
 	import ShellListItemBadges from '$lib/layouts/ShellListItemBadges.svelte';
 	import ShellListItemMetadata from '$lib/layouts/ShellListItemMetadata.svelte';
+	import ShellMetadataItem from '$lib/layouts/ShellMetadataItem.svelte';
 	import Badge from '$lib/layouts/Badge.svelte';
 	import Placeholder from '$lib/layouts/Placeholder.svelte';
 	import PopupButton from '$lib/forms/PopupButton.svelte';
@@ -77,8 +78,6 @@
 							{#snippet extra()}<Badge
 									>{RegionUtil.flag(data.regions, resource.status.regionId)}
 									{RegionUtil.name(data.regions, resource.status.regionId)}</Badge
-								><Badge icon="network"
-									>{lookupNetwork(resource.status.networkId).metadata.name}</Badge
 								>{/snippet}
 						</ShellListItemBadges>
 					{/snippet}
@@ -93,7 +92,13 @@
 							Removing "{resource.metadata.name}" will affect any instances using it.
 						</ModalIcon>
 					{/snippet}
-					<ShellListItemMetadata metadata={resource.metadata} />
+					<ShellListItemMetadata metadata={resource.metadata}>
+						<ShellMetadataItem
+							icon="network"
+							label="Network"
+							value={lookupNetwork(resource.status.networkId).metadata.name}
+						/>
+					</ShellListItemMetadata>
 				</ShellListItem>{/each}</ShellList
 		>{/snippet}
 	{#snippet empty()}<Placeholder>No security groups yet — create one to get started.</Placeholder
