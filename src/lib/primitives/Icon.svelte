@@ -324,6 +324,10 @@
 		<circle cx="13" cy="10" r="2" fill="currentColor" stroke="none" />
 		<circle cx="8" cy="14" r="2" fill="currentColor" stroke="none" />
 	</svg>
+{:else if name === 'activity'}
+	<svg width={size} height={size} viewBox="0 0 20 20" aria-hidden="true" class={cls}>
+		<polyline points="2,10 5,10 7,5 9,15 11,7 13,12 15,10 18,10" />
+	</svg>
 {:else if name === 'rows'}
 	<svg width={size} height={size} viewBox="0 0 20 20" aria-hidden="true" class={cls}>
 		<rect x="3" y="3" width="14" height="4" rx="1.5" />

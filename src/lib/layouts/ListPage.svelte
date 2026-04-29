@@ -7,22 +7,27 @@
 	import { ageFormatter } from '$lib/formatters';
 	import type { ShellPageSettings } from '$lib/layouts/types';
 	import ShellPageHeader from '$lib/layouts/ShellPageHeader.svelte';
+	import FilterChip from '$lib/forms/FilterChip.svelte';
 	import Icon from '$lib/primitives/Icon.svelte';
 	import * as Identity from '$lib/openapi/identity';
+	import { countryFlag } from '$lib/regionutil';
+
+	interface NamedItem {
+		metadata: { id: string; name: string };
+	}
 
 	interface Props {
 		settings: ShellPageSettings;
 		resources: Array<T>;
 		filterFn?: (r: T, query: string) => boolean;
 		tools?: Snippet;
-		// Required: card / list view.
 		list: Snippet<[Array<T>]>;
-		// Optional: custom table row. When absent a generic name/status/age table is shown.
 		tableRow?: Snippet<[T]>;
 		tableHeaders?: Array<string>;
-		// Optional: enables grouped view. Return the group key for each resource.
 		groupKey?: (r: T) => string;
 		groupLabel?: (key: string) => string;
+		projects?: Array<NamedItem>;
+		regions?: Array<NamedItem>;
 		empty?: Snippet;
 	}
 
@@ -36,36 +41,103 @@
 		tableHeaders,
 		groupKey,
 		groupLabel,
+		projects,
+		regions,
 		empty
 	}: Props = $props();
 
 	type View = 'list' | 'table' | 'grouped';
 
 	let query = $state('');
-	let statusFilter = $state<'all' | 'provisioned' | 'attention'>('all');
 	let view = $state<View>('list');
+	let selectedStatuses = $state(new Set<string>());
+	let selectedProjectIds = $state(new Set<string>());
+	let selectedRegionIds = $state(new Set<string>());
 
-	// Reset grouped view if groupKey prop is removed
+	const anyFilterActive = $derived(
+		!!query.trim() ||
+			selectedStatuses.size > 0 ||
+			selectedProjectIds.size > 0 ||
+			selectedRegionIds.size > 0
+	);
+
+	function clearAll() {
+		query = '';
+		selectedStatuses = new Set();
+		selectedProjectIds = new Set();
+		selectedRegionIds = new Set();
+	}
+
+	// Status options in design order with semantic pip colours.
+	const STATUS_DISPLAY: Array<{ v: Identity.ResourceProvisioningStatus; color: string }> = [
+		{ v: Identity.ResourceProvisioningStatus.Provisioned, color: 'var(--accent)' },
+		{ v: Identity.ResourceProvisioningStatus.Provisioning, color: 'oklch(0.6 0.15 200)' },
+		{ v: Identity.ResourceProvisioningStatus.Pending, color: 'oklch(0.75 0.15 60)' },
+		{ v: Identity.ResourceProvisioningStatus.Deprovisioning, color: 'oklch(0.7 0.12 30)' },
+		{ v: Identity.ResourceProvisioningStatus.Error, color: 'var(--danger)' },
+		{ v: Identity.ResourceProvisioningStatus.Unknown, color: 'var(--text-4)' }
+	];
+	const statusOptions = STATUS_DISPLAY.map(({ v, color }) => ({
+		id: v,
+		label: v.charAt(0).toUpperCase() + v.slice(1),
+		color
+	}));
+
+	// Rotating palette for project pips — visually distinct, stays consistent by index.
+	const PROJECT_PALETTE = [
+		'oklch(0.65 0.18 220)', // blue
+		'oklch(0.65 0.18 290)', // violet
+		'oklch(0.68 0.16 30)', // orange
+		'oklch(0.65 0.18 340)', // pink
+		'oklch(0.65 0.16 170)', // teal
+		'oklch(0.68 0.16 80)' // lime
+	];
+
+	const projectOptions = $derived(
+		(projects ?? []).map((p, i) => ({
+			id: p.metadata.id,
+			label: p.metadata.name,
+			color: PROJECT_PALETTE[i % PROJECT_PALETTE.length]
+		}))
+	);
+
+	const regionOptions = $derived(
+		(regions ?? []).map((r) => ({
+			id: r.metadata.id,
+			label: r.metadata.name,
+			prefix: countryFlag(r.metadata.name.split('-')[0])
+		}))
+	);
+
 	$effect(() => {
 		if (view === 'grouped' && !groupKey) view = 'list';
 	});
 
 	const filtered = $derived.by(() => {
 		let r = resources;
-		if (statusFilter === 'provisioned') {
-			r = r.filter(
-				(x) => x.metadata.provisioningStatus === Identity.ResourceProvisioningStatus.Provisioned
-			);
-		} else if (statusFilter === 'attention') {
-			r = r.filter(
-				(x) => x.metadata.provisioningStatus !== Identity.ResourceProvisioningStatus.Provisioned
-			);
-		}
+
+		if (selectedStatuses.size > 0)
+			r = r.filter((x) => selectedStatuses.has(x.metadata.provisioningStatus));
+
+		if (selectedProjectIds.size > 0)
+			r = r.filter((x) => {
+				const pid = (x as unknown as { metadata: { projectId?: string } }).metadata.projectId;
+				return pid ? selectedProjectIds.has(pid) : false;
+			});
+
+		if (selectedRegionIds.size > 0)
+			r = r.filter((x) => {
+				const a = x as unknown as { status?: { regionId?: string }; spec?: { regionId?: string } };
+				const rid = a.status?.regionId ?? a.spec?.regionId;
+				return rid ? selectedRegionIds.has(rid) : false;
+			});
+
 		if (query.trim()) {
 			const q = query.toLowerCase();
 			const fn = filterFn ?? ((x: T) => x.metadata.name.toLowerCase().includes(q));
 			r = r.filter((x) => fn(x, q));
 		}
+
 		return r;
 	});
 
@@ -95,7 +167,6 @@
 	{/if}
 </ShellPageHeader>
 
-<!-- Stats row -->
 <div class="stats">
 	<div class="stat">
 		<div class="stat__label">Total</div>
@@ -117,7 +188,7 @@
 
 <!-- Ribbon -->
 <div class="toolbar">
-	<!-- Search chip -->
+	<!-- Search -->
 	<div class="search-chip" class:search-chip--active={!!query}>
 		<Icon name="search" size={13} class="search-icon" />
 		<input type="search" class="search-chip__input" placeholder="Filter…" bind:value={query} />
@@ -128,30 +199,48 @@
 		{/if}
 	</div>
 
-	<!-- Status chips -->
-	<button
-		class="filter-chip"
-		class:active={statusFilter === 'provisioned'}
-		onclick={() => (statusFilter = statusFilter === 'provisioned' ? 'all' : 'provisioned')}
-	>
-		<span class="dot dot--ok"></span>Provisioned
-	</button>
-	<button
-		class="filter-chip"
-		class:active={statusFilter === 'attention'}
-		onclick={() => (statusFilter = statusFilter === 'attention' ? 'all' : 'attention')}
-	>
-		<span class="dot dot--warn"></span>Needs attention
-	</button>
+	<!-- Status filter -->
+	<FilterChip
+		icon="activity"
+		label="Status"
+		options={statusOptions}
+		selected={selectedStatuses}
+		onchange={(s) => (selectedStatuses = s)}
+	/>
+
+	<!-- Project filter -->
+	{#if projectOptions.length >= 1}
+		<FilterChip
+			icon="folder"
+			label="Project"
+			options={projectOptions}
+			selected={selectedProjectIds}
+			onchange={(s) => (selectedProjectIds = s)}
+		/>
+	{/if}
+
+	<!-- Region filter -->
+	{#if regionOptions.length >= 1}
+		<FilterChip
+			icon="globe"
+			label="Region"
+			options={regionOptions}
+			selected={selectedRegionIds}
+			onchange={(s) => (selectedRegionIds = s)}
+		/>
+	{/if}
+
+	<!-- Global clear -->
+	{#if anyFilterActive}
+		<button class="clear-btn" onclick={clearAll}>
+			<Icon name="x" size={12} />Clear
+		</button>
+	{/if}
 
 	<div class="spacer"></div>
 
-	<!-- Item count -->
-	<span class="item-count">
-		{filtered.length} item{filtered.length === 1 ? '' : 's'}
-	</span>
+	<span class="item-count">{filtered.length} item{filtered.length === 1 ? '' : 's'}</span>
 
-	<!-- View switcher: list + table always; grouped when groupKey provided -->
 	<div class="seg" role="group" aria-label="View">
 		<button class:active={view === 'list'} onclick={() => (view = 'list')}>
 			<Icon name="rows" size={14} />List
@@ -169,13 +258,10 @@
 
 <!-- Content -->
 {#if filtered.length === 0}
-	{#if empty && resources.length === 0 && statusFilter === 'all' && !query}
+	{#if empty && resources.length === 0 && !anyFilterActive}
 		{@render empty()}
 	{:else}
-		<p class="empty-filter">
-			{#if query}No resources match "<strong>{query}</strong>"{:else}No resources match the current
-				filter.{/if}
-		</p>
+		<p class="empty-filter">No resources match the current filters.</p>
 	{/if}
 {:else if view === 'table'}
 	<div class="table-wrap">
@@ -273,23 +359,28 @@
 		display: flex;
 		align-items: center;
 	}
-
 	.search-chip__clear:hover {
 		color: var(--text-2);
 	}
 
-	.dot {
-		width: 6px;
-		height: 6px;
-		border-radius: 999px;
-		flex-shrink: 0;
+	.clear-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		height: 28px;
+		padding: 0 10px;
+		border-radius: 8px;
+		font-size: 12px;
+		color: var(--text-3);
+		border: 1px solid transparent;
+		transition:
+			color 120ms var(--ease),
+			background 120ms var(--ease);
 	}
 
-	.dot--ok {
-		background: var(--accent);
-	}
-	.dot--warn {
-		background: oklch(0.75 0.15 60);
+	.clear-btn:hover {
+		color: var(--text-1);
+		background: var(--bg-2);
 	}
 
 	.item-count {
@@ -298,7 +389,6 @@
 		white-space: nowrap;
 	}
 
-	/* Icon + label gap inside .seg buttons */
 	:global(.seg button) {
 		display: inline-flex;
 		align-items: center;

@@ -81,7 +81,7 @@
 	}
 </script>
 
-<ListPage {settings} resources={data.instances}>
+<ListPage {settings} resources={data.instances} projects={data.projects} regions={data.regions}>
 	{#snippet tools()}
 		{#if data.projects.length}
 			<PopupButton icon="plus" label="Create">

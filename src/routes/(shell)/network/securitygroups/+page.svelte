@@ -39,7 +39,12 @@
 	}
 </script>
 
-<ListPage {settings} resources={data.securityGroups}>
+<ListPage
+	{settings}
+	resources={data.securityGroups}
+	projects={data.projects}
+	regions={data.regions}
+>
 	{#snippet tools()}
 		{#if data.projects.length}
 			<PopupButton icon="plus" label="Create">
