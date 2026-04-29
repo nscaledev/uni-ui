@@ -70,9 +70,9 @@
 	{@render main()}
 
 	{#if children}
-		<div class="card-meta">
+		<dl class="rcard__grid">
 			{@render children()}
-		</div>
+		</dl>
 	{/if}
 </article>
 
@@ -95,14 +95,6 @@
 		top: calc(100% + 4px);
 		min-width: 160px;
 		z-index: 40;
-	}
-
-	.card-meta {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 6px 16px;
-		padding-top: 10px;
-		border-top: 1px solid var(--line-weak);
 	}
 
 	.selected {

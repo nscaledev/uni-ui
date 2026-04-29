@@ -198,21 +198,18 @@
 								label="Network"
 								value={lookupNetwork(resource.status.networkId).metadata.name}
 							/>{/if}
-						{#if resource.status.privateIP}<div class="meta-extra">
-								<Icon name="network" size={14} /><span>Private</span><span
-									>{resource.status.privateIP}</span
-								>
-							</div>{/if}
-						{#if resource.status.publicIP}<div class="meta-extra">
-								<Icon name="network" size={14} /><span>Public</span><span
-									>{resource.status.publicIP}</span
-								>
-							</div>{/if}
-						{#if sshCertificateAuthorityName(resource)}<div class="meta-extra">
-								<Icon name="key" size={14} /><span>SSH CA</span><span
-									>{sshCertificateAuthorityName(resource)}</span
-								>
-							</div>{/if}
+						{#if resource.status.privateIP}
+							<ShellMetadataItem label="Private" value={resource.status.privateIP} />
+						{/if}
+						{#if resource.status.publicIP}
+							<ShellMetadataItem label="Public" value={resource.status.publicIP} />
+						{/if}
+						{#if sshCertificateAuthorityName(resource)}
+							<ShellMetadataItem
+								label="SSH CA"
+								value={sshCertificateAuthorityName(resource) ?? ''}
+							/>
+						{/if}
 					</ShellListItemMetadata>
 				</ShellListItem>{/each}</ShellList
 		>{/snippet}
@@ -240,18 +237,5 @@
 		color: var(--text-3);
 		letter-spacing: 0.06em;
 		text-transform: uppercase;
-	}
-	.meta-extra {
-		display: flex;
-		align-items: center;
-		gap: 6px;
-		font-size: 12px;
-		color: var(--text-3);
-	}
-	.meta-extra span:first-of-type {
-		font-weight: 500;
-	}
-	.meta-extra span:last-child {
-		color: var(--text-2);
 	}
 </style>
