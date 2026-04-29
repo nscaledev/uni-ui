@@ -264,12 +264,12 @@
 	</div>
 	<div class="stat">
 		<div class="stat__label">Provisioned</div>
-		<div class="stat__value">{stats.provisioned}</div>
+		<div class="stat__value ok">{stats.provisioned}</div>
 		<div class="stat__sub up">● healthy</div>
 	</div>
 	<div class="stat">
 		<div class="stat__label">Needs attention</div>
-		<div class="stat__value" class:warn={stats.needsAttention > 0}>{stats.needsAttention}</div>
+		<div class="stat__value" class:danger={stats.needsAttention > 0}>{stats.needsAttention}</div>
 		{#if stats.needsAttention > 0}
 			<div class="stat__sub down">● error + degraded</div>
 		{/if}
@@ -489,6 +489,14 @@
 
 <style>
 	.warn {
+		color: var(--danger);
+	}
+
+	.ok {
+		color: var(--accent);
+	}
+
+	.danger {
 		color: var(--danger);
 	}
 
