@@ -58,7 +58,7 @@
 			>{#each users as resource}<ShellListItem id={resource.metadata.id}>
 					{#snippet main()}<ShellListItemHeader title={resource.spec.subject} />{/snippet}
 					{#snippet badges()}
-						<ShellListItemBadges metadata={resource.metadata} showHealth={false}>
+						<ShellListItemBadges metadata={resource.metadata}>
 							{#snippet extra()}<span class="chip chip--{stateVariant(resource)}"
 									>{resource.spec.state}</span
 								>{/snippet}

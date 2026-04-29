@@ -43,10 +43,7 @@
 	{#snippet list(accounts)}<ShellList
 			>{#each accounts as resource}<ShellListItem id={resource.metadata.id}>
 					{#snippet main()}<ShellListItemHeader metadata={resource.metadata} />{/snippet}
-					{#snippet badges()}<ShellListItemBadges
-							metadata={resource.metadata}
-							showHealth={false}
-						/>{/snippet}
+					{#snippet badges()}<ShellListItemBadges metadata={resource.metadata} />{/snippet}
 					{#snippet trail()}<ModalIcon
 							icon="trash"
 							title="Delete service account?"

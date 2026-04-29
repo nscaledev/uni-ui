@@ -1,10 +1,7 @@
 <script lang="ts">
 	import * as Identity from '$lib/openapi/identity';
-	import * as ProvisioningStatus from '$lib/provisioningStatus';
-	import * as HealthStatus from '$lib/healthStatus';
 	import * as Kubernetes from '$lib/openapi/kubernetes';
-
-	import Badge from '$lib/layouts/Badge.svelte';
+	import { resolveChip, type OperationalStatus } from '$lib/layouts/effectiveStatus';
 
 	const PROJECT_PALETTE = [
 		'oklch(0.65 0.18 220)',
@@ -18,12 +15,11 @@
 	interface Props {
 		metadata?: Identity.ResourceReadMetadata;
 		projects?: Array<Identity.ProjectRead>;
-		showProvisioning?: boolean;
-		showHealth?: boolean;
+		operationalStatus?: OperationalStatus | null;
 		extra?: import('svelte').Snippet;
 	}
 
-	let { metadata, projects, showProvisioning = true, showHealth = true, extra }: Props = $props();
+	let { metadata, projects, operationalStatus, extra }: Props = $props();
 
 	const project = $derived.by(() => {
 		if (!metadata || !projects || !('projectId' in metadata)) return null;
@@ -36,15 +32,7 @@
 		};
 	});
 
-	const provisioningVisible = $derived(
-		showProvisioning &&
-			!!metadata &&
-			metadata.provisioningStatus !== Identity.ResourceProvisioningStatus.Unknown
-	);
-
-	const healthVisible = $derived(
-		showHealth && !!metadata && metadata.healthStatus !== Identity.ResourceHealthStatus.Unknown
-	);
+	const chip = $derived(resolveChip(metadata?.provisioningStatus, operationalStatus));
 </script>
 
 <div class="badges">
@@ -55,16 +43,11 @@
 		</span>
 	{/if}
 
-	{#if provisioningVisible && metadata}
-		<Badge icon={ProvisioningStatus.icon(metadata)} iconcolor={ProvisioningStatus.color(metadata)}>
-			{metadata.provisioningStatus}
-		</Badge>
-	{/if}
-
-	{#if healthVisible && metadata}
-		<Badge icon={HealthStatus.icon(metadata)} iconcolor={HealthStatus.color(metadata)}>
-			{metadata.healthStatus}
-		</Badge>
+	{#if chip}
+		<span class="chip chip--{chip.chipClass}">
+			<span class="dot"></span>
+			{chip.label}
+		</span>
 	{/if}
 
 	{@render extra?.()}
