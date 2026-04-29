@@ -185,6 +185,7 @@
 
 <aside class="sidebar">
 	<!-- Static nav (Dashboard) -->
+	<div class="nav-group-title">Overview</div>
 	{#each navStatic as entry}
 		<a
 			href={entry.href}
@@ -198,6 +199,7 @@
 	{/each}
 
 	<!-- Grouped nav via Accordion -->
+	<div class="nav-group-title">Resources</div>
 	<Accordion.Root type="single" value={openSection} onValueChange={(v) => (openSection = v)}>
 		{#each nav as section}
 			<Accordion.Item value={section.title}>
