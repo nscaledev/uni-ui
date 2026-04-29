@@ -6,6 +6,7 @@
 	let { data }: { data: PageData } = $props();
 	import * as Clients from '$lib/clients';
 	import * as Kubernetes from '$lib/openapi/kubernetes';
+	import { fromHealthStatus } from '$lib/layouts/effectiveStatus';
 	import * as RegionUtil from '$lib/regionutil';
 	import type { ShellPageSettings } from '$lib/layouts/types.ts';
 	import ListPage from '$lib/layouts/ListPage.svelte';
@@ -96,7 +97,11 @@
 			>{#each clusters as resource}<ShellListItem id={resource.metadata.id}>
 					{#snippet main()}<ShellListItemHeader metadata={resource.metadata} />{/snippet}
 					{#snippet badges()}
-						<ShellListItemBadges metadata={resource.metadata} projects={data.projects}>
+						<ShellListItemBadges
+							metadata={resource.metadata}
+							projects={data.projects}
+							operationalStatus={fromHealthStatus(resource.metadata.healthStatus)}
+						>
 							{#snippet extra()}<Badge
 									>{RegionUtil.flag(data.regions, resource.spec.regionId)}
 									{RegionUtil.name(data.regions, resource.spec.regionId)}</Badge
@@ -104,14 +109,19 @@
 						</ShellListItemBadges>
 					{/snippet}
 					{#snippet menu()}
-						<button
-							class="btn btn--ghost"
-							onclick={() => downloadKubeconfig(resource)}
-							title="Download kubeconfig"><Icon name="download" size={16} /></button
+						<button class="menu__item" onclick={() => downloadKubeconfig(resource)}>
+							<Icon name="download" size={14} /> Download kubeconfig
+						</button>
+						<hr class="menu__sep" />
+						<ModalIcon
+							icon="trash"
+							label="Delete"
+							class="menu__item menu__item--danger"
+							title="Delete cluster?"
+							confirm={() => deleteCluster(resource)}
 						>
-						<ModalIcon icon="trash" title="Delete cluster?" confirm={() => deleteCluster(resource)}
-							>Removing "{resource.metadata.name}" will destroy all workloads.</ModalIcon
-						>
+							Removing "{resource.metadata.name}" will destroy all workloads.
+						</ModalIcon>
 					{/snippet}
 					<ShellListItemMetadata metadata={resource.metadata} />
 				</ShellListItem>{/each}</ShellList
