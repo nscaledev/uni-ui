@@ -41,7 +41,7 @@
 		if (!disabled) open = o;
 	}}
 >
-	<Dialog.Trigger class="btn {cls}" {disabled} aria-label={label ?? title}>
+	<Dialog.Trigger class={cls || 'btn'} {disabled} aria-label={label ?? title}>
 		<Icon name={icon} size={16} />
 		{#if label}<span>{label}</span>{/if}
 	</Dialog.Trigger>
