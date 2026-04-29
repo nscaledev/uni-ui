@@ -6,6 +6,7 @@
 	let { data }: { data: PageData } = $props();
 	import * as Clients from '$lib/clients';
 	import * as Identity from '$lib/openapi/identity';
+	import { fromUserState } from '$lib/layouts/effectiveStatus';
 	import * as Formatters from '$lib/formatters';
 	import type { ShellPageSettings } from '$lib/layouts/types.ts';
 	import ListPage from '$lib/layouts/ListPage.svelte';
@@ -27,11 +28,6 @@
 	onMount(() => startAutoRefresh('layout:users'));
 	function userLastActive(u: Identity.UserRead) {
 		return u.status.lastActive ? Formatters.ageFormatter(u.status.lastActive) : 'never';
-	}
-	function stateVariant(u: Identity.UserRead): 'ok' | 'warn' | 'err' {
-		if (u.spec.state === Identity.UserState.Active) return 'ok';
-		if (u.spec.state === Identity.UserState.Suspended) return 'err';
-		return 'warn';
 	}
 	function deleteUser(id: string) {
 		Clients.identity()
@@ -58,11 +54,10 @@
 			>{#each users as resource}<ShellListItem id={resource.metadata.id}>
 					{#snippet main()}<ShellListItemHeader title={resource.spec.subject} />{/snippet}
 					{#snippet badges()}
-						<ShellListItemBadges metadata={resource.metadata}>
-							{#snippet extra()}<span class="chip chip--{stateVariant(resource)}"
-									>{resource.spec.state}</span
-								>{/snippet}
-						</ShellListItemBadges>
+						<ShellListItemBadges
+							metadata={resource.metadata}
+							operationalStatus={fromUserState(resource.spec.state)}
+						/>
 					{/snippet}
 					{#snippet menu()}<ModalIcon
 							icon="trash"
