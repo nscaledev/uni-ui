@@ -93,7 +93,7 @@
 		{/if}
 	{/snippet}
 	{#snippet list(clusters)}<ShellList
-			>{#each clusters as resource}<ShellListItem>
+			>{#each clusters as resource}<ShellListItem id={resource.metadata.id}>
 					{#snippet main()}<ShellListItemHeader metadata={resource.metadata} />{/snippet}
 					{#snippet badges()}
 						<ShellListItemBadges metadata={resource.metadata} projects={data.projects}>

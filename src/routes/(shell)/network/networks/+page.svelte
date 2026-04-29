@@ -166,7 +166,7 @@
 	{#snippet list(networks)}
 		<ShellList>
 			{#each networks as resource}
-				<ShellListItem>
+				<ShellListItem id={resource.metadata.id}>
 					{#snippet main()}
 						<ShellListItemHeader metadata={resource.metadata} />
 					{/snippet}

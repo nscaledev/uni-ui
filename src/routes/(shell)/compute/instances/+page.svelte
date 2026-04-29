@@ -114,7 +114,7 @@
 		{/if}
 	{/snippet}
 	{#snippet list(instances)}<ShellList
-			>{#each instances as resource}<ShellListItem>
+			>{#each instances as resource}<ShellListItem id={resource.metadata.id}>
 					{#snippet main()}<ShellListItemHeader
 							metadata={resource.metadata}
 							href="/compute/instances/edit/{resource.metadata.id}"

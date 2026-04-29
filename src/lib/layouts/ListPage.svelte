@@ -1,12 +1,14 @@
 <script
 	lang="ts"
-	generics="T extends { metadata: { provisioningStatus: string; creationTime: Date; name: string } }"
+	generics="T extends { metadata: { id: string; provisioningStatus: string; creationTime: Date; name: string } }"
 >
 	import type { Snippet } from 'svelte';
+	import { setContext } from 'svelte';
 	import { computeStats } from '$lib/layouts/stats';
 	import { ageFormatter } from '$lib/formatters';
 	import type { ShellPageSettings } from '$lib/layouts/types';
 	import ShellPageHeader from '$lib/layouts/ShellPageHeader.svelte';
+	import BulkBar from '$lib/layouts/BulkBar.svelte';
 	import FilterChip from '$lib/forms/FilterChip.svelte';
 	import Icon from '$lib/primitives/Icon.svelte';
 	import * as Identity from '$lib/openapi/identity';
@@ -16,6 +18,11 @@
 
 	interface NamedItem {
 		metadata: { id: string; name: string };
+	}
+
+	interface SelectContext {
+		isSelected: (id: string) => boolean;
+		toggle: (id: string) => void;
 	}
 
 	interface Props {
@@ -31,6 +38,7 @@
 		projects?: Array<NamedItem>;
 		regions?: Array<NamedItem>;
 		empty?: Snippet;
+		bulkbar?: Snippet<[{ ids: Set<string>; clear: () => void }]>;
 	}
 
 	let {
@@ -45,9 +53,11 @@
 		groupLabel,
 		projects,
 		regions,
-		empty
+		empty,
+		bulkbar
 	}: Props = $props();
 
+	// ── local filter state ────────────────────────────────────────
 	let query = $state('');
 	let selectedStatuses = $state(new Set<string>());
 	let selectedProjectIds = $state(new Set<string>());
@@ -67,7 +77,28 @@
 		selectedRegionIds = new Set();
 	}
 
-	// Status options in design order with semantic pip colours.
+	// ── selection state ───────────────────────────────────────────
+	let selectedIds = $state(new Set<string>());
+
+	function toggleId(id: string) {
+		const s = new Set(selectedIds);
+		s.has(id) ? s.delete(id) : s.add(id);
+		selectedIds = s;
+	}
+
+	function clearSelection() {
+		selectedIds = new Set();
+	}
+
+	// Expose selection state to descendant components (e.g. ShellListItem).
+	if (bulkbar) {
+		setContext<SelectContext>('bulkSelect', {
+			isSelected: (id) => selectedIds.has(id),
+			toggle: toggleId
+		});
+	}
+
+	// ── filter options ────────────────────────────────────────────
 	const STATUS_DISPLAY: Array<{ v: Identity.ResourceProvisioningStatus; color: string }> = [
 		{ v: Identity.ResourceProvisioningStatus.Provisioned, color: 'var(--accent)' },
 		{ v: Identity.ResourceProvisioningStatus.Provisioning, color: 'oklch(0.6 0.15 200)' },
@@ -82,14 +113,13 @@
 		color
 	}));
 
-	// Rotating palette for project pips — visually distinct, stays consistent by index.
 	const PROJECT_PALETTE = [
-		'oklch(0.65 0.18 220)', // blue
-		'oklch(0.65 0.18 290)', // violet
-		'oklch(0.68 0.16 30)', // orange
-		'oklch(0.65 0.18 340)', // pink
-		'oklch(0.65 0.16 170)', // teal
-		'oklch(0.68 0.16 80)' // lime
+		'oklch(0.65 0.18 220)',
+		'oklch(0.65 0.18 290)',
+		'oklch(0.68 0.16 30)',
+		'oklch(0.65 0.18 340)',
+		'oklch(0.65 0.16 170)',
+		'oklch(0.68 0.16 80)'
 	];
 
 	const projectOptions = $derived(
@@ -112,6 +142,7 @@
 		if ($view === 'grouped' && !groupKey) $view = 'cards';
 	});
 
+	// ── filtered list ─────────────────────────────────────────────
 	const filtered = $derived.by(() => {
 		let r = resources;
 
@@ -137,7 +168,7 @@
 			r = r.filter((x) => fn(x, q));
 		}
 
-		// Apply global omni-search filters on top of local ones.
+		// Apply global omni-search on top of local filters.
 		if ($omniQuery.trim()) {
 			const q = $omniQuery.toLowerCase();
 			const fn = filterFn ?? ((x: T) => x.metadata.name.toLowerCase().includes(q));
@@ -176,6 +207,45 @@
 			items
 		}));
 	});
+
+	// ── pagination ────────────────────────────────────────────────
+	let currentPage = $state(1);
+	let perPage = $state(25);
+
+	// Reset page and selection when filters change.
+	$effect(() => {
+		filtered;
+		currentPage = 1;
+		clearSelection();
+	});
+
+	const paginated = $derived(filtered.slice((currentPage - 1) * perPage, currentPage * perPage));
+	const totalPages = $derived(Math.ceil(filtered.length / perPage));
+
+	function pageWindow(): Array<number> {
+		const pages: Array<number> = [];
+		const start = Math.max(1, Math.min(currentPage - 2, totalPages - 4));
+		const end = Math.min(totalPages, Math.max(currentPage + 2, 5));
+		for (let i = start; i <= end; i++) pages.push(i);
+		return pages;
+	}
+
+	// ── select-all helpers ────────────────────────────────────────
+	const pageIds = $derived(paginated.map((r) => r.metadata.id));
+	const allPageSelected = $derived(
+		pageIds.length > 0 && pageIds.every((id) => selectedIds.has(id))
+	);
+	const somePageSelected = $derived(pageIds.some((id) => selectedIds.has(id)) && !allPageSelected);
+
+	function toggleAll() {
+		const s = new Set(selectedIds);
+		if (allPageSelected) {
+			pageIds.forEach((id) => s.delete(id));
+		} else {
+			pageIds.forEach((id) => s.add(id));
+		}
+		selectedIds = s;
+	}
 
 	const stats = $derived(computeStats(resources));
 </script>
@@ -288,6 +358,17 @@
 		<table class="table">
 			<thead>
 				<tr>
+					{#if bulkbar}
+						<th class="col-select">
+							<input
+								type="checkbox"
+								class="checkbox"
+								class:indet={somePageSelected}
+								checked={allPageSelected}
+								onchange={toggleAll}
+							/>
+						</th>
+					{/if}
 					{#if tableHeaders?.length}
 						{#each tableHeaders as h}<th>{h}</th>{/each}
 					{:else}
@@ -296,11 +377,21 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each filtered as resource}
+				{#each paginated as resource}
 					{#if tableRow}
 						{@render tableRow(resource)}
 					{:else}
 						<tr>
+							{#if bulkbar}
+								<td class="col-select">
+									<input
+										type="checkbox"
+										class="checkbox"
+										checked={selectedIds.has(resource.metadata.id)}
+										onchange={() => toggleId(resource.metadata.id)}
+									/>
+								</td>
+							{/if}
 							<td class="primary">{resource.metadata.name}</td>
 							<td>{resource.metadata.provisioningStatus}</td>
 							<td>{ageFormatter(resource.metadata.creationTime)}</td>
@@ -323,7 +414,77 @@
 		</div>
 	{/each}
 {:else}
-	{@render list(filtered)}
+	<!-- Cards view: select-all bar when bulk actions are enabled -->
+	{#if bulkbar && paginated.length > 0}
+		<div class="select-all-bar">
+			<label class="select-all-bar__check">
+				<input
+					type="checkbox"
+					class="checkbox"
+					class:indet={somePageSelected}
+					checked={allPageSelected}
+					onchange={toggleAll}
+				/>
+				<span>
+					{#if allPageSelected}
+						All {pageIds.length} on this page selected
+					{:else if somePageSelected}
+						{pageIds.filter((id) => selectedIds.has(id)).length} of {pageIds.length} selected
+					{:else}
+						Select all {pageIds.length} on this page
+					{/if}
+				</span>
+			</label>
+		</div>
+	{/if}
+	{@render list(paginated)}
+{/if}
+
+<!-- Pagination -->
+{#if totalPages > 1}
+	<div class="pagination">
+		<span>Rows per page</span>
+		<select
+			class="page-btn"
+			bind:value={perPage}
+			onchange={() => (currentPage = 1)}
+			style="padding: 0 8px;"
+		>
+			{#each [10, 25, 50, 100] as n}<option value={n}>{n}</option>{/each}
+		</select>
+		<span class="spacer"></span>
+		<span
+			>{(currentPage - 1) * perPage + 1}–{Math.min(currentPage * perPage, filtered.length)} of {filtered.length}</span
+		>
+		<button
+			class="page-btn"
+			disabled={currentPage === 1}
+			onclick={() => (currentPage = Math.max(1, currentPage - 1))}
+		>
+			<Icon name="chevronLeft" size={12} />
+		</button>
+		{#each pageWindow() as n}
+			<button class="page-btn" class:active={n === currentPage} onclick={() => (currentPage = n)}>
+				{n}
+			</button>
+		{/each}
+		<button
+			class="page-btn"
+			disabled={currentPage === totalPages}
+			onclick={() => (currentPage = Math.min(totalPages, currentPage + 1))}
+		>
+			<Icon name="chevronRight" size={12} />
+		</button>
+	</div>
+{/if}
+
+<!-- Bulk action bar — slides up when any items are selected -->
+{#if bulkbar && selectedIds.size > 0}
+	<BulkBar count={selectedIds.size} onClear={clearSelection}>
+		{#snippet actions()}
+			{@render bulkbar({ ids: selectedIds, clear: clearSelection })}
+		{/snippet}
+	</BulkBar>
 {/if}
 
 <style>
@@ -420,5 +581,21 @@
 		text-align: center;
 		font-size: 13px;
 		color: var(--text-3);
+	}
+
+	.select-all-bar {
+		display: flex;
+		align-items: center;
+		padding: 8px 4px;
+		margin-bottom: 8px;
+	}
+
+	.select-all-bar__check {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		font-size: 12px;
+		color: var(--text-3);
+		cursor: pointer;
 	}
 </style>

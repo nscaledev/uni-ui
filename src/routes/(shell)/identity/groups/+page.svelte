@@ -46,7 +46,7 @@
 	{#snippet list(groups)}
 		<ShellList>
 			{#each groups as resource}
-				<ShellListItem>
+				<ShellListItem id={resource.metadata.id}>
 					{#snippet main()}
 						<ShellListItemHeader
 							metadata={resource.metadata}

@@ -41,7 +41,7 @@
 			href="/identity/serviceaccounts/create"
 		/>{/snippet}
 	{#snippet list(accounts)}<ShellList
-			>{#each accounts as resource}<ShellListItem>
+			>{#each accounts as resource}<ShellListItem id={resource.metadata.id}>
 					{#snippet main()}<ShellListItemHeader metadata={resource.metadata} />{/snippet}
 					{#snippet badges()}<ShellListItemBadges
 							metadata={resource.metadata}

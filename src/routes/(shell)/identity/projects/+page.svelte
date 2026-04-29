@@ -40,7 +40,7 @@
 			href="/identity/projects/create"
 		/>{/snippet}
 	{#snippet list(projects)}<ShellList
-			>{#each projects as resource}<ShellListItem>
+			>{#each projects as resource}<ShellListItem id={resource.metadata.id}>
 					{#snippet main()}<ShellListItemHeader metadata={resource.metadata} />{/snippet}
 					{#snippet badges()}<ShellListItemBadges metadata={resource.metadata} />{/snippet}
 					{#snippet trail()}<ModalIcon

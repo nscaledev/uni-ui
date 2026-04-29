@@ -67,7 +67,7 @@
 		{/if}
 	{/snippet}
 	{#snippet list(groups)}<ShellList
-			>{#each groups as resource}<ShellListItem>
+			>{#each groups as resource}<ShellListItem id={resource.metadata.id}>
 					{#snippet main()}<ShellListItemHeader
 							metadata={resource.metadata}
 							href="/network/securitygroups/edit/{resource.metadata.id}"

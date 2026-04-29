@@ -40,7 +40,7 @@
 			href="/identity/oauth2providers/create"
 		/>{/snippet}
 	{#snippet list(providers)}<ShellList
-			>{#each providers as resource}<ShellListItem>
+			>{#each providers as resource}<ShellListItem id={resource.metadata.id}>
 					{#snippet main()}<ShellListItemHeader metadata={resource.metadata} />{/snippet}
 					{#snippet badges()}<ShellListItemBadges
 							metadata={resource.metadata}

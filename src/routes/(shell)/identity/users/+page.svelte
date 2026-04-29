@@ -55,7 +55,7 @@
 			href="/identity/users/create"
 		/>{/snippet}
 	{#snippet list(users)}<ShellList
-			>{#each users as resource}<ShellListItem>
+			>{#each users as resource}<ShellListItem id={resource.metadata.id}>
 					{#snippet main()}<ShellListItemHeader title={resource.spec.subject} />{/snippet}
 					{#snippet badges()}
 						<ShellListItemBadges metadata={resource.metadata} showHealth={false}>

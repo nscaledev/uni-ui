@@ -36,7 +36,7 @@
 
 <ListPage {settings} resources={data.clustermanagers}>
 	{#snippet list(managers)}<ShellList
-			>{#each managers as resource}<ShellListItem>
+			>{#each managers as resource}<ShellListItem id={resource.metadata.id}>
 					{#snippet main()}<ShellListItemHeader metadata={resource.metadata} />{/snippet}
 					{#snippet badges()}<ShellListItemBadges
 							metadata={resource.metadata}

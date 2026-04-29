@@ -40,7 +40,7 @@
 			href="/identity/sshcertificateauthorities/create"
 		/>{/snippet}
 	{#snippet list(cas)}<ShellList
-			>{#each cas as resource}<ShellListItem>
+			>{#each cas as resource}<ShellListItem id={resource.metadata.id}>
 					{#snippet main()}<ShellListItemHeader metadata={resource.metadata} />{/snippet}
 					{#snippet badges()}<ShellListItemBadges
 							metadata={resource.metadata}
