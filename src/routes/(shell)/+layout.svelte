@@ -49,6 +49,8 @@
 		profile={data.profile}
 		organizations={data.organizations}
 		organizationID={data.organizationID}
+		projects={data.projects}
+		projectID={data.projectID}
 	/>
 
 	<SideBar organizations={data.organizations} organizationID={data.organizationID} acl={data.acl} />

@@ -1,21 +1,18 @@
 export const ssr = false;
 
 import type { LayoutLoad } from './$types';
-
 import * as Clients from '$lib/clients';
 
 export const load: LayoutLoad = async ({ fetch, depends, parent }) => {
 	depends('layout:clustermanagers');
 
-	const { organizationID } = await parent();
+	const { organizationID, projectID } = await parent();
 
-	const clustermanagers = Clients.kubernetes(
-		fetch
-	).apiV1OrganizationsOrganizationIDClustermanagersGet({
-		organizationID: organizationID
+	const all = await Clients.kubernetes(fetch).apiV1OrganizationsOrganizationIDClustermanagersGet({
+		organizationID
 	});
 
-	return {
-		clustermanagers: await clustermanagers
-	};
+	const clustermanagers = projectID ? all.filter((cm) => cm.metadata.projectId === projectID) : all;
+
+	return { clustermanagers };
 };

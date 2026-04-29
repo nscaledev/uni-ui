@@ -1,54 +1,63 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
-	import { invalidate } from '$app/navigation';
 	import { computePosition, flip, offset, shift } from '@floating-ui/dom';
 	import Icon from '$lib/primitives/Icon.svelte';
 	import { logout } from '$lib/credentials';
 	import type { IDToken } from '$lib/oidc';
-	import type { OrganizationRead } from '$lib/openapi/identity';
+	import type { OrganizationRead, ProjectRead } from '$lib/openapi/identity';
 	import { tweaksOpen } from '$lib/stores/theme';
+	import ScopePicker from '$lib/shell/ScopePicker.svelte';
+
+	const PROJECT_PALETTE = [
+		'oklch(0.65 0.18 220)',
+		'oklch(0.65 0.18 290)',
+		'oklch(0.68 0.16 30)',
+		'oklch(0.65 0.18 340)',
+		'oklch(0.65 0.16 170)',
+		'oklch(0.68 0.16 80)'
+	];
 
 	interface Props {
 		profile: IDToken;
 		organizations: Array<OrganizationRead>;
 		organizationID: string;
+		projects: Array<ProjectRead>;
+		projectID: string | null;
 	}
 
-	let { profile, organizations, organizationID }: Props = $props();
+	let { profile, organizations, organizationID, projects, projectID }: Props = $props();
 
 	const organization = $derived(organizations.find((o) => o.metadata.id === organizationID));
+	const project = $derived(projectID ? projects.find((p) => p.metadata.id === projectID) : null);
+
+	function projectColor(p: ProjectRead): string {
+		const i = projects.indexOf(p);
+		return PROJECT_PALETTE[i % PROJECT_PALETTE.length];
+	}
 
 	// ── scope picker ──────────────────────────────────────────
 	let scopeOpen = $state(false);
 	let scopeTriggerEl: HTMLButtonElement;
-	let scopeMenuEl: HTMLDivElement;
+	let scopePanelEl: HTMLDivElement;
 
 	async function repositionScope() {
-		if (!scopeTriggerEl || !scopeMenuEl) return;
-		const { x, y } = await computePosition(scopeTriggerEl, scopeMenuEl, {
+		if (!scopeTriggerEl || !scopePanelEl) return;
+		const { x, y } = await computePosition(scopeTriggerEl, scopePanelEl, {
 			placement: 'bottom-start',
 			middleware: [offset(6), flip(), shift({ padding: 8 })]
 		});
-		Object.assign(scopeMenuEl.style, { left: `${x}px`, top: `${y}px` });
+		Object.assign(scopePanelEl.style, { left: `${x}px`, top: `${y}px` });
 	}
 
 	$effect(() => {
 		if (scopeOpen) repositionScope();
 	});
 
-	function switchOrg(id: string) {
-		if (!browser) return;
-		scopeOpen = false;
-		if (id === organizationID) return;
-		window.localStorage.setItem('organization_id', id);
-		invalidate('app:organization_id');
-	}
-
 	const orgInitials = $derived.by(() => {
 		const name = organization?.metadata.name ?? '';
 		const words = name.trim().split(/\s+/);
-		if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
-		return name.slice(0, 2).toUpperCase();
+		return words.length >= 2
+			? (words[0][0] + words[1][0]).toUpperCase()
+			: name.slice(0, 2).toUpperCase();
 	});
 
 	// ── user menu ─────────────────────────────────────────────
@@ -57,9 +66,8 @@
 	let menuEl: HTMLDivElement;
 
 	const initials = $derived.by(() => {
-		if (profile.given_name && profile.family_name) {
+		if (profile.given_name && profile.family_name)
 			return (profile.given_name[0] + profile.family_name[0]).toUpperCase();
-		}
 		return (profile.email?.[0] ?? '?').toUpperCase();
 	});
 
@@ -82,10 +90,10 @@
 		if (menuOpen) repositionMenu();
 	});
 
-	// ── shared close on outside click ─────────────────────────
+	// ── shared outside-click / escape ─────────────────────────
 	function onwindowpointerdown(e: PointerEvent) {
 		const t = e.target as Node;
-		if (scopeOpen && !scopeTriggerEl?.contains(t) && !scopeMenuEl?.contains(t)) scopeOpen = false;
+		if (scopeOpen && !scopeTriggerEl?.contains(t) && !scopePanelEl?.contains(t)) scopeOpen = false;
 		if (menuOpen && !avatarTriggerEl?.contains(t) && !menuEl?.contains(t)) menuOpen = false;
 	}
 
@@ -100,17 +108,21 @@
 <svelte:window onpointerdown={onwindowpointerdown} onkeydown={onwindowkeydown} />
 
 <header class="header">
-	<!-- Scope / org picker -->
+	<!-- Scope pill -->
 	<button
 		bind:this={scopeTriggerEl}
 		class="scope"
 		onclick={() => (scopeOpen = !scopeOpen)}
-		aria-haspopup="listbox"
+		aria-haspopup="dialog"
 		aria-expanded={scopeOpen}
-		aria-label="Switch organization"
+		aria-label="Switch organization or project"
 	>
 		<span class="scope__avatar">{orgInitials}</span>
-		<span class="scope__label">{organization?.metadata.name ?? 'Loading…'}</span>
+		<span class="scope__label">{organization?.metadata.name ?? '…'}</span>
+		{#if project}
+			<span class="scope__sep">/</span>
+			<span class="scope__soft" style="color:{projectColor(project)}">{project.metadata.name}</span>
+		{/if}
 		<Icon name="chevronDown" size={12} />
 	</button>
 
@@ -144,36 +156,16 @@
 	</button>
 </header>
 
-<!-- Org picker popover -->
+<!-- Scope picker popover -->
 {#if scopeOpen}
-	<div
-		bind:this={scopeMenuEl}
-		class="menu"
-		role="listbox"
-		style="position:fixed;z-index:200;min-width:200px;"
-	>
-		<div class="menu__title">Organization</div>
-		{#each organizations as org}
-			<button
-				class="menu__item"
-				class:menu__item--active={org.metadata.id === organizationID}
-				role="option"
-				aria-selected={org.metadata.id === organizationID}
-				onclick={() => switchOrg(org.metadata.id)}
-			>
-				<span class="scope__avatar scope__avatar--sm"
-					>{(org.metadata.name.trim().split(/\s+/).length >= 2
-						? org.metadata.name.trim().split(/\s+/)[0][0] +
-							org.metadata.name.trim().split(/\s+/)[1][0]
-						: org.metadata.name.slice(0, 2)
-					).toUpperCase()}</span
-				>
-				{org.metadata.name}
-				{#if org.metadata.id === organizationID}
-					<Icon name="check" size={14} class="check-icon" />
-				{/if}
-			</button>
-		{/each}
+	<div bind:this={scopePanelEl} class="menu menu--wide" style="position:fixed;z-index:200;">
+		<ScopePicker
+			{organizations}
+			{organizationID}
+			{projects}
+			{projectID}
+			onclose={() => (scopeOpen = false)}
+		/>
 	</div>
 {/if}
 
@@ -193,8 +185,7 @@
 				logout();
 			}}
 		>
-			<Icon name="logout" size={14} />
-			Sign out
+			<Icon name="logout" size={14} />Sign out
 		</button>
 	</div>
 {/if}
@@ -217,7 +208,6 @@
 		background: var(--bg-2);
 		color: var(--text-1);
 	}
-
 	.header-icon-btn--active {
 		background: var(--bg-2);
 		color: var(--accent);
@@ -233,36 +223,18 @@
 	.menu-user {
 		padding: 8px 10px 6px;
 	}
-
 	.menu-user__name {
 		font-size: 13px;
 		font-weight: 600;
 		color: var(--text-1);
 	}
-
 	.menu-user__email {
 		font-size: 11.5px;
 		color: var(--text-3);
 		margin-top: 2px;
 	}
 
-	.menu__item--active {
-		color: var(--text-1);
-	}
-
 	.menu__item--danger {
 		color: var(--danger);
-	}
-
-	.scope__avatar--sm {
-		width: 18px;
-		height: 18px;
-		font-size: 9px;
-		border-radius: 4px;
-	}
-
-	:global(.check-icon) {
-		margin-left: auto;
-		color: var(--accent);
 	}
 </style>

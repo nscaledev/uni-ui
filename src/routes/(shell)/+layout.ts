@@ -16,15 +16,13 @@ function getSessionData<Type>(key: string): Type | undefined {
 
 export const load: LayoutLoad = async ({ fetch, depends }) => {
 	depends('app:organization_id');
+	depends('app:project_id');
 
 	const token = getSessionData<InternalToken>('token');
 	const profile = getSessionData<OIDC.IDToken>('profile');
 
-	// Not logged in, redirect to the start of the login flow, remembering where
-	// we were.
 	if (!token) {
 		window.sessionStorage.setItem('oidc_location', window.location.pathname);
-
 		redirect(307, '/oauth2/login');
 	}
 
@@ -32,28 +30,35 @@ export const load: LayoutLoad = async ({ fetch, depends }) => {
 		error(500, 'OIDC ID token not set');
 	}
 
-	// Every view will need to know the organization the user is currently viewing,
-	// we persist this across sessions.
 	const organizations = await Clients.identity(fetch).apiV1OrganizationsGet();
 	if (organizations.length == 0) {
 		error(500, 'User is not a member of any organizations');
 	}
 
 	let organizationID = window.localStorage.getItem('organization_id');
-
 	if (!organizationID || !organizations.find((o) => o.metadata.id == organizationID)) {
 		organizationID = organizations[0].metadata.id;
 	}
 
-	// Some views will alter based on ACL data for that organization.
-	const acl = await Clients.identity(fetch).apiV1OrganizationsOrganizationIDAclGet({
-		organizationID: organizationID
-	});
+	const [acl, projects] = await Promise.all([
+		Clients.identity(fetch).apiV1OrganizationsOrganizationIDAclGet({ organizationID }),
+		Clients.identity(fetch).apiV1OrganizationsOrganizationIDProjectsGet({ organizationID })
+	]);
+
+	// null = all projects; undefined means not yet set
+	let projectID: string | null = window.localStorage.getItem('project_id');
+	if (projectID && !projects.find((p) => p.metadata.id === projectID)) {
+		// Stored project no longer exists in this org — reset.
+		projectID = null;
+		window.localStorage.removeItem('project_id');
+	}
 
 	return {
-		profile: profile,
-		organizations: organizations,
-		organizationID: organizationID,
-		acl: acl
+		profile,
+		organizations,
+		organizationID,
+		acl,
+		projects,
+		projectID
 	};
 };
