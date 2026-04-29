@@ -42,8 +42,10 @@
 							metadata={resource.metadata}
 							projects={data.projects}
 						/>{/snippet}
-					{#snippet trail()}<ModalIcon
+					{#snippet menu()}<ModalIcon
 							icon="trash"
+							label="Delete"
+							class="menu__item menu__item--danger"
 							title="Delete cluster manager?"
 							confirm={() => deleteManager(resource)}
 							>Removing "{resource.metadata.name}" will remove all clusters it manages.</ModalIcon

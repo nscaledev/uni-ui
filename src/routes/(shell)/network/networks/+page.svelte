@@ -182,9 +182,11 @@
 						</ShellListItemBadges>
 					{/snippet}
 
-					{#snippet trail()}
+					{#snippet menu()}
 						<ModalIcon
 							icon="trash"
+							label="Delete"
+							class="menu__item menu__item--danger"
 							title="Delete network?"
 							confirm={() => deleteNetwork(resource)}
 						/>

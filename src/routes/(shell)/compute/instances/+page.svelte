@@ -132,7 +132,7 @@
 							{/snippet}
 						</ShellListItemBadges>
 					{/snippet}
-					{#snippet trail()}
+					{#snippet menu()}
 						<button
 							class="btn btn--ghost"
 							onclick={() => getSSHKey(resource)}

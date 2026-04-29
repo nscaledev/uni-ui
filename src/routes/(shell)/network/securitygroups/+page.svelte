@@ -82,13 +82,16 @@
 								>{/snippet}
 						</ShellListItemBadges>
 					{/snippet}
-					{#snippet trail()}
+					{#snippet menu()}
 						<ModalIcon
 							icon="trash"
+							label="Delete"
+							class="menu__item menu__item--danger"
 							title="Delete security group?"
 							confirm={() => deleteGroup(resource)}
-							>Removing "{resource.metadata.name}" will affect any instances using it.</ModalIcon
 						>
+							Removing "{resource.metadata.name}" will affect any instances using it.
+						</ModalIcon>
 					{/snippet}
 					<ShellListItemMetadata metadata={resource.metadata} />
 				</ShellListItem>{/each}</ShellList

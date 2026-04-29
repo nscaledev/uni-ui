@@ -56,9 +56,11 @@
 					{#snippet badges()}
 						<ShellListItemBadges metadata={resource.metadata} />
 					{/snippet}
-					{#snippet trail()}
+					{#snippet menu()}
 						<ModalIcon
 							icon="trash"
+							label="Delete"
+							class="menu__item menu__item--danger"
 							title="Delete group?"
 							confirm={() => deleteGroup(resource.metadata.id)}
 						>

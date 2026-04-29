@@ -64,8 +64,10 @@
 								>{/snippet}
 						</ShellListItemBadges>
 					{/snippet}
-					{#snippet trail()}<ModalIcon
+					{#snippet menu()}<ModalIcon
 							icon="trash"
+							label="Delete"
+							class="menu__item menu__item--danger"
 							title="Delete user?"
 							confirm={() => deleteUser(resource.metadata.id)}
 						/>{/snippet}

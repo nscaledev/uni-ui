@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import { getContext } from 'svelte';
+	import Icon from '$lib/primitives/Icon.svelte';
 
 	interface SelectContext {
 		isSelected: (id: string) => boolean;
@@ -11,15 +12,24 @@
 		id?: string;
 		main: Snippet;
 		badges?: Snippet;
-		trail?: Snippet;
+		menu?: Snippet;
 		children?: Snippet;
 	}
 
-	let { id, main, badges, trail, children }: Props = $props();
+	let { id, main, badges, menu, children }: Props = $props();
 
 	const selectCtx = getContext<SelectContext | undefined>('bulkSelect');
 	const selected = $derived(id && selectCtx ? selectCtx.isSelected(id) : false);
+
+	let menuOpen = $state(false);
+	let menuWrapEl: HTMLDivElement;
+
+	function onwindowpointerdown(e: PointerEvent) {
+		if (menuOpen && !menuWrapEl?.contains(e.target as Node)) menuOpen = false;
+	}
 </script>
+
+<svelte:window onpointerdown={onwindowpointerdown} />
 
 <article class="rcard" class:selected>
 	{#if id && selectCtx}
@@ -34,9 +44,25 @@
 
 	<div class="rcard__head">
 		{@render badges?.()}
-		{#if trail}
-			<div class="card-trail">
-				{@render trail()}
+		{#if menu}
+			<div class="card-menu-wrap" bind:this={menuWrapEl}>
+				<button
+					class="btn btn--ghost btn--icon btn--sm"
+					onclick={(e) => {
+						e.stopPropagation();
+						menuOpen = !menuOpen;
+					}}
+					aria-label="Actions"
+					aria-haspopup="menu"
+					aria-expanded={menuOpen}
+				>
+					<Icon name="more" size={14} />
+				</button>
+				{#if menuOpen}
+					<div class="menu card-menu" role="menu" onclick={() => (menuOpen = false)}>
+						{@render menu()}
+					</div>
+				{/if}
 			</div>
 		{/if}
 	</div>
@@ -57,12 +83,18 @@
 		right: 12px;
 	}
 
-	.card-trail {
+	.card-menu-wrap {
 		margin-left: auto;
-		display: flex;
-		align-items: center;
-		gap: 4px;
+		position: relative;
 		flex-shrink: 0;
+	}
+
+	.card-menu {
+		position: absolute;
+		right: 0;
+		top: calc(100% + 4px);
+		min-width: 160px;
+		z-index: 40;
 	}
 
 	.card-meta {

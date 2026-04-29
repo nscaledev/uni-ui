@@ -43,8 +43,10 @@
 			>{#each projects as resource}<ShellListItem id={resource.metadata.id}>
 					{#snippet main()}<ShellListItemHeader metadata={resource.metadata} />{/snippet}
 					{#snippet badges()}<ShellListItemBadges metadata={resource.metadata} />{/snippet}
-					{#snippet trail()}<ModalIcon
+					{#snippet menu()}<ModalIcon
 							icon="trash"
+							label="Delete"
+							class="menu__item menu__item--danger"
 							title="Delete project?"
 							confirm={() => deleteProject(resource.metadata.id)}
 							>Removing "{resource.metadata.name}" removes all infrastructure owned by it.</ModalIcon

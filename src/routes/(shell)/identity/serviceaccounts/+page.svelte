@@ -44,8 +44,10 @@
 			>{#each accounts as resource}<ShellListItem id={resource.metadata.id}>
 					{#snippet main()}<ShellListItemHeader metadata={resource.metadata} />{/snippet}
 					{#snippet badges()}<ShellListItemBadges metadata={resource.metadata} />{/snippet}
-					{#snippet trail()}<ModalIcon
+					{#snippet menu()}<ModalIcon
 							icon="trash"
+							label="Delete"
+							class="menu__item menu__item--danger"
 							title="Delete service account?"
 							confirm={() => deleteServiceAccount(resource.metadata.id)}
 							>Removing "{resource.metadata.name}" may break automation.</ModalIcon

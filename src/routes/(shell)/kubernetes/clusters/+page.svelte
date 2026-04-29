@@ -103,7 +103,7 @@
 								>{/snippet}
 						</ShellListItemBadges>
 					{/snippet}
-					{#snippet trail()}
+					{#snippet menu()}
 						<button
 							class="btn btn--ghost"
 							onclick={() => downloadKubeconfig(resource)}
