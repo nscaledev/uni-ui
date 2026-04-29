@@ -10,6 +10,7 @@
 	import * as Region from '$lib/openapi/region';
 	import * as RegionUtil from '$lib/regionutil';
 	import * as MachineStatus from '$lib/machineStatus';
+	import { fromPowerState } from '$lib/layouts/effectiveStatus';
 	import type { ShellPageSettings } from '$lib/layouts/types.ts';
 	import ListPage from '$lib/layouts/ListPage.svelte';
 	import ShellList from '$lib/layouts/ShellList.svelte';
@@ -120,7 +121,11 @@
 							href="/compute/instances/edit/{resource.metadata.id}"
 						/>{/snippet}
 					{#snippet badges()}
-						<ShellListItemBadges metadata={resource.metadata} projects={data.projects}>
+						<ShellListItemBadges
+							metadata={resource.metadata}
+							projects={data.projects}
+							operationalStatus={fromPowerState(resource.status.powerState)}
+						>
 							{#snippet extra()}
 								<Badge
 									>{RegionUtil.flag(data.regions, resource.status.regionId)}
@@ -133,46 +138,61 @@
 						</ShellListItemBadges>
 					{/snippet}
 					{#snippet menu()}
-						<button
-							class="btn btn--ghost"
-							onclick={() => getSSHKey(resource)}
-							disabled={!!resource.spec.sshCertificateAuthorityId}
-							title="Download SSH key"><Icon name="key" size={16} /></button
-						>
+						{#if !resource.spec.sshCertificateAuthorityId}
+							<button class="menu__item" onclick={() => getSSHKey(resource)}>
+								<Icon name="key" size={14} /> Download SSH key
+							</button>
+							<hr class="menu__sep" />
+						{/if}
 						<ModalIcon
 							icon={resource.status.powerState !== Compute.InstanceLifecyclePhase.Stopped
 								? 'stop'
 								: 'play'}
+							label={resource.status.powerState !== Compute.InstanceLifecyclePhase.Stopped
+								? 'Stop'
+								: 'Start'}
+							class="menu__item"
 							title="Are you sure?"
 							confirm={() =>
 								resource.status.powerState !== Compute.InstanceLifecyclePhase.Stopped
 									? stop(resource)
 									: start(resource)}
 							disabled={!MachineStatus.canStopOrStart(resource.status.powerState)}
-							>{resource.status.powerState !== Compute.InstanceLifecyclePhase.Stopped
-								? 'Stop'
-								: 'Start'} instance?</ModalIcon
 						>
+							{resource.status.powerState !== Compute.InstanceLifecyclePhase.Stopped
+								? 'Stop'
+								: 'Start'} instance?
+						</ModalIcon>
 						<ModalIcon
 							icon="refresh"
+							label="Soft reboot"
+							class="menu__item"
 							title="Soft reboot?"
 							confirm={() => rebootSoft(resource)}
 							disabled={!MachineStatus.canReboot(resource.status.powerState)}
-							>Soft-reboot "{resource.metadata.name}"?</ModalIcon
 						>
+							Soft-reboot "{resource.metadata.name}"?
+						</ModalIcon>
 						<ModalIcon
 							icon="restartAlert"
+							label="Hard reboot"
+							class="menu__item"
 							title="Hard reboot?"
 							confirm={() => rebootHard(resource)}
 							disabled={!MachineStatus.canReboot(resource.status.powerState)}
-							>Force-reboot "{resource.metadata.name}"?</ModalIcon
 						>
+							Force-reboot "{resource.metadata.name}"?
+						</ModalIcon>
+						<hr class="menu__sep" />
 						<ModalIcon
 							icon="trash"
+							label="Delete"
+							class="menu__item menu__item--danger"
 							title="Delete instance?"
 							confirm={() => deleteInstance(resource)}
-							>Removing "{resource.metadata.name}" is permanent.</ModalIcon
 						>
+							Removing "{resource.metadata.name}" is permanent.
+						</ModalIcon>
 					{/snippet}
 					<ShellListItemMetadata metadata={resource.metadata}>
 						{#if resource.status.privateIP}<div class="meta-extra">
