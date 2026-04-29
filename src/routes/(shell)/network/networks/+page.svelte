@@ -9,6 +9,8 @@
 	import * as Clients from '$lib/clients';
 	import * as Region from '$lib/openapi/region';
 	import * as RegionUtil from '$lib/regionutil';
+	import * as Identity from '$lib/openapi/identity';
+	import { ageFormatter } from '$lib/formatters';
 
 	import type { ShellPageSettings } from '$lib/layouts/types.ts';
 	import ListPage from '$lib/layouts/ListPage.svelte';
@@ -38,6 +40,39 @@
 	// eslint-disable-next-line svelte/valid-compile
 	let createRegionID = $state(data.regions[0]?.metadata.id);
 
+	const PROJECT_PALETTE = [
+		'oklch(0.65 0.18 220)',
+		'oklch(0.65 0.18 290)',
+		'oklch(0.68 0.16 30)',
+		'oklch(0.65 0.18 340)',
+		'oklch(0.65 0.16 170)',
+		'oklch(0.68 0.16 80)'
+	];
+
+	function networkProject(resource: Region.NetworkV2Read) {
+		const idx = data.projects.findIndex((p) => p.metadata.id === resource.metadata.projectId);
+		if (idx < 0) return null;
+		return {
+			name: data.projects[idx].metadata.name,
+			color: PROJECT_PALETTE[idx % PROJECT_PALETTE.length]
+		};
+	}
+
+	function statusKind(resource: Region.NetworkV2Read): string {
+		switch (resource.metadata.provisioningStatus) {
+			case Identity.ResourceProvisioningStatus.Provisioned:
+				return 'ok';
+			case Identity.ResourceProvisioningStatus.Error:
+				return 'err';
+			case Identity.ResourceProvisioningStatus.Deprovisioning:
+				return 'warn';
+			case Identity.ResourceProvisioningStatus.Unknown:
+				return 'muted';
+			default:
+				return 'info';
+		}
+	}
+
 	function deleteNetwork(resource: Region.NetworkV2Read) {
 		Clients.region()
 			.apiV2NetworksNetworkIDDelete({ networkID: resource.metadata.id })
@@ -46,7 +81,13 @@
 	}
 </script>
 
-<ListPage {settings} resources={data.networks} projects={data.projects} regions={data.regions}>
+<ListPage
+	{settings}
+	resources={data.networks}
+	projects={data.projects}
+	regions={data.regions}
+	tableHeaders={['Name', 'Status', 'Project', 'Region', 'Prefix', 'Owner', 'Age', '']}
+>
 	{#snippet tools()}
 		{#if data.projects.length}
 			<PopupButton icon="plus" label="Create">
@@ -82,6 +123,44 @@
 				{/snippet}
 			</PopupButton>
 		{/if}
+	{/snippet}
+
+	{#snippet tableRow(resource)}
+		{@const proj = networkProject(resource)}
+		<tr>
+			<td class="primary">
+				<div>{resource.metadata.name}</div>
+				<div class="sub">{resource.metadata.id}</div>
+			</td>
+			<td>
+				<span class="chip chip--{statusKind(resource)}">
+					<span class="dot"></span>
+					{resource.metadata.provisioningStatus}
+				</span>
+			</td>
+			<td>
+				{#if proj}
+					<span class="chip">
+						<span class="dot" style="background:{proj.color}"></span>
+						{proj.name}
+					</span>
+				{/if}
+			</td>
+			<td>
+				<span class="mono region-cell">
+					{RegionUtil.flag(data.regions, resource.status.regionId)}
+					{RegionUtil.name(data.regions, resource.status.regionId)}
+				</span>
+			</td>
+			<td><span class="mono">{resource.status.prefix}</span></td>
+			<td>{resource.metadata.createdBy}</td>
+			<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
+			<td class="col-actions">
+				<button class="row-action" title="Delete network" onclick={() => deleteNetwork(resource)}>
+					<Icon name="trash" size={14} />
+				</button>
+			</td>
+		</tr>
 	{/snippet}
 
 	{#snippet list(networks)}
