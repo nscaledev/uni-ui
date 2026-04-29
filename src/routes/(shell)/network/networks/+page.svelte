@@ -89,11 +89,11 @@
 			{#each networks as resource}
 				<ShellListItem>
 					{#snippet main()}
-						<ShellListItemHeader metadata={resource.metadata} projects={data.projects} />
+						<ShellListItemHeader metadata={resource.metadata} />
 					{/snippet}
 
 					{#snippet badges()}
-						<ShellListItemBadges metadata={resource.metadata}>
+						<ShellListItemBadges metadata={resource.metadata} projects={data.projects}>
 							{#snippet extra()}
 								<Badge>
 									{RegionUtil.flag(data.regions, resource.status.regionId)}

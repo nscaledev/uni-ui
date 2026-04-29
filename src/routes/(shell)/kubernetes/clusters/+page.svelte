@@ -89,12 +89,9 @@
 	{/snippet}
 	{#snippet list(clusters)}<ShellList
 			>{#each clusters as resource}<ShellListItem>
-					{#snippet main()}<ShellListItemHeader
-							metadata={resource.metadata}
-							projects={data.projects}
-						/>{/snippet}
+					{#snippet main()}<ShellListItemHeader metadata={resource.metadata} />{/snippet}
 					{#snippet badges()}
-						<ShellListItemBadges metadata={resource.metadata}>
+						<ShellListItemBadges metadata={resource.metadata} projects={data.projects}>
 							{#snippet extra()}<Badge
 									>{RegionUtil.flag(data.regions, resource.spec.regionId)}
 									{RegionUtil.name(data.regions, resource.spec.regionId)}</Badge

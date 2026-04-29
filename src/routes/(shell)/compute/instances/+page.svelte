@@ -112,11 +112,10 @@
 			>{#each instances as resource}<ShellListItem>
 					{#snippet main()}<ShellListItemHeader
 							metadata={resource.metadata}
-							projects={data.projects}
 							href="/compute/instances/edit/{resource.metadata.id}"
 						/>{/snippet}
 					{#snippet badges()}
-						<ShellListItemBadges metadata={resource.metadata}>
+						<ShellListItemBadges metadata={resource.metadata} projects={data.projects}>
 							{#snippet extra()}
 								<Badge
 									>{RegionUtil.flag(data.regions, resource.status.regionId)}

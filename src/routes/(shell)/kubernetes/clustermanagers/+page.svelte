@@ -37,11 +37,11 @@
 <ListPage {settings} resources={data.clustermanagers}>
 	{#snippet list(managers)}<ShellList
 			>{#each managers as resource}<ShellListItem>
-					{#snippet main()}<ShellListItemHeader
+					{#snippet main()}<ShellListItemHeader metadata={resource.metadata} />{/snippet}
+					{#snippet badges()}<ShellListItemBadges
 							metadata={resource.metadata}
 							projects={data.projects}
 						/>{/snippet}
-					{#snippet badges()}<ShellListItemBadges metadata={resource.metadata} />{/snippet}
 					{#snippet trail()}<ModalIcon
 							icon="trash"
 							title="Delete cluster manager?"

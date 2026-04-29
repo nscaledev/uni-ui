@@ -41,10 +41,7 @@
 		/>{/snippet}
 	{#snippet list(cas)}<ShellList
 			>{#each cas as resource}<ShellListItem>
-					{#snippet main()}<ShellListItemHeader
-							metadata={resource.metadata}
-							projects={data.projects}
-						/>{/snippet}
+					{#snippet main()}<ShellListItemHeader metadata={resource.metadata} />{/snippet}
 					{#snippet badges()}<ShellListItemBadges
 							metadata={resource.metadata}
 							showHealth={false}

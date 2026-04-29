@@ -6,14 +6,6 @@
 	let { children }: Props = $props();
 </script>
 
-<div class="shell-list">
+<div class="cards">
 	{@render children?.()}
 </div>
-
-<style>
-	.shell-list {
-		display: flex;
-		flex-direction: column;
-		gap: 6px;
-	}
-</style>
