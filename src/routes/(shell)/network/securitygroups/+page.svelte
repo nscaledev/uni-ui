@@ -42,7 +42,7 @@
 <ListPage
 	{settings}
 	resources={data.securityGroups}
-	projects={data.projects}
+	projects={data.projectID ? [] : data.projects}
 	regions={data.regions}
 >
 	{#snippet tools()}

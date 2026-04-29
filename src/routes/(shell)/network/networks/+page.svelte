@@ -84,7 +84,7 @@
 <ListPage
 	{settings}
 	resources={data.networks}
-	projects={data.projects}
+	projects={data.projectID ? [] : data.projects}
 	regions={data.regions}
 	tableHeaders={['Name', 'Status', 'Project', 'Region', 'Prefix', 'Owner', 'Age', '']}
 >
