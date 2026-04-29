@@ -11,6 +11,7 @@
 	import Icon from '$lib/primitives/Icon.svelte';
 	import * as Identity from '$lib/openapi/identity';
 	import { countryFlag } from '$lib/regionutil';
+	import { view } from '$lib/stores/theme';
 
 	interface NamedItem {
 		metadata: { id: string; name: string };
@@ -46,10 +47,7 @@
 		empty
 	}: Props = $props();
 
-	type View = 'list' | 'table' | 'grouped';
-
 	let query = $state('');
-	let view = $state<View>('list');
 	let selectedStatuses = $state(new Set<string>());
 	let selectedProjectIds = $state(new Set<string>());
 	let selectedRegionIds = $state(new Set<string>());
@@ -110,7 +108,7 @@
 	);
 
 	$effect(() => {
-		if (view === 'grouped' && !groupKey) view = 'list';
+		if ($view === 'grouped' && !groupKey) $view = 'cards';
 	});
 
 	const filtered = $derived.by(() => {
@@ -142,7 +140,7 @@
 	});
 
 	const groups = $derived.by(() => {
-		if (view !== 'grouped' || !groupKey) return null;
+		if ($view !== 'grouped' || !groupKey) return null;
 		const map = new Map<string, Array<T>>();
 		for (const r of filtered) {
 			const k = groupKey(r);
@@ -165,18 +163,28 @@
 	<div class="stat">
 		<div class="stat__label">Total</div>
 		<div class="stat__value">{stats.total}</div>
+		{#if projects && projects.length > 0}
+			<div class="stat__sub">
+				across {projects.length} project{projects.length === 1 ? '' : 's'}
+			</div>
+		{/if}
 	</div>
 	<div class="stat">
 		<div class="stat__label">Provisioned</div>
 		<div class="stat__value">{stats.provisioned}</div>
+		<div class="stat__sub up">● healthy</div>
 	</div>
 	<div class="stat">
 		<div class="stat__label">Needs attention</div>
 		<div class="stat__value" class:warn={stats.needsAttention > 0}>{stats.needsAttention}</div>
+		{#if stats.needsAttention > 0}
+			<div class="stat__sub down">● error + degraded</div>
+		{/if}
 	</div>
 	<div class="stat">
 		<div class="stat__label">Recent (7d)</div>
 		<div class="stat__value">{stats.recent}</div>
+		<div class="stat__sub">in the last 7 days</div>
 	</div>
 </div>
 
@@ -202,8 +210,8 @@
 		onchange={(s) => (selectedStatuses = s)}
 	/>
 
-	<!-- Project filter -->
-	{#if projectOptions.length >= 1}
+	<!-- Project filter — only useful when more than one project is in scope -->
+	{#if projectOptions.length > 1}
 		<FilterChip
 			icon="folder"
 			label="Project"
@@ -236,17 +244,12 @@
 	<span class="item-count">{filtered.length} item{filtered.length === 1 ? '' : 's'}</span>
 
 	<div class="seg" role="group" aria-label="View">
-		<button class:active={view === 'list'} onclick={() => (view = 'list')}>
-			<Icon name="rows" size={14} />List
+		<button class:active={$view === 'cards'} onclick={() => ($view = 'cards')}>
+			<Icon name="cards" size={14} />Cards
 		</button>
-		<button class:active={view === 'table'} onclick={() => (view = 'table')}>
+		<button class:active={$view === 'table'} onclick={() => ($view = 'table')}>
 			<Icon name="table" size={14} />Table
 		</button>
-		{#if groupKey}
-			<button class:active={view === 'grouped'} onclick={() => (view = 'grouped')}>
-				<Icon name="cards" size={14} />Grouped
-			</button>
-		{/if}
 	</div>
 </div>
 
@@ -257,7 +260,7 @@
 	{:else}
 		<p class="empty-filter">No resources match the current filters.</p>
 	{/if}
-{:else if view === 'table'}
+{:else if $view === 'table'}
 	<div class="table-wrap">
 		<table class="table">
 			<thead>
@@ -284,7 +287,7 @@
 			</tbody>
 		</table>
 	</div>
-{:else if view === 'grouped' && groups}
+{:else if $view === 'grouped' && groups}
 	{#each groups as group}
 		<div class="group">
 			<div class="group__head">

@@ -11,6 +11,12 @@
 	let { settings, tools, children }: Props = $props();
 </script>
 
+<nav class="breadcrumb" aria-label="Breadcrumb">
+	<span>{settings.feature}</span>
+	<span class="sep">/</span>
+	<span>{settings.name}</span>
+</nav>
+
 <div class="page-head">
 	<div>
 		<h1>{settings.name}</h1>
