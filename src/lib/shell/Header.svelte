@@ -6,6 +6,7 @@
 	import type { OrganizationRead, ProjectRead } from '$lib/openapi/identity';
 	import { tweaksOpen } from '$lib/stores/theme';
 	import ScopePicker from '$lib/shell/ScopePicker.svelte';
+	import OmniSearch from '$lib/shell/OmniSearch.svelte';
 
 	const PROJECT_PALETTE = [
 		'oklch(0.65 0.18 220)',
@@ -125,6 +126,8 @@
 		{/if}
 		<Icon name="chevronDown" size={12} />
 	</button>
+
+	<OmniSearch />
 
 	<div style="flex:1"></div>
 

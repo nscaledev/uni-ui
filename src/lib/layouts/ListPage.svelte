@@ -12,6 +12,7 @@
 	import * as Identity from '$lib/openapi/identity';
 	import { countryFlag } from '$lib/regionutil';
 	import { view } from '$lib/stores/theme';
+	import { omniQuery, omniFilters } from '$lib/stores/search';
 
 	interface NamedItem {
 		metadata: { id: string; name: string };
@@ -134,6 +135,28 @@
 			const q = query.toLowerCase();
 			const fn = filterFn ?? ((x: T) => x.metadata.name.toLowerCase().includes(q));
 			r = r.filter((x) => fn(x, q));
+		}
+
+		// Apply global omni-search filters on top of local ones.
+		if ($omniQuery.trim()) {
+			const q = $omniQuery.toLowerCase();
+			const fn = filterFn ?? ((x: T) => x.metadata.name.toLowerCase().includes(q));
+			r = r.filter((x) => fn(x, q));
+		}
+		for (const { key, value } of $omniFilters) {
+			if (key === 'status') r = r.filter((x) => x.metadata.provisioningStatus === value);
+			if (key === 'project')
+				r = r.filter(
+					(x) => (x as unknown as { metadata: { projectId?: string } }).metadata.projectId === value
+				);
+			if (key === 'region')
+				r = r.filter((x) => {
+					const a = x as unknown as {
+						status?: { regionId?: string };
+						spec?: { regionId?: string };
+					};
+					return (a.status?.regionId ?? a.spec?.regionId) === value;
+				});
 		}
 
 		return r;
