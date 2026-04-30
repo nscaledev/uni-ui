@@ -6,7 +6,8 @@
 	let { data }: { data: PageData } = $props();
 	import * as Clients from '$lib/clients';
 	import * as Kubernetes from '$lib/openapi/kubernetes';
-	import { fromHealthStatus } from '$lib/layouts/effectiveStatus';
+	import { resolveChip, fromHealthStatus } from '$lib/layouts/effectiveStatus';
+	import { ageFormatter } from '$lib/formatters';
 	import * as RegionUtil from '$lib/regionutil';
 	import type { ShellPageSettings } from '$lib/layouts/types.ts';
 	import ListPage from '$lib/layouts/ListPage.svelte';
@@ -31,6 +32,24 @@
 	let createProjectID = $state(data.projects[0]?.metadata.id);
 	// eslint-disable-next-line svelte/valid-compile
 	let createRegionID = $state(data.regions[0]?.metadata.id);
+	const PROJECT_PALETTE = [
+		'oklch(0.65 0.18 220)',
+		'oklch(0.65 0.18 290)',
+		'oklch(0.68 0.16 30)',
+		'oklch(0.65 0.18 340)',
+		'oklch(0.65 0.16 170)',
+		'oklch(0.68 0.16 80)'
+	];
+
+	function clusterProject(resource: Kubernetes.KubernetesClusterRead) {
+		const idx = data.projects.findIndex((p) => p.metadata.id === resource.metadata.projectId);
+		if (idx < 0) return null;
+		return {
+			name: data.projects[idx].metadata.name,
+			color: PROJECT_PALETTE[idx % PROJECT_PALETTE.length]
+		};
+	}
+
 	function deleteCluster(resource: Kubernetes.KubernetesClusterRead) {
 		Clients.kubernetes()
 			.apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDDelete({
@@ -64,7 +83,50 @@
 	resources={data.clusters}
 	projects={data.projectID ? [] : data.projects}
 	regions={data.regions}
+	tableHeaders={['Name', 'Status', 'Project', 'Region', 'Version', 'Owner', 'Age', '']}
 >
+	{#snippet tableRow(resource)}
+		{@const chip = resolveChip(
+			resource.metadata.provisioningStatus,
+			fromHealthStatus(resource.metadata.healthStatus)
+		)}
+		{@const proj = clusterProject(resource)}
+		<tr>
+			<td class="primary">
+				<div>{resource.metadata.name}</div>
+				<div class="sub">{resource.metadata.id}</div>
+			</td>
+			<td>
+				{#if chip}<span class="chip chip--{chip.chipClass}"
+						><span class="dot"></span>{chip.label}</span
+					>{/if}
+			</td>
+			<td>
+				{#if proj}<span class="chip"
+						><span class="dot" style="background:{proj.color}"></span>{proj.name}</span
+					>{/if}
+			</td>
+			<td>
+				<span class="mono region-cell">
+					{RegionUtil.flag(data.regions, resource.spec.regionId)}
+					{RegionUtil.name(data.regions, resource.spec.regionId)}
+				</span>
+			</td>
+			<td><span class="mono">{resource.spec.version}</span></td>
+			<td>{resource.metadata.createdBy}</td>
+			<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
+			<td class="col-actions">
+				<button
+					class="row-action"
+					title="Download kubeconfig"
+					onclick={() => downloadKubeconfig(resource)}
+				>
+					<Icon name="download" size={14} />
+				</button>
+			</td>
+		</tr>
+	{/snippet}
+
 	{#snippet tools()}
 		{#if data.projects.length}
 			<PopupButton icon="plus" label="Create">

@@ -7,6 +7,8 @@
 	import * as Clients from '$lib/clients';
 	import * as Region from '$lib/openapi/region';
 	import * as RegionUtil from '$lib/regionutil';
+	import { resolveChip } from '$lib/layouts/effectiveStatus';
+	import { ageFormatter } from '$lib/formatters';
 	import type { ShellPageSettings } from '$lib/layouts/types.ts';
 	import ListPage from '$lib/layouts/ListPage.svelte';
 	import ShellList from '$lib/layouts/ShellList.svelte';
@@ -29,8 +31,26 @@
 	onMount(() => startAutoRefresh('layout:securitygroups'));
 	// eslint-disable-next-line svelte/valid-compile
 	let createNetworkID = $state(data.networks[0]?.metadata.id);
+	const PROJECT_PALETTE = [
+		'oklch(0.65 0.18 220)',
+		'oklch(0.65 0.18 290)',
+		'oklch(0.68 0.16 30)',
+		'oklch(0.65 0.18 340)',
+		'oklch(0.65 0.16 170)',
+		'oklch(0.68 0.16 80)'
+	];
+
 	function lookupNetwork(id: string): Region.NetworkV2Read {
 		return data.networks.find((x) => x.metadata.id == id) as Region.NetworkV2Read;
+	}
+
+	function securityGroupProject(resource: Region.SecurityGroupV2Read) {
+		const idx = data.projects.findIndex((p) => p.metadata.id === resource.metadata.projectId);
+		if (idx < 0) return null;
+		return {
+			name: data.projects[idx].metadata.name,
+			color: PROJECT_PALETTE[idx % PROJECT_PALETTE.length]
+		};
 	}
 	function deleteGroup(resource: Region.SecurityGroupV2Read) {
 		Clients.region()
@@ -45,7 +65,47 @@
 	resources={data.securityGroups}
 	projects={data.projectID ? [] : data.projects}
 	regions={data.regions}
+	tableHeaders={['Name', 'Status', 'Project', 'Region', 'Network', 'Owner', 'Age', '']}
 >
+	{#snippet tableRow(resource)}
+		{@const chip = resolveChip(resource.metadata.provisioningStatus, null)}
+		{@const proj = securityGroupProject(resource)}
+		<tr>
+			<td class="primary">
+				<div>{resource.metadata.name}</div>
+				<div class="sub">{resource.metadata.id}</div>
+			</td>
+			<td>
+				{#if chip}<span class="chip chip--{chip.chipClass}"
+						><span class="dot"></span>{chip.label}</span
+					>{/if}
+			</td>
+			<td>
+				{#if proj}<span class="chip"
+						><span class="dot" style="background:{proj.color}"></span>{proj.name}</span
+					>{/if}
+			</td>
+			<td>
+				<span class="mono region-cell">
+					{RegionUtil.flag(data.regions, resource.status.regionId)}
+					{RegionUtil.name(data.regions, resource.status.regionId)}
+				</span>
+			</td>
+			<td>{lookupNetwork(resource.status.networkId)?.metadata.name ?? '—'}</td>
+			<td>{resource.metadata.createdBy}</td>
+			<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
+			<td class="col-actions">
+				<a
+					class="row-action"
+					href="/network/securitygroups/edit/{resource.metadata.id}"
+					title="Edit"
+				>
+					<Icon name="edit" size={14} />
+				</a>
+			</td>
+		</tr>
+	{/snippet}
+
 	{#snippet tools()}
 		{#if data.projects.length}
 			<PopupButton icon="plus" label="Create">

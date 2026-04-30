@@ -10,7 +10,8 @@
 	import * as Region from '$lib/openapi/region';
 	import * as RegionUtil from '$lib/regionutil';
 	import * as MachineStatus from '$lib/machineStatus';
-	import { fromPowerState } from '$lib/layouts/effectiveStatus';
+	import { resolveChip, fromPowerState } from '$lib/layouts/effectiveStatus';
+	import { ageFormatter } from '$lib/formatters';
 	import type { ShellPageSettings } from '$lib/layouts/types.ts';
 	import ListPage from '$lib/layouts/ListPage.svelte';
 	import ShellList from '$lib/layouts/ShellList.svelte';
@@ -43,6 +44,24 @@
 		);
 		return ca?.metadata.name ?? resource.spec.sshCertificateAuthorityId;
 	}
+	const PROJECT_PALETTE = [
+		'oklch(0.65 0.18 220)',
+		'oklch(0.65 0.18 290)',
+		'oklch(0.68 0.16 30)',
+		'oklch(0.65 0.18 340)',
+		'oklch(0.65 0.16 170)',
+		'oklch(0.68 0.16 80)'
+	];
+
+	function instanceProject(resource: Compute.InstanceRead) {
+		const idx = data.projects.findIndex((p) => p.metadata.id === resource.metadata.projectId);
+		if (idx < 0) return null;
+		return {
+			name: data.projects[idx].metadata.name,
+			color: PROJECT_PALETTE[idx % PROJECT_PALETTE.length]
+		};
+	}
+
 	function deleteInstance(resource: Compute.InstanceRead) {
 		Clients.compute()
 			.apiV2InstancesInstanceIDDelete({ instanceID: resource.metadata.id })
@@ -88,7 +107,50 @@
 	resources={data.instances}
 	projects={data.projectID ? [] : data.projects}
 	regions={data.regions}
+	tableHeaders={['Name', 'Status', 'Project', 'Region', 'Private IP', 'Owner', 'Age', '']}
 >
+	{#snippet tableRow(resource)}
+		{@const chip = resolveChip(
+			resource.metadata.provisioningStatus,
+			fromPowerState(resource.status.powerState)
+		)}
+		{@const proj = instanceProject(resource)}
+		<tr>
+			<td class="primary">
+				<div>{resource.metadata.name}</div>
+				<div class="sub">{resource.metadata.id}</div>
+			</td>
+			<td>
+				{#if chip}<span class="chip chip--{chip.chipClass}"
+						><span class="dot"></span>{chip.label}</span
+					>{/if}
+			</td>
+			<td>
+				{#if proj}<span class="chip"
+						><span class="dot" style="background:{proj.color}"></span>{proj.name}</span
+					>{/if}
+			</td>
+			<td>
+				<span class="mono region-cell">
+					{RegionUtil.flag(data.regions, resource.status.regionId)}
+					{RegionUtil.name(data.regions, resource.status.regionId)}
+				</span>
+			</td>
+			<td><span class="mono">{resource.status.privateIP ?? '—'}</span></td>
+			<td>{resource.metadata.createdBy}</td>
+			<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
+			<td class="col-actions">
+				<button
+					class="row-action"
+					title="Edit"
+					onclick={() => (window.location.href = `/compute/instances/edit/${resource.metadata.id}`)}
+				>
+					<Icon name="edit" size={14} />
+				</button>
+			</td>
+		</tr>
+	{/snippet}
+
 	{#snippet tools()}
 		{#if data.projects.length}
 			<PopupButton icon="plus" label="Create">
