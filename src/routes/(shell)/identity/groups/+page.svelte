@@ -30,6 +30,19 @@
 
 	onMount(() => startAutoRefresh('layout:groups'));
 
+	async function bulkDeleteGroups(ids: Set<string>, clear: () => void) {
+		await Promise.allSettled(
+			[...ids].map((id) =>
+				Clients.identity().apiV1OrganizationsOrganizationIDGroupsGroupidDelete({
+					organizationID: data.organizationID,
+					groupid: id
+				})
+			)
+		);
+		clear();
+		invalidate('page:groups');
+	}
+
 	function deleteGroup(id: string) {
 		Clients.identity()
 			.apiV1OrganizationsOrganizationIDGroupsGroupidDelete({
@@ -46,28 +59,38 @@
 	resources={data.groups || []}
 	tableHeaders={['Name', 'Status', 'Members', 'Owner', 'Age', '']}
 >
+	{#snippet bulkbar({ ids, clear })}
+		<ModalIcon
+			icon="trash"
+			label="Delete ({ids.size})"
+			class="btn btn--sm btn--danger"
+			title="Delete {ids.size} group{ids.size === 1 ? '' : 's'}?"
+			confirm={() => bulkDeleteGroups(ids, clear)}
+		>
+			This will remove {ids.size} group{ids.size === 1 ? '' : 's'}.
+		</ModalIcon>
+	{/snippet}
+
 	{#snippet tableRow(resource)}
 		{@const chip = resolveChip(resource.metadata.provisioningStatus, null)}
 		{@const members = (resource.spec.userIDs?.length ?? 0) + resource.spec.serviceAccountIDs.length}
-		<tr>
-			<td class="primary">
-				<div>{resource.metadata.name}</div>
-				<div class="sub">{resource.metadata.id}</div>
-			</td>
-			<td>
-				{#if chip}<span class="chip chip--{chip.chipClass}"
-						><span class="dot"></span>{chip.label}</span
-					>{/if}
-			</td>
-			<td>{members}</td>
-			<td>{resource.metadata.createdBy}</td>
-			<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
-			<td class="col-actions">
-				<a class="row-action" href="/identity/groups/view/{resource.metadata.id}" title="View">
-					<Icon name="eye" size={14} />
-				</a>
-			</td>
-		</tr>
+		<td class="primary">
+			<div>{resource.metadata.name}</div>
+			<div class="sub">{resource.metadata.id}</div>
+		</td>
+		<td>
+			{#if chip}<span class="chip chip--{chip.chipClass}"
+					><span class="dot"></span>{chip.label}</span
+				>{/if}
+		</td>
+		<td>{members}</td>
+		<td>{resource.metadata.createdBy}</td>
+		<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
+		<td class="col-actions">
+			<a class="row-action" href="/identity/groups/view/{resource.metadata.id}" title="View">
+				<Icon name="eye" size={14} />
+			</a>
+		</td>
 	{/snippet}
 
 	{#snippet tools()}

@@ -32,17 +32,16 @@
 <svelte:window onpointerdown={onwindowpointerdown} />
 
 <article class="rcard" class:selected>
-	{#if id && selectCtx}
-		<input
-			type="checkbox"
-			class="checkbox card-checkbox"
-			checked={selected}
-			onchange={() => id && selectCtx?.toggle(id)}
-			aria-label="Select item"
-		/>
-	{/if}
-
 	<div class="rcard__head">
+		{#if id && selectCtx}
+			<input
+				type="checkbox"
+				class="checkbox"
+				checked={selected}
+				onchange={() => id && selectCtx?.toggle(id)}
+				aria-label="Select item"
+			/>
+		{/if}
 		{@render badges?.()}
 		{#if menu}
 			<div class="card-menu-wrap" bind:this={menuWrapEl}>
@@ -77,12 +76,6 @@
 </article>
 
 <style>
-	.card-checkbox {
-		position: absolute;
-		top: 12px;
-		right: 12px;
-	}
-
 	.card-menu-wrap {
 		margin-left: auto;
 		position: relative;

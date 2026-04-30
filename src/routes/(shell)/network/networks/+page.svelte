@@ -79,6 +79,14 @@
 			.then(() => invalidate('layout:networks'))
 			.catch((e: Error) => Clients.error(e));
 	}
+
+	async function bulkDeleteNetworks(ids: Set<string>, clear: () => void) {
+		await Promise.allSettled(
+			[...ids].map((id) => Clients.region().apiV2NetworksNetworkIDDelete({ networkID: id }))
+		);
+		clear();
+		invalidate('layout:networks');
+	}
 </script>
 
 <ListPage
@@ -88,6 +96,18 @@
 	regions={data.regions}
 	tableHeaders={['Name', 'Status', 'Project', 'Region', 'Prefix', 'Owner', 'Age', '']}
 >
+	{#snippet bulkbar({ ids, clear })}
+		<ModalIcon
+			icon="trash"
+			label="Delete ({ids.size})"
+			class="btn btn--sm btn--danger"
+			title="Delete {ids.size} network{ids.size === 1 ? '' : 's'}?"
+			confirm={() => bulkDeleteNetworks(ids, clear)}
+		>
+			This will permanently remove {ids.size} network{ids.size === 1 ? '' : 's'}.
+		</ModalIcon>
+	{/snippet}
+
 	{#snippet tools()}
 		{#if data.projects.length}
 			<PopupButton icon="plus" label="Create">
@@ -127,40 +147,38 @@
 
 	{#snippet tableRow(resource)}
 		{@const proj = networkProject(resource)}
-		<tr>
-			<td class="primary">
-				<div>{resource.metadata.name}</div>
-				<div class="sub">{resource.metadata.id}</div>
-			</td>
-			<td>
-				<span class="chip chip--{statusKind(resource)}">
-					<span class="dot"></span>
-					{resource.metadata.provisioningStatus}
+		<td class="primary">
+			<div>{resource.metadata.name}</div>
+			<div class="sub">{resource.metadata.id}</div>
+		</td>
+		<td>
+			<span class="chip chip--{statusKind(resource)}">
+				<span class="dot"></span>
+				{resource.metadata.provisioningStatus}
+			</span>
+		</td>
+		<td>
+			{#if proj}
+				<span class="chip">
+					<span class="dot" style="background:{proj.color}"></span>
+					{proj.name}
 				</span>
-			</td>
-			<td>
-				{#if proj}
-					<span class="chip">
-						<span class="dot" style="background:{proj.color}"></span>
-						{proj.name}
-					</span>
-				{/if}
-			</td>
-			<td>
-				<span class="mono region-cell">
-					{RegionUtil.flag(data.regions, resource.status.regionId)}
-					{RegionUtil.name(data.regions, resource.status.regionId)}
-				</span>
-			</td>
-			<td><span class="mono">{resource.status.prefix}</span></td>
-			<td>{resource.metadata.createdBy}</td>
-			<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
-			<td class="col-actions">
-				<button class="row-action" title="Delete network" onclick={() => deleteNetwork(resource)}>
-					<Icon name="trash" size={14} />
-				</button>
-			</td>
-		</tr>
+			{/if}
+		</td>
+		<td>
+			<span class="mono region-cell">
+				{RegionUtil.flag(data.regions, resource.status.regionId)}
+				{RegionUtil.name(data.regions, resource.status.regionId)}
+			</span>
+		</td>
+		<td><span class="mono">{resource.status.prefix}</span></td>
+		<td>{resource.metadata.createdBy}</td>
+		<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
+		<td class="col-actions">
+			<button class="row-action" title="Delete network" onclick={() => deleteNetwork(resource)}>
+				<Icon name="trash" size={14} />
+			</button>
+		</td>
 	{/snippet}
 
 	{#snippet list(networks)}

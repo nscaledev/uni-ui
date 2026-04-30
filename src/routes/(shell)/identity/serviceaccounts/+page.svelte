@@ -25,6 +25,19 @@
 		icon: 'key'
 	};
 	onMount(() => startAutoRefresh('layout:serviceaccounts'));
+	async function bulkDeleteServiceAccounts(ids: Set<string>, clear: () => void) {
+		await Promise.allSettled(
+			[...ids].map((id) =>
+				Clients.identity().apiV1OrganizationsOrganizationIDServiceaccountsServiceAccountIDDelete({
+					organizationID: data.organizationID,
+					serviceAccountID: id
+				})
+			)
+		);
+		clear();
+		invalidate('layout:serviceaccounts');
+	}
+
 	function deleteServiceAccount(id: string) {
 		Clients.identity()
 			.apiV1OrganizationsOrganizationIDServiceaccountsServiceAccountIDDelete({
@@ -41,23 +54,33 @@
 	resources={data.serviceAccounts || []}
 	tableHeaders={['Name', 'Status', 'Expiry', 'Owner', 'Age', '']}
 >
+	{#snippet bulkbar({ ids, clear })}
+		<ModalIcon
+			icon="trash"
+			label="Delete ({ids.size})"
+			class="btn btn--sm btn--danger"
+			title="Delete {ids.size} service account{ids.size === 1 ? '' : 's'}?"
+			confirm={() => bulkDeleteServiceAccounts(ids, clear)}
+		>
+			This will permanently remove {ids.size} service account{ids.size === 1 ? '' : 's'}.
+		</ModalIcon>
+	{/snippet}
+
 	{#snippet tableRow(resource)}
 		{@const chip = resolveChip(resource.metadata.provisioningStatus, null)}
-		<tr>
-			<td class="primary">
-				<div>{resource.metadata.name}</div>
-				<div class="sub">{resource.metadata.id}</div>
-			</td>
-			<td>
-				{#if chip}<span class="chip chip--{chip.chipClass}"
-						><span class="dot"></span>{chip.label}</span
-					>{/if}
-			</td>
-			<td><span class="mono">{resource.status.expiry.toISOString().slice(0, 10)}</span></td>
-			<td>{resource.metadata.createdBy}</td>
-			<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
-			<td></td>
-		</tr>
+		<td class="primary">
+			<div>{resource.metadata.name}</div>
+			<div class="sub">{resource.metadata.id}</div>
+		</td>
+		<td>
+			{#if chip}<span class="chip chip--{chip.chipClass}"
+					><span class="dot"></span>{chip.label}</span
+				>{/if}
+		</td>
+		<td><span class="mono">{resource.status.expiry.toISOString().slice(0, 10)}</span></td>
+		<td>{resource.metadata.createdBy}</td>
+		<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
+		<td></td>
 	{/snippet}
 
 	{#snippet tools()}<SubtleButton

@@ -212,11 +212,25 @@
 	let currentPage = $state(1);
 	let perPage = $state(25);
 
-	// Reset page and selection when filters change.
+	// Trim selection to IDs still present after a data refresh or filter change.
+	// Preserves stable selections across auto-refreshes; removes items that
+	// no longer exist or no longer match the current filters.
 	$effect(() => {
-		filtered;
+		const valid = new Set(filtered.map((r) => r.metadata.id));
+		const trimmed = new Set([...selectedIds].filter((id) => valid.has(id)));
+		if (trimmed.size !== selectedIds.size) selectedIds = trimmed;
+	});
+
+	// Reset page when user-controlled filters change — separately from selection
+	// so a data refresh doesn't jump back to page 1.
+	$effect(() => {
+		query;
+		selectedStatuses;
+		selectedProjectIds;
+		selectedRegionIds;
+		$omniQuery;
+		$omniFilters;
 		currentPage = 1;
-		clearSelection();
 	});
 
 	const paginated = $derived(filtered.slice((currentPage - 1) * perPage, currentPage * perPage));
@@ -378,25 +392,29 @@
 			</thead>
 			<tbody>
 				{#each paginated as resource}
-					{#if tableRow}
-						{@render tableRow(resource)}
-					{:else}
-						<tr>
-							{#if bulkbar}
-								<td class="col-select">
-									<input
-										type="checkbox"
-										class="checkbox"
-										checked={selectedIds.has(resource.metadata.id)}
-										onchange={() => toggleId(resource.metadata.id)}
-									/>
-								</td>
-							{/if}
+					<tr
+						class:selected={selectedIds.has(resource.metadata.id)}
+						class:has-err={resource.metadata.provisioningStatus === 'error'}
+						class:has-warn={resource.metadata.provisioningStatus === 'deprovisioning'}
+					>
+						{#if bulkbar}
+							<td class="col-select">
+								<input
+									type="checkbox"
+									class="checkbox"
+									checked={selectedIds.has(resource.metadata.id)}
+									onchange={() => toggleId(resource.metadata.id)}
+								/>
+							</td>
+						{/if}
+						{#if tableRow}
+							{@render tableRow(resource)}
+						{:else}
 							<td class="primary">{resource.metadata.name}</td>
 							<td>{resource.metadata.provisioningStatus}</td>
 							<td>{ageFormatter(resource.metadata.creationTime)}</td>
-						</tr>
-					{/if}
+						{/if}
+					</tr>
 				{/each}
 			</tbody>
 		</table>

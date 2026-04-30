@@ -50,6 +50,23 @@
 		};
 	}
 
+	async function bulkDeleteClusters(ids: Set<string>, clear: () => void) {
+		const toDelete = data.clusters.filter((c) => ids.has(c.metadata.id));
+		await Promise.allSettled(
+			toDelete.map((c) =>
+				Clients.kubernetes().apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDDelete(
+					{
+						organizationID: data.organizationID,
+						projectID: c.metadata.projectId,
+						clusterID: c.metadata.id
+					}
+				)
+			)
+		);
+		clear();
+		invalidate('layout:clusters');
+	}
+
 	function deleteCluster(resource: Kubernetes.KubernetesClusterRead) {
 		Clients.kubernetes()
 			.apiV1OrganizationsOrganizationIDProjectsProjectIDClustersClusterIDDelete({
@@ -85,46 +102,56 @@
 	regions={data.regions}
 	tableHeaders={['Name', 'Status', 'Project', 'Region', 'Version', 'Owner', 'Age', '']}
 >
+	{#snippet bulkbar({ ids, clear })}
+		<ModalIcon
+			icon="trash"
+			label="Delete ({ids.size})"
+			class="btn btn--sm btn--danger"
+			title="Delete {ids.size} cluster{ids.size === 1 ? '' : 's'}?"
+			confirm={() => bulkDeleteClusters(ids, clear)}
+		>
+			This will permanently remove {ids.size} cluster{ids.size === 1 ? '' : 's'} and all workloads.
+		</ModalIcon>
+	{/snippet}
+
 	{#snippet tableRow(resource)}
 		{@const chip = resolveChip(
 			resource.metadata.provisioningStatus,
 			fromHealthStatus(resource.metadata.healthStatus)
 		)}
 		{@const proj = clusterProject(resource)}
-		<tr>
-			<td class="primary">
-				<div>{resource.metadata.name}</div>
-				<div class="sub">{resource.metadata.id}</div>
-			</td>
-			<td>
-				{#if chip}<span class="chip chip--{chip.chipClass}"
-						><span class="dot"></span>{chip.label}</span
-					>{/if}
-			</td>
-			<td>
-				{#if proj}<span class="chip"
-						><span class="dot" style="background:{proj.color}"></span>{proj.name}</span
-					>{/if}
-			</td>
-			<td>
-				<span class="mono region-cell">
-					{RegionUtil.flag(data.regions, resource.spec.regionId)}
-					{RegionUtil.name(data.regions, resource.spec.regionId)}
-				</span>
-			</td>
-			<td><span class="mono">{resource.spec.version}</span></td>
-			<td>{resource.metadata.createdBy}</td>
-			<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
-			<td class="col-actions">
-				<button
-					class="row-action"
-					title="Download kubeconfig"
-					onclick={() => downloadKubeconfig(resource)}
-				>
-					<Icon name="download" size={14} />
-				</button>
-			</td>
-		</tr>
+		<td class="primary">
+			<div>{resource.metadata.name}</div>
+			<div class="sub">{resource.metadata.id}</div>
+		</td>
+		<td>
+			{#if chip}<span class="chip chip--{chip.chipClass}"
+					><span class="dot"></span>{chip.label}</span
+				>{/if}
+		</td>
+		<td>
+			{#if proj}<span class="chip"
+					><span class="dot" style="background:{proj.color}"></span>{proj.name}</span
+				>{/if}
+		</td>
+		<td>
+			<span class="mono region-cell">
+				{RegionUtil.flag(data.regions, resource.spec.regionId)}
+				{RegionUtil.name(data.regions, resource.spec.regionId)}
+			</span>
+		</td>
+		<td><span class="mono">{resource.spec.version}</span></td>
+		<td>{resource.metadata.createdBy}</td>
+		<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
+		<td class="col-actions">
+			<button
+				class="row-action"
+				title="Download kubeconfig"
+				onclick={() => downloadKubeconfig(resource)}
+			>
+				<Icon name="download" size={14} />
+			</button>
+		</td>
 	{/snippet}
 
 	{#snippet tools()}

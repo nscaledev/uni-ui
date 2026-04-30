@@ -29,6 +29,19 @@
 	function userLastActive(u: Identity.UserRead) {
 		return u.status.lastActive ? Formatters.ageFormatter(u.status.lastActive) : 'never';
 	}
+	async function bulkDeleteUsers(ids: Set<string>, clear: () => void) {
+		await Promise.allSettled(
+			[...ids].map((id) =>
+				Clients.identity().apiV1OrganizationsOrganizationIDUsersUserIDDelete({
+					organizationID: data.organizationID,
+					userID: id
+				})
+			)
+		);
+		clear();
+		invalidate('layout:users');
+	}
+
 	function deleteUser(id: string) {
 		Clients.identity()
 			.apiV1OrganizationsOrganizationIDUsersUserIDDelete({
@@ -46,25 +59,35 @@
 	filterFn={(r, q) => r.spec.subject.toLowerCase().includes(q)}
 	tableHeaders={['Subject', 'Status', 'Last Active', 'Age', '']}
 >
+	{#snippet bulkbar({ ids, clear })}
+		<ModalIcon
+			icon="trash"
+			label="Delete ({ids.size})"
+			class="btn btn--sm btn--danger"
+			title="Delete {ids.size} user{ids.size === 1 ? '' : 's'}?"
+			confirm={() => bulkDeleteUsers(ids, clear)}
+		>
+			This will remove {ids.size} user{ids.size === 1 ? '' : 's'} from the organization.
+		</ModalIcon>
+	{/snippet}
+
 	{#snippet tableRow(resource)}
 		{@const chip = resolveChip(
 			resource.metadata.provisioningStatus,
 			fromUserState(resource.spec.state)
 		)}
-		<tr>
-			<td class="primary">
-				<div>{resource.spec.subject}</div>
-				<div class="sub">{resource.metadata.id}</div>
-			</td>
-			<td>
-				{#if chip}<span class="chip chip--{chip.chipClass}"
-						><span class="dot"></span>{chip.label}</span
-					>{/if}
-			</td>
-			<td>{userLastActive(resource)}</td>
-			<td><span class="mono">{Formatters.ageFormatter(resource.metadata.creationTime)}</span></td>
-			<td></td>
-		</tr>
+		<td class="primary">
+			<div>{resource.spec.subject}</div>
+			<div class="sub">{resource.metadata.id}</div>
+		</td>
+		<td>
+			{#if chip}<span class="chip chip--{chip.chipClass}"
+					><span class="dot"></span>{chip.label}</span
+				>{/if}
+		</td>
+		<td>{userLastActive(resource)}</td>
+		<td><span class="mono">{Formatters.ageFormatter(resource.metadata.creationTime)}</span></td>
+		<td></td>
 	{/snippet}
 
 	{#snippet tools()}<SubtleButton

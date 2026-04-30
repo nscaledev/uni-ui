@@ -58,6 +58,16 @@
 			.then(() => invalidate('layout:securitygroups'))
 			.catch((e: Error) => Clients.error(e));
 	}
+
+	async function bulkDeleteSecurityGroups(ids: Set<string>, clear: () => void) {
+		await Promise.allSettled(
+			[...ids].map((id) =>
+				Clients.region().apiV2SecuritygroupsSecurityGroupIDDelete({ securityGroupID: id })
+			)
+		);
+		clear();
+		invalidate('layout:securitygroups');
+	}
 </script>
 
 <ListPage
@@ -67,43 +77,49 @@
 	regions={data.regions}
 	tableHeaders={['Name', 'Status', 'Project', 'Region', 'Network', 'Owner', 'Age', '']}
 >
+	{#snippet bulkbar({ ids, clear })}
+		<ModalIcon
+			icon="trash"
+			label="Delete ({ids.size})"
+			class="btn btn--sm btn--danger"
+			title="Delete {ids.size} security group{ids.size === 1 ? '' : 's'}?"
+			confirm={() => bulkDeleteSecurityGroups(ids, clear)}
+		>
+			This will permanently remove {ids.size} security group{ids.size === 1 ? '' : 's'}.
+		</ModalIcon>
+	{/snippet}
+
 	{#snippet tableRow(resource)}
 		{@const chip = resolveChip(resource.metadata.provisioningStatus, null)}
 		{@const proj = securityGroupProject(resource)}
-		<tr>
-			<td class="primary">
-				<div>{resource.metadata.name}</div>
-				<div class="sub">{resource.metadata.id}</div>
-			</td>
-			<td>
-				{#if chip}<span class="chip chip--{chip.chipClass}"
-						><span class="dot"></span>{chip.label}</span
-					>{/if}
-			</td>
-			<td>
-				{#if proj}<span class="chip"
-						><span class="dot" style="background:{proj.color}"></span>{proj.name}</span
-					>{/if}
-			</td>
-			<td>
-				<span class="mono region-cell">
-					{RegionUtil.flag(data.regions, resource.status.regionId)}
-					{RegionUtil.name(data.regions, resource.status.regionId)}
-				</span>
-			</td>
-			<td>{lookupNetwork(resource.status.networkId)?.metadata.name ?? '—'}</td>
-			<td>{resource.metadata.createdBy}</td>
-			<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
-			<td class="col-actions">
-				<a
-					class="row-action"
-					href="/network/securitygroups/edit/{resource.metadata.id}"
-					title="Edit"
-				>
-					<Icon name="edit" size={14} />
-				</a>
-			</td>
-		</tr>
+		<td class="primary">
+			<div>{resource.metadata.name}</div>
+			<div class="sub">{resource.metadata.id}</div>
+		</td>
+		<td>
+			{#if chip}<span class="chip chip--{chip.chipClass}"
+					><span class="dot"></span>{chip.label}</span
+				>{/if}
+		</td>
+		<td>
+			{#if proj}<span class="chip"
+					><span class="dot" style="background:{proj.color}"></span>{proj.name}</span
+				>{/if}
+		</td>
+		<td>
+			<span class="mono region-cell">
+				{RegionUtil.flag(data.regions, resource.status.regionId)}
+				{RegionUtil.name(data.regions, resource.status.regionId)}
+			</span>
+		</td>
+		<td>{lookupNetwork(resource.status.networkId)?.metadata.name ?? '—'}</td>
+		<td>{resource.metadata.createdBy}</td>
+		<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
+		<td class="col-actions">
+			<a class="row-action" href="/network/securitygroups/edit/{resource.metadata.id}" title="Edit">
+				<Icon name="edit" size={14} />
+			</a>
+		</td>
 	{/snippet}
 
 	{#snippet tools()}

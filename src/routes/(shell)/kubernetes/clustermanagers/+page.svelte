@@ -24,6 +24,23 @@
 		icon: 'k8s'
 	};
 	onMount(() => startAutoRefresh('layout:clustermanagers'));
+	async function bulkDeleteManagers(ids: Set<string>, clear: () => void) {
+		const toDelete = data.clustermanagers.filter((m) => ids.has(m.metadata.id));
+		await Promise.allSettled(
+			toDelete.map((m) =>
+				Clients.kubernetes().apiV1OrganizationsOrganizationIDProjectsProjectIDClustermanagersClusterManagerIDDelete(
+					{
+						organizationID: data.organizationID,
+						projectID: m.metadata.projectId,
+						clusterManagerID: m.metadata.id
+					}
+				)
+			)
+		);
+		clear();
+		invalidate('layout:clustermanagers');
+	}
+
 	function deleteManager(resource: Kubernetes.ClusterManagerRead) {
 		Clients.kubernetes()
 			.apiV1OrganizationsOrganizationIDProjectsProjectIDClustermanagersClusterManagerIDDelete({
@@ -41,22 +58,32 @@
 	resources={data.clustermanagers}
 	tableHeaders={['Name', 'Status', 'Owner', 'Age', '']}
 >
+	{#snippet bulkbar({ ids, clear })}
+		<ModalIcon
+			icon="trash"
+			label="Delete ({ids.size})"
+			class="btn btn--sm btn--danger"
+			title="Delete {ids.size} cluster manager{ids.size === 1 ? '' : 's'}?"
+			confirm={() => bulkDeleteManagers(ids, clear)}
+		>
+			This will remove {ids.size} cluster manager{ids.size === 1 ? '' : 's'} and all their clusters.
+		</ModalIcon>
+	{/snippet}
+
 	{#snippet tableRow(resource)}
 		{@const chip = resolveChip(resource.metadata.provisioningStatus, null)}
-		<tr>
-			<td class="primary">
-				<div>{resource.metadata.name}</div>
-				<div class="sub">{resource.metadata.id}</div>
-			</td>
-			<td>
-				{#if chip}<span class="chip chip--{chip.chipClass}"
-						><span class="dot"></span>{chip.label}</span
-					>{/if}
-			</td>
-			<td>{resource.metadata.createdBy}</td>
-			<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
-			<td></td>
-		</tr>
+		<td class="primary">
+			<div>{resource.metadata.name}</div>
+			<div class="sub">{resource.metadata.id}</div>
+		</td>
+		<td>
+			{#if chip}<span class="chip chip--{chip.chipClass}"
+					><span class="dot"></span>{chip.label}</span
+				>{/if}
+		</td>
+		<td>{resource.metadata.createdBy}</td>
+		<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
+		<td></td>
 	{/snippet}
 	{#snippet list(managers)}<ShellList
 			>{#each managers as resource}<ShellListItem id={resource.metadata.id}>

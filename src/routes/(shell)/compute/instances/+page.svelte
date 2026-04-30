@@ -68,6 +68,14 @@
 			.then(() => invalidate('layout:instances'))
 			.catch((e: Error) => Clients.error(e));
 	}
+
+	async function bulkDeleteInstances(ids: Set<string>, clear: () => void) {
+		await Promise.allSettled(
+			[...ids].map((id) => Clients.compute().apiV2InstancesInstanceIDDelete({ instanceID: id }))
+		);
+		clear();
+		invalidate('layout:instances');
+	}
 	function getSSHKey(resource: Compute.InstanceRead) {
 		if (!browser) return;
 		Clients.compute()
@@ -109,46 +117,56 @@
 	regions={data.regions}
 	tableHeaders={['Name', 'Status', 'Project', 'Region', 'Private IP', 'Owner', 'Age', '']}
 >
+	{#snippet bulkbar({ ids, clear })}
+		<ModalIcon
+			icon="trash"
+			label="Delete ({ids.size})"
+			class="btn btn--sm btn--danger"
+			title="Delete {ids.size} instance{ids.size === 1 ? '' : 's'}?"
+			confirm={() => bulkDeleteInstances(ids, clear)}
+		>
+			This will permanently remove {ids.size} instance{ids.size === 1 ? '' : 's'}.
+		</ModalIcon>
+	{/snippet}
+
 	{#snippet tableRow(resource)}
 		{@const chip = resolveChip(
 			resource.metadata.provisioningStatus,
 			fromPowerState(resource.status.powerState)
 		)}
 		{@const proj = instanceProject(resource)}
-		<tr>
-			<td class="primary">
-				<div>{resource.metadata.name}</div>
-				<div class="sub">{resource.metadata.id}</div>
-			</td>
-			<td>
-				{#if chip}<span class="chip chip--{chip.chipClass}"
-						><span class="dot"></span>{chip.label}</span
-					>{/if}
-			</td>
-			<td>
-				{#if proj}<span class="chip"
-						><span class="dot" style="background:{proj.color}"></span>{proj.name}</span
-					>{/if}
-			</td>
-			<td>
-				<span class="mono region-cell">
-					{RegionUtil.flag(data.regions, resource.status.regionId)}
-					{RegionUtil.name(data.regions, resource.status.regionId)}
-				</span>
-			</td>
-			<td><span class="mono">{resource.status.privateIP ?? '—'}</span></td>
-			<td>{resource.metadata.createdBy}</td>
-			<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
-			<td class="col-actions">
-				<button
-					class="row-action"
-					title="Edit"
-					onclick={() => (window.location.href = `/compute/instances/edit/${resource.metadata.id}`)}
-				>
-					<Icon name="edit" size={14} />
-				</button>
-			</td>
-		</tr>
+		<td class="primary">
+			<div>{resource.metadata.name}</div>
+			<div class="sub">{resource.metadata.id}</div>
+		</td>
+		<td>
+			{#if chip}<span class="chip chip--{chip.chipClass}"
+					><span class="dot"></span>{chip.label}</span
+				>{/if}
+		</td>
+		<td>
+			{#if proj}<span class="chip"
+					><span class="dot" style="background:{proj.color}"></span>{proj.name}</span
+				>{/if}
+		</td>
+		<td>
+			<span class="mono region-cell">
+				{RegionUtil.flag(data.regions, resource.status.regionId)}
+				{RegionUtil.name(data.regions, resource.status.regionId)}
+			</span>
+		</td>
+		<td><span class="mono">{resource.status.privateIP ?? '—'}</span></td>
+		<td>{resource.metadata.createdBy}</td>
+		<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
+		<td class="col-actions">
+			<button
+				class="row-action"
+				title="Edit"
+				onclick={() => (window.location.href = `/compute/instances/edit/${resource.metadata.id}`)}
+			>
+				<Icon name="edit" size={14} />
+			</button>
+		</td>
 	{/snippet}
 
 	{#snippet tools()}
