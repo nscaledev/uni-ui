@@ -335,6 +335,7 @@ button { cursor: pointer; border: 0; background: none; padding: 0; }
   gap: 8px;
   height: 34px;
   padding: 0 10px;
+  width: 100%;
   border-radius: var(--r-md);
   background: var(--bg-1);
   border: 1px solid var(--line);
@@ -1443,6 +1444,7 @@ tr.has-warn td:first-child,
   gap: 8px;
   padding: 0 10px;
   min-height: 34px;
+  width: 100%;
   border-radius: 8px;
   background: var(--bg-2);
   border: 1px solid var(--line);
