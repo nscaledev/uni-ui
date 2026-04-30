@@ -12,6 +12,11 @@
 	let buttonEl: HTMLButtonElement;
 	let menuStyle = $state('');
 
+	function portal(node: HTMLElement) {
+		document.body.appendChild(node);
+		return { destroy: () => node.remove() };
+	}
+
 	function openMenu(e: MouseEvent) {
 		e.stopPropagation();
 		if (!open) {
@@ -44,16 +49,14 @@
 		<Icon name="more" size={14} />
 	</button>
 	{#if open}
-		<div class="menu row-menu" role="menu" style={menuStyle} onclick={() => (open = false)}>
+		<div
+			use:portal
+			class="menu"
+			role="menu"
+			style="position:fixed;min-width:160px;z-index:200;{menuStyle}"
+			onclick={() => (open = false)}
+		>
 			{@render menu()}
 		</div>
 	{/if}
 </td>
-
-<style>
-	.row-menu {
-		position: fixed;
-		min-width: 160px;
-		z-index: 40;
-	}
-</style>
