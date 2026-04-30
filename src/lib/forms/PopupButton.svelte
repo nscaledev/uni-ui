@@ -8,7 +8,7 @@
 		label: string;
 		disabled?: boolean;
 		class?: string;
-		contents: Snippet;
+		contents: Snippet<[() => void]>;
 	}
 
 	let { icon, label, disabled = $bindable(false), class: cls = '', contents }: Props = $props();
@@ -57,7 +57,7 @@
 
 {#if open}
 	<div bind:this={floatingEl} class="menu popup-menu" style="position:fixed;z-index:100;">
-		{@render contents()}
+		{@render contents(() => (open = false))}
 	</div>
 {/if}
 

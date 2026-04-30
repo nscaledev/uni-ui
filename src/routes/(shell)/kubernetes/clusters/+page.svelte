@@ -33,6 +33,11 @@
 	let createProjectID = $state(data.projects[0]?.metadata.id);
 	// eslint-disable-next-line svelte/valid-compile
 	let createRegionID = $state(data.regions[0]?.metadata.id);
+
+	const createURL = $derived(
+		`/kubernetes/clusters/create?projectID=${data.projectID ?? createProjectID}&regionID=${data.regions.length === 1 ? data.regions[0].metadata.id : createRegionID}`
+	);
+	const skipPopup = $derived(!!data.projectID && data.regions.length === 1);
 	const PROJECT_PALETTE = [
 		'oklch(0.65 0.18 220)',
 		'oklch(0.65 0.18 290)',
@@ -166,30 +171,42 @@
 
 	{#snippet tools()}
 		{#if data.projects.length}
-			<PopupButton icon="plus" label="Create">
-				{#snippet contents()}
-					<div class="create-popup">
-						<div class="create-popup__label">Project</div>
-						<div class="picker">
-							<Icon name="folder" size={14} /><select bind:value={createProjectID}
-								>{#each data.projects as p}<option value={p.metadata.id}>{p.metadata.name}</option
-									>{/each}</select
-							>
+			{#if skipPopup}
+				<a href={createURL} class="btn btn--primary"><Icon name="plus" size={16} /> Create</a>
+			{:else}
+				<PopupButton icon="plus" label="Create">
+					{#snippet contents(close)}
+						<div class="create-popup">
+							{#if !data.projectID}
+								<div class="menu__title" style="padding-inline: 0">Project</div>
+								<div class="picker">
+									<Icon name="folder" size={14} />
+									<select bind:value={createProjectID}>
+										{#each data.projects as p}
+											<option value={p.metadata.id}>{p.metadata.name}</option>
+										{/each}
+									</select>
+								</div>
+							{/if}
+							{#if data.regions.length > 1}
+								<div class="menu__title" style="padding-inline: 0">Region</div>
+								<div class="picker">
+									<Icon name="globe" size={14} />
+									<select bind:value={createRegionID}>
+										{#each data.regions as r}
+											<option value={r.metadata.id}>{r.metadata.name}</option>
+										{/each}
+									</select>
+								</div>
+							{/if}
+							<div class="create-popup__footer">
+								<button onclick={close} class="btn btn--ghost btn--sm">Cancel</button>
+								<a href={createURL} class="btn btn--primary btn--sm">Continue</a>
+							</div>
 						</div>
-						<div class="create-popup__label">Region</div>
-						<div class="picker">
-							<Icon name="globe" size={14} /><select bind:value={createRegionID}
-								>{#each data.regions as r}<option value={r.metadata.id}>{r.metadata.name}</option
-									>{/each}</select
-							>
-						</div>
-						<a
-							href="/kubernetes/clusters/create?projectID={createProjectID}&regionID={createRegionID}"
-							class="btn btn--primary">Continue</a
-						>
-					</div>
-				{/snippet}
-			</PopupButton>
+					{/snippet}
+				</PopupButton>
+			{/if}
 		{/if}
 	{/snippet}
 	{#snippet list(clusters)}<ShellList
@@ -228,19 +245,3 @@
 		>{/snippet}
 	{#snippet empty()}<Placeholder>No Kubernetes clusters yet.</Placeholder>{/snippet}
 </ListPage>
-
-<style>
-	.create-popup {
-		display: flex;
-		flex-direction: column;
-		gap: 8px;
-		min-width: 220px;
-	}
-	.create-popup__label {
-		font-size: 11.5px;
-		font-weight: 600;
-		color: var(--text-3);
-		letter-spacing: 0.06em;
-		text-transform: uppercase;
-	}
-</style>

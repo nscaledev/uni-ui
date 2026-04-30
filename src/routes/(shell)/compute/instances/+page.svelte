@@ -35,6 +35,14 @@
 	onMount(() => startAutoRefresh('layout:instances'));
 	// eslint-disable-next-line svelte/valid-compile
 	let createNetworkID = $state(data.networks[0]?.metadata.id);
+
+	const createNetwork = $derived(
+		data.networks.length === 1 ? data.networks[0] : lookupNetwork(createNetworkID ?? '')
+	);
+	const createURL = $derived(
+		`/compute/instances/create?projectID=${createNetwork?.metadata.projectId}&regionID=${createNetwork?.status?.regionId}&networkID=${createNetwork?.metadata.id}`
+	);
+	const skipPopup = $derived(data.networks.length === 1);
 	function lookupNetwork(id: string): Region.NetworkV2Read {
 		return data.networks.find((x) => x.metadata.id == id) as Region.NetworkV2Read;
 	}
@@ -224,28 +232,29 @@
 
 	{#snippet tools()}
 		{#if data.projects.length}
-			<PopupButton icon="plus" label="Create">
-				{#snippet contents()}
-					<div class="create-popup">
-						<div class="create-popup__label">Network</div>
-						<div class="picker">
-							<Icon name="network" size={14} /><select bind:value={createNetworkID}
-								>{#each data.networks as n}<option value={n.metadata.id}>{n.metadata.name}</option
-									>{/each}</select
-							>
+			{#if skipPopup}
+				<a href={createURL} class="btn btn--primary"><Icon name="plus" size={16} /> Create</a>
+			{:else}
+				<PopupButton icon="plus" label="Create">
+					{#snippet contents(close)}
+						<div class="create-popup">
+							<div class="menu__title" style="padding-inline: 0">Network</div>
+							<div class="picker">
+								<Icon name="network" size={14} />
+								<select bind:value={createNetworkID}>
+									{#each data.networks as n}
+										<option value={n.metadata.id}>{n.metadata.name}</option>
+									{/each}
+								</select>
+							</div>
+							<div class="create-popup__footer">
+								<button onclick={close} class="btn btn--ghost btn--sm">Cancel</button>
+								<a href={createURL} class="btn btn--primary btn--sm">Continue</a>
+							</div>
 						</div>
-						<a
-							href={'/compute/instances/create?projectID=' +
-								lookupNetwork(createNetworkID || '')?.metadata.projectId +
-								'&regionID=' +
-								lookupNetwork(createNetworkID || '')?.status?.regionId +
-								'&networkID=' +
-								createNetworkID}
-							class="btn btn--primary">Continue</a
-						>
-					</div>
-				{/snippet}
-			</PopupButton>
+					{/snippet}
+				</PopupButton>
+			{/if}
 		{/if}
 	{/snippet}
 	{#snippet list(instances)}<ShellList
@@ -357,19 +366,3 @@
 		{/if}
 	{/snippet}
 </ListPage>
-
-<style>
-	.create-popup {
-		display: flex;
-		flex-direction: column;
-		gap: 8px;
-		min-width: 220px;
-	}
-	.create-popup__label {
-		font-size: 11.5px;
-		font-weight: 600;
-		color: var(--text-3);
-		letter-spacing: 0.06em;
-		text-transform: uppercase;
-	}
-</style>

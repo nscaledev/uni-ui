@@ -720,6 +720,12 @@ button { cursor: pointer; border: 0; background: none; padding: 0; }
 }
 
 /* =========================================================
+   create popup (scope/resource picker inside PopupButton)
+   ========================================================= */
+.create-popup { display: flex; flex-direction: column; gap: 8px; }
+.create-popup__footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
+
+/* =========================================================
    table
    ========================================================= */
 .table-wrap {
