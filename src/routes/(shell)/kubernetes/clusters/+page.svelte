@@ -146,10 +146,11 @@
 		<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
 		<RowMenu>
 			{#snippet menu()}
+				<div class="menu__title">Access</div>
 				<button class="menu__item" onclick={() => downloadKubeconfig(resource)}>
 					<Icon name="download" size={14} /> Download kubeconfig
 				</button>
-				<hr class="menu__sep" />
+				<div class="menu__title">Danger</div>
 				<ModalIcon
 					icon="trash"
 					label="Delete"
@@ -207,10 +208,11 @@
 						</ShellListItemBadges>
 					{/snippet}
 					{#snippet menu()}
+						<div class="menu__title">Access</div>
 						<button class="menu__item" onclick={() => downloadKubeconfig(resource)}>
 							<Icon name="download" size={14} /> Download kubeconfig
 						</button>
-						<hr class="menu__sep" />
+						<div class="menu__title">Danger</div>
 						<ModalIcon
 							icon="trash"
 							label="Delete"

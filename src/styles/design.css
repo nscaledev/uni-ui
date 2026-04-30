@@ -1005,7 +1005,7 @@ tr.has-warn td:first-child,
   border-radius: 10px;
   background: var(--bg-3);
   backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--line);
   box-shadow: var(--shadow-pop);
   z-index: 30;
 }
@@ -1674,9 +1674,9 @@ tr.has-warn td:first-child,
   background: var(--menu-bg);
 }
 
-/* solid mode: ensure menu uses panel bg (no --menu-bg token set) */
+/* solid mode: elevate menu above surface so it reads as a popover */
 :root:not([data-surface="glass"]) .menu {
-  background: var(--bg-1);
+  background: var(--bg-3);
 }
 
 /* Glass: shell wrapper must be transparent so the body aurora shows through */

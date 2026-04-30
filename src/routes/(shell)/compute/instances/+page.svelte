@@ -164,11 +164,12 @@
 		<RowMenu>
 			{#snippet menu()}
 				{#if !resource.spec.sshCertificateAuthorityId}
+					<div class="menu__title">Access</div>
 					<button class="menu__item" onclick={() => getSSHKey(resource)}>
 						<Icon name="key" size={14} /> Download SSH key
 					</button>
-					<hr class="menu__sep" />
 				{/if}
+				<div class="menu__title">Power</div>
 				<ModalIcon
 					icon={resource.status.powerState !== Compute.InstanceLifecyclePhase.Stopped
 						? 'stop'
@@ -207,7 +208,7 @@
 				>
 					Force-reboot "{resource.metadata.name}"?
 				</ModalIcon>
-				<hr class="menu__sep" />
+				<div class="menu__title">Danger</div>
 				<ModalIcon
 					icon="trash"
 					label="Delete"
@@ -269,11 +270,12 @@
 					{/snippet}
 					{#snippet menu()}
 						{#if !resource.spec.sshCertificateAuthorityId}
+							<div class="menu__title">Access</div>
 							<button class="menu__item" onclick={() => getSSHKey(resource)}>
 								<Icon name="key" size={14} /> Download SSH key
 							</button>
-							<hr class="menu__sep" />
 						{/if}
+						<div class="menu__title">Power</div>
 						<ModalIcon
 							icon={resource.status.powerState !== Compute.InstanceLifecyclePhase.Stopped
 								? 'stop'
@@ -313,7 +315,7 @@
 						>
 							Force-reboot "{resource.metadata.name}"?
 						</ModalIcon>
-						<hr class="menu__sep" />
+						<div class="menu__title">Danger</div>
 						<ModalIcon
 							icon="trash"
 							label="Delete"
