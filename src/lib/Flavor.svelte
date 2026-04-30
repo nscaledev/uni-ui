@@ -9,39 +9,38 @@
 </script>
 
 {#if flavor}
-	<dl class="attrs">
-		<dt>CPU</dt>
-		<dd>{flavor.spec.cpus} core</dd>
-		<dt>RAM</dt>
-		<dd>{flavor.spec.memory} GiB</dd>
-		<dt>Disk</dt>
-		<dd>{flavor.spec.disk} GiB</dd>
+	<span class="flavor">
+		<span class="k">CPU</span>
+		{flavor.spec.cpus} core
+		<span class="sep">·</span>
+		<span class="k">RAM</span>
+		{flavor.spec.memory} GiB
+		<span class="sep">·</span>
+		<span class="k">Disk</span>
+		{flavor.spec.disk} GiB
 		{#if flavor.spec.gpu}
-			<dt>GPU</dt>
-			<dd>
-				{flavor.spec.gpu.physicalCount}×
-				{flavor.spec.gpu.model} · {flavor.spec.gpu.logicalCount} logical · {flavor.spec.gpu.memory} GiB
-			</dd>
+			<span class="sep">·</span>
+			<span class="k">GPU</span>
+			{flavor.spec.gpu.physicalCount}× {flavor.spec.gpu.model} · {flavor.spec.gpu.logicalCount} logical
+			· {flavor.spec.gpu.memory} GiB
 		{/if}
-	</dl>
+	</span>
 {/if}
 
 <style>
-	.attrs {
-		display: grid;
-		grid-template-columns: 36px minmax(0, 1fr);
-		gap: 3px 10px;
-		margin: 0;
+	.flavor {
 		font-size: 12px;
+		color: var(--text-1);
 	}
 
-	.attrs dt {
+	.k {
 		color: var(--text-3);
 		font-weight: 500;
+		margin-right: 4px;
 	}
 
-	.attrs dd {
-		margin: 0;
-		color: var(--text-1);
+	.sep {
+		color: var(--text-4);
+		margin: 0 4px;
 	}
 </style>
