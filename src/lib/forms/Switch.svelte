@@ -31,56 +31,36 @@
 	}
 </script>
 
-<div class="switch-row">
-	<div class="switch-row__text">
-		<span class="switch-label">{label}</span>
-		{#if hint}
-			<p class="switch-row__hint">{hint}</p>
-		{/if}
+<div class="form-row">
+	<div class="form-row__left">
+		<span class="form-row__title">{label}</span>
+		{#if hint}<p class="form-row__hint">{hint}</p>{/if}
 	</div>
-
-	<button
-		type="button"
-		role="switch"
-		aria-checked={checked}
-		aria-label={label}
-		class="toggle"
-		class:toggle--on={checked}
-		class:toggle--disabled={disabled}
-		{disabled}
-		onclick={toggle}
-	>
-		<span class="toggle__thumb"></span>
-	</button>
+	<div class="form-row__control">
+		<button
+			type="button"
+			role="switch"
+			aria-checked={checked}
+			aria-label={label}
+			class="toggle"
+			class:toggle--on={checked}
+			class:toggle--disabled={disabled}
+			{disabled}
+			onclick={toggle}
+		>
+			<span class="toggle__thumb"></span>
+		</button>
+	</div>
 </div>
 
 <style>
-	.switch-row {
+	.form-row__left {
+		padding-top: 2px;
+	}
+
+	.form-row__control {
 		display: flex;
-		align-items: flex-start;
-		justify-content: space-between;
-		gap: 24px;
-	}
-
-	.switch-row__text {
-		display: flex;
-		flex-direction: column;
-		gap: 4px;
-		flex: 1;
-		min-width: 0;
-	}
-
-	.switch-label {
-		font-size: 13px;
-		font-weight: 500;
-		color: var(--text-1);
-	}
-
-	.switch-row__hint {
-		font-size: 11.5px;
-		color: var(--text-3);
-		line-height: 1.45;
-		margin: 0;
+		align-items: center;
 	}
 
 	.toggle {

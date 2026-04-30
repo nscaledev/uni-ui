@@ -42,63 +42,48 @@
 	}
 </script>
 
-<div class="chips-field">
-	<div class="chips-field__label">{label}</div>
+<div class="form-row">
+	<div class="form-row__left">
+		<div class="form-row__title">{label}</div>
+		{#if hint}<p class="form-row__hint">{hint}</p>{/if}
+	</div>
+	<div class="form-row__control">
+		<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
+		<div class="chips-input" onclick={() => inputEl.focus()}>
+			{#each value as tag, i}
+				<span class="chip">
+					<span class="chip__label">{tag}</span>
+					<button
+						type="button"
+						class="chip__remove"
+						aria-label="Remove {tag}"
+						onclick={(e) => {
+							e.stopPropagation();
+							remove(i);
+						}}
+					>
+						<Icon name="x" size={12} />
+					</button>
+				</span>
+			{/each}
 
-	{#if hint}
-		<p class="chips-field__hint">{hint}</p>
-	{/if}
-
-	<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
-	<div class="chips-input" onclick={() => inputEl.focus()}>
-		{#each value as tag, i}
-			<span class="chip">
-				<span class="chip__label">{tag}</span>
-				<button
-					type="button"
-					class="chip__remove"
-					aria-label="Remove {tag}"
-					onclick={(e) => {
-						e.stopPropagation();
-						remove(i);
-					}}
-				>
-					<Icon name="x" size={12} />
-				</button>
-			</span>
-		{/each}
-
-		<input
-			{name}
-			type="text"
-			class="chips-input__text"
-			{placeholder}
-			bind:value={input}
-			bind:this={inputEl}
-			{onkeydown}
-			onblur={commit}
-		/>
+			<input
+				{name}
+				type="text"
+				class="chips-input__text"
+				{placeholder}
+				bind:value={input}
+				bind:this={inputEl}
+				{onkeydown}
+				onblur={commit}
+			/>
+		</div>
 	</div>
 </div>
 
 <style>
-	.chips-field {
-		display: flex;
-		flex-direction: column;
-		gap: 6px;
-	}
-
-	.chips-field__label {
-		font-size: 13px;
-		font-weight: 500;
-		color: var(--text-1);
-	}
-
-	.chips-field__hint {
-		font-size: 11.5px;
-		color: var(--text-3);
-		line-height: 1.45;
-		margin: 0;
+	.form-row__left {
+		padding-top: 2px;
 	}
 
 	.chips-input {

@@ -42,69 +42,60 @@
 	}
 </script>
 
-<div class="ms-field">
-	<div class="ms-field__label">{label}</div>
-
-	{#if hint}
-		<p class="ms-field__hint">{hint}</p>
-	{/if}
-
-	{#if value.length}
-		<div class="ms-chips">
-			{#each value as v, i}
-				<div class="ms-chip">
-					<span class="ms-chip__content">{@render selected(v)}</span>
-					<button class="ms-chip__remove" onclick={() => remove(i)} aria-label="Remove">
-						<Icon name="x" size={14} />
-					</button>
-				</div>
-			{/each}
-		</div>
-	{/if}
-
-	<Combobox.Root type="multiple" onValueChange={add} onOpenChange={() => (query = '')}>
-		<div class="ms-input-wrap">
-			<Icon name="search" size={14} class="ms-search-icon" />
-			<Combobox.Input
-				class="ms-input"
-				placeholder="Search to add…"
-				oninput={(e) => (query = (e.target as HTMLInputElement).value)}
-				aria-label={label}
-			/>
-		</div>
-
-		<Combobox.Content class="menu ms-menu" sideOffset={4}>
-			{#if available.length}
-				{#each available as option}
-					<Combobox.Item value={option.value} label={option.label} class="menu__item">
-						{option.label}
-					</Combobox.Item>
+<div class="form-row">
+	<div class="form-row__left">
+		<div class="form-row__title">{label}</div>
+		{#if hint}<p class="form-row__hint">{hint}</p>{/if}
+	</div>
+	<div class="form-row__control">
+		{#if value.length}
+			<div class="ms-chips">
+				{#each value as v, i}
+					<div class="ms-chip">
+						<span class="ms-chip__content">{@render selected(v)}</span>
+						<button class="ms-chip__remove" onclick={() => remove(i)} aria-label="Remove">
+							<Icon name="x" size={14} />
+						</button>
+					</div>
 				{/each}
-			{:else}
-				<div class="ms-empty">No options</div>
-			{/if}
-		</Combobox.Content>
-	</Combobox.Root>
+			</div>
+		{/if}
+
+		<Combobox.Root type="multiple" onValueChange={add} onOpenChange={() => (query = '')}>
+			<div class="ms-input-wrap">
+				<Icon name="search" size={14} class="ms-search-icon" />
+				<Combobox.Input
+					class="ms-input"
+					placeholder="Search to add…"
+					oninput={(e) => (query = (e.target as HTMLInputElement).value)}
+					aria-label={label}
+				/>
+			</div>
+
+			<Combobox.Content class="menu ms-menu" sideOffset={4}>
+				{#if available.length}
+					{#each available as option}
+						<Combobox.Item value={option.value} label={option.label} class="menu__item">
+							{option.label}
+						</Combobox.Item>
+					{/each}
+				{:else}
+					<div class="ms-empty">No options</div>
+				{/if}
+			</Combobox.Content>
+		</Combobox.Root>
+	</div>
 </div>
 
 <style>
-	.ms-field {
+	.form-row__left {
+		padding-top: 2px;
+	}
+
+	.form-row__control {
 		display: flex;
 		flex-direction: column;
 		gap: 8px;
-	}
-
-	.ms-field__label {
-		font-size: 13px;
-		font-weight: 500;
-		color: var(--text-1);
-	}
-
-	.ms-field__hint {
-		font-size: 11.5px;
-		color: var(--text-3);
-		line-height: 1.45;
-		margin: 0;
 	}
 
 	/* Selected chips */

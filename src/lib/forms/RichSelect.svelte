@@ -68,27 +68,27 @@
 
 <svelte:window onkeydown={onwindowkeydown} onpointerdown={onwindowpointerdown} />
 
-<div class="rich-select">
-	<div class="rich-select__label">{label}</div>
-
-	{#if hint}
-		<p class="rich-select__hint">{hint}</p>
-	{/if}
-
-	<button
-		type="button"
-		class="rich-select__trigger"
-		class:rich-select__trigger--open={open}
-		bind:this={triggerEl}
-		onclick={toggle}
-		aria-haspopup="listbox"
-		aria-expanded={open}
-	>
-		<span class="rich-select__value">
-			{@render contents(value)}
-		</span>
-		<Icon name="chevronDown" size={16} class="rich-select__chevron" />
-	</button>
+<div class="form-row">
+	<div class="form-row__left">
+		<div class="form-row__title">{label}</div>
+		{#if hint}<p class="form-row__hint">{hint}</p>{/if}
+	</div>
+	<div class="form-row__control">
+		<button
+			type="button"
+			class="rich-select__trigger"
+			class:rich-select__trigger--open={open}
+			bind:this={triggerEl}
+			onclick={toggle}
+			aria-haspopup="listbox"
+			aria-expanded={open}
+		>
+			<span class="rich-select__value">
+				{@render contents(value)}
+			</span>
+			<Icon name="chevronDown" size={16} class="rich-select__chevron" />
+		</button>
+	</div>
 </div>
 
 {#if open}
@@ -114,23 +114,8 @@
 {/if}
 
 <style>
-	.rich-select {
-		display: flex;
-		flex-direction: column;
-		gap: 6px;
-	}
-
-	.rich-select__label {
-		font-size: 13px;
-		font-weight: 500;
-		color: var(--text-1);
-	}
-
-	.rich-select__hint {
-		font-size: 11.5px;
-		color: var(--text-3);
-		line-height: 1.45;
-		margin: 0;
+	.form-row__left {
+		padding-top: 2px;
 	}
 
 	.rich-select__trigger {

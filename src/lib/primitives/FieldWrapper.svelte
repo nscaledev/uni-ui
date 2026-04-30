@@ -71,7 +71,8 @@
 		border: 0;
 		outline: 0;
 		color: var(--text-1);
-		font: inherit;
+		font-size: 12.5px;
+		font-family: inherit;
 	}
 
 	.field__status {
