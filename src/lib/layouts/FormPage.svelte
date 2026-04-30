@@ -43,14 +43,15 @@
 	{/each}
 </nav>
 
+{#if description}
+	<div class="form-intro">
+		<div class="form-intro__title">{submitLabel}</div>
+		<div class="form-intro__desc">{description}</div>
+	</div>
+{/if}
+
 <div class="form-layout" class:form-layout--no-aside={!summary}>
 	<div class="form-main">
-		{#if description}
-			<div class="form-intro">
-				<div class="form-intro__title">{submitLabel}</div>
-				<div class="form-intro__desc">{description}</div>
-			</div>
-		{/if}
 		{@render form()}
 	</div>
 
