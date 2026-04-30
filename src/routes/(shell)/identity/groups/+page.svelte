@@ -20,7 +20,6 @@
 	import SubtleButton from '$lib/forms/SubtleButton.svelte';
 	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
 	import RowMenu from '$lib/layouts/RowMenu.svelte';
-	import Icon from '$lib/primitives/Icon.svelte';
 
 	const settings: ShellPageSettings = {
 		feature: 'Identity',
@@ -91,9 +90,6 @@
 		<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
 		<RowMenu>
 			{#snippet menu()}
-				<a class="menu__item" href="/identity/groups/view/{resource.metadata.id}">
-					<Icon name="eye" size={14} /> View
-				</a>
 				<ModalIcon
 					icon="trash"
 					label="Delete"

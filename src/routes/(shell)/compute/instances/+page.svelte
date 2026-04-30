@@ -163,10 +163,6 @@
 		<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
 		<RowMenu>
 			{#snippet menu()}
-				<a class="menu__item" href="/compute/instances/edit/{resource.metadata.id}">
-					<Icon name="edit" size={14} /> Edit
-				</a>
-				<hr class="menu__sep" />
 				{#if !resource.spec.sshCertificateAuthorityId}
 					<button class="menu__item" onclick={() => getSSHKey(resource)}>
 						<Icon name="key" size={14} /> Download SSH key

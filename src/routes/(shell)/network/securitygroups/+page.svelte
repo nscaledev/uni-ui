@@ -120,9 +120,6 @@
 		<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
 		<RowMenu>
 			{#snippet menu()}
-				<a class="menu__item" href="/network/securitygroups/edit/{resource.metadata.id}">
-					<Icon name="edit" size={14} /> Edit
-				</a>
 				<ModalIcon
 					icon="trash"
 					label="Delete"
