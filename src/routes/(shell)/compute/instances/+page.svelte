@@ -24,6 +24,7 @@
 	import Placeholder from '$lib/layouts/Placeholder.svelte';
 	import PopupButton from '$lib/forms/PopupButton.svelte';
 	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
+	import RowMenu from '$lib/layouts/RowMenu.svelte';
 	import Icon from '$lib/primitives/Icon.svelte';
 	const settings: ShellPageSettings = {
 		feature: 'Infrastructure',
@@ -136,8 +137,10 @@
 		)}
 		{@const proj = instanceProject(resource)}
 		<td class="primary">
-			<div>{resource.metadata.name}</div>
-			<div class="sub">{resource.metadata.id}</div>
+			<a href="/compute/instances/edit/{resource.metadata.id}">
+				<div>{resource.metadata.name}</div>
+				<div class="sub">{resource.metadata.id}</div>
+			</a>
 		</td>
 		<td>
 			{#if chip}<span class="chip chip--{chip.chipClass}"
@@ -158,15 +161,68 @@
 		<td><span class="mono">{resource.status.privateIP ?? '—'}</span></td>
 		<td>{resource.metadata.createdBy}</td>
 		<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
-		<td class="col-actions">
-			<button
-				class="row-action"
-				title="Edit"
-				onclick={() => (window.location.href = `/compute/instances/edit/${resource.metadata.id}`)}
-			>
-				<Icon name="edit" size={14} />
-			</button>
-		</td>
+		<RowMenu>
+			{#snippet menu()}
+				<a class="menu__item" href="/compute/instances/edit/{resource.metadata.id}">
+					<Icon name="edit" size={14} /> Edit
+				</a>
+				<hr class="menu__sep" />
+				{#if !resource.spec.sshCertificateAuthorityId}
+					<button class="menu__item" onclick={() => getSSHKey(resource)}>
+						<Icon name="key" size={14} /> Download SSH key
+					</button>
+					<hr class="menu__sep" />
+				{/if}
+				<ModalIcon
+					icon={resource.status.powerState !== Compute.InstanceLifecyclePhase.Stopped
+						? 'stop'
+						: 'play'}
+					label={resource.status.powerState !== Compute.InstanceLifecyclePhase.Stopped
+						? 'Stop'
+						: 'Start'}
+					class="menu__item"
+					title="Are you sure?"
+					confirm={() =>
+						resource.status.powerState !== Compute.InstanceLifecyclePhase.Stopped
+							? stop(resource)
+							: start(resource)}
+					disabled={!MachineStatus.canStopOrStart(resource.status.powerState)}
+				>
+					{resource.status.powerState !== Compute.InstanceLifecyclePhase.Stopped ? 'Stop' : 'Start'}
+					instance?
+				</ModalIcon>
+				<ModalIcon
+					icon="refresh"
+					label="Soft reboot"
+					class="menu__item"
+					title="Soft reboot?"
+					confirm={() => rebootSoft(resource)}
+					disabled={!MachineStatus.canReboot(resource.status.powerState)}
+				>
+					Soft-reboot "{resource.metadata.name}"?
+				</ModalIcon>
+				<ModalIcon
+					icon="restartAlert"
+					label="Hard reboot"
+					class="menu__item"
+					title="Hard reboot?"
+					confirm={() => rebootHard(resource)}
+					disabled={!MachineStatus.canReboot(resource.status.powerState)}
+				>
+					Force-reboot "{resource.metadata.name}"?
+				</ModalIcon>
+				<hr class="menu__sep" />
+				<ModalIcon
+					icon="trash"
+					label="Delete"
+					class="menu__item menu__item--danger"
+					title="Delete instance?"
+					confirm={() => deleteInstance(resource)}
+				>
+					Removing "{resource.metadata.name}" is permanent.
+				</ModalIcon>
+			{/snippet}
+		</RowMenu>
 	{/snippet}
 
 	{#snippet tools()}

@@ -21,6 +21,7 @@
 	import Placeholder from '$lib/layouts/Placeholder.svelte';
 	import PopupButton from '$lib/forms/PopupButton.svelte';
 	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
+	import RowMenu from '$lib/layouts/RowMenu.svelte';
 	import Icon from '$lib/primitives/Icon.svelte';
 	const settings: ShellPageSettings = {
 		feature: 'Network',
@@ -93,8 +94,10 @@
 		{@const chip = resolveChip(resource.metadata.provisioningStatus, null)}
 		{@const proj = securityGroupProject(resource)}
 		<td class="primary">
-			<div>{resource.metadata.name}</div>
-			<div class="sub">{resource.metadata.id}</div>
+			<a href="/network/securitygroups/edit/{resource.metadata.id}">
+				<div>{resource.metadata.name}</div>
+				<div class="sub">{resource.metadata.id}</div>
+			</a>
 		</td>
 		<td>
 			{#if chip}<span class="chip chip--{chip.chipClass}"
@@ -115,11 +118,22 @@
 		<td>{lookupNetwork(resource.status.networkId)?.metadata.name ?? '—'}</td>
 		<td>{resource.metadata.createdBy}</td>
 		<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
-		<td class="col-actions">
-			<a class="row-action" href="/network/securitygroups/edit/{resource.metadata.id}" title="Edit">
-				<Icon name="edit" size={14} />
-			</a>
-		</td>
+		<RowMenu>
+			{#snippet menu()}
+				<a class="menu__item" href="/network/securitygroups/edit/{resource.metadata.id}">
+					<Icon name="edit" size={14} /> Edit
+				</a>
+				<ModalIcon
+					icon="trash"
+					label="Delete"
+					class="menu__item menu__item--danger"
+					title="Delete security group?"
+					confirm={() => deleteGroup(resource)}
+				>
+					Removing "{resource.metadata.name}" will affect any instances using it.
+				</ModalIcon>
+			{/snippet}
+		</RowMenu>
 	{/snippet}
 
 	{#snippet tools()}

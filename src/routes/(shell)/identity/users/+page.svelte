@@ -19,6 +19,7 @@
 	import Placeholder from '$lib/layouts/Placeholder.svelte';
 	import SubtleButton from '$lib/forms/SubtleButton.svelte';
 	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
+	import RowMenu from '$lib/layouts/RowMenu.svelte';
 	const settings: ShellPageSettings = {
 		feature: 'Identity',
 		name: 'Users',
@@ -87,7 +88,17 @@
 		</td>
 		<td>{userLastActive(resource)}</td>
 		<td><span class="mono">{Formatters.ageFormatter(resource.metadata.creationTime)}</span></td>
-		<td></td>
+		<RowMenu>
+			{#snippet menu()}
+				<ModalIcon
+					icon="trash"
+					label="Delete"
+					class="menu__item menu__item--danger"
+					title="Delete user?"
+					confirm={() => deleteUser(resource.metadata.id)}
+				/>
+			{/snippet}
+		</RowMenu>
 	{/snippet}
 
 	{#snippet tools()}<SubtleButton

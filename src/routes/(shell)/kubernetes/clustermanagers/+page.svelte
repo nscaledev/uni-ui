@@ -17,6 +17,7 @@
 	import ShellListItemMetadata from '$lib/layouts/ShellListItemMetadata.svelte';
 	import Placeholder from '$lib/layouts/Placeholder.svelte';
 	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
+	import RowMenu from '$lib/layouts/RowMenu.svelte';
 	const settings: ShellPageSettings = {
 		feature: 'Kubernetes',
 		name: 'Cluster Managers',
@@ -83,7 +84,18 @@
 		</td>
 		<td>{resource.metadata.createdBy}</td>
 		<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
-		<td></td>
+		<RowMenu>
+			{#snippet menu()}
+				<ModalIcon
+					icon="trash"
+					label="Delete"
+					class="menu__item menu__item--danger"
+					title="Delete cluster manager?"
+					confirm={() => deleteManager(resource)}
+					>Removing "{resource.metadata.name}" will remove all clusters it manages.</ModalIcon
+				>
+			{/snippet}
+		</RowMenu>
 	{/snippet}
 	{#snippet list(managers)}<ShellList
 			>{#each managers as resource}<ShellListItem id={resource.metadata.id}>

@@ -20,6 +20,7 @@
 	import Placeholder from '$lib/layouts/Placeholder.svelte';
 	import PopupButton from '$lib/forms/PopupButton.svelte';
 	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
+	import RowMenu from '$lib/layouts/RowMenu.svelte';
 	import Icon from '$lib/primitives/Icon.svelte';
 	const settings: ShellPageSettings = {
 		feature: 'Kubernetes',
@@ -143,15 +144,23 @@
 		<td><span class="mono">{resource.spec.version}</span></td>
 		<td>{resource.metadata.createdBy}</td>
 		<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
-		<td class="col-actions">
-			<button
-				class="row-action"
-				title="Download kubeconfig"
-				onclick={() => downloadKubeconfig(resource)}
-			>
-				<Icon name="download" size={14} />
-			</button>
-		</td>
+		<RowMenu>
+			{#snippet menu()}
+				<button class="menu__item" onclick={() => downloadKubeconfig(resource)}>
+					<Icon name="download" size={14} /> Download kubeconfig
+				</button>
+				<hr class="menu__sep" />
+				<ModalIcon
+					icon="trash"
+					label="Delete"
+					class="menu__item menu__item--danger"
+					title="Delete cluster?"
+					confirm={() => deleteCluster(resource)}
+				>
+					Removing "{resource.metadata.name}" will destroy all workloads.
+				</ModalIcon>
+			{/snippet}
+		</RowMenu>
 	{/snippet}
 
 	{#snippet tools()}

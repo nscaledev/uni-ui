@@ -19,6 +19,7 @@
 	import Placeholder from '$lib/layouts/Placeholder.svelte';
 	import SubtleButton from '$lib/forms/SubtleButton.svelte';
 	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
+	import RowMenu from '$lib/layouts/RowMenu.svelte';
 	import Icon from '$lib/primitives/Icon.svelte';
 
 	const settings: ShellPageSettings = {
@@ -75,8 +76,10 @@
 		{@const chip = resolveChip(resource.metadata.provisioningStatus, null)}
 		{@const members = (resource.spec.userIDs?.length ?? 0) + resource.spec.serviceAccountIDs.length}
 		<td class="primary">
-			<div>{resource.metadata.name}</div>
-			<div class="sub">{resource.metadata.id}</div>
+			<a href="/identity/groups/view/{resource.metadata.id}">
+				<div>{resource.metadata.name}</div>
+				<div class="sub">{resource.metadata.id}</div>
+			</a>
 		</td>
 		<td>
 			{#if chip}<span class="chip chip--{chip.chipClass}"
@@ -86,11 +89,22 @@
 		<td>{members}</td>
 		<td>{resource.metadata.createdBy}</td>
 		<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
-		<td class="col-actions">
-			<a class="row-action" href="/identity/groups/view/{resource.metadata.id}" title="View">
-				<Icon name="eye" size={14} />
-			</a>
-		</td>
+		<RowMenu>
+			{#snippet menu()}
+				<a class="menu__item" href="/identity/groups/view/{resource.metadata.id}">
+					<Icon name="eye" size={14} /> View
+				</a>
+				<ModalIcon
+					icon="trash"
+					label="Delete"
+					class="menu__item menu__item--danger"
+					title="Delete group?"
+					confirm={() => deleteGroup(resource.metadata.id)}
+				>
+					Removing "{resource.metadata.name}" will disassociate any projects referencing it.
+				</ModalIcon>
+			{/snippet}
+		</RowMenu>
 	{/snippet}
 
 	{#snippet tools()}

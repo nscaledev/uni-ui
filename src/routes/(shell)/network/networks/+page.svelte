@@ -23,6 +23,7 @@
 	import Badge from '$lib/layouts/Badge.svelte';
 	import Placeholder from '$lib/layouts/Placeholder.svelte';
 	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
+	import RowMenu from '$lib/layouts/RowMenu.svelte';
 	import PopupButton from '$lib/forms/PopupButton.svelte';
 	import Icon from '$lib/primitives/Icon.svelte';
 
@@ -174,11 +175,17 @@
 		<td><span class="mono">{resource.status.prefix}</span></td>
 		<td>{resource.metadata.createdBy}</td>
 		<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
-		<td class="col-actions">
-			<button class="row-action" title="Delete network" onclick={() => deleteNetwork(resource)}>
-				<Icon name="trash" size={14} />
-			</button>
-		</td>
+		<RowMenu>
+			{#snippet menu()}
+				<ModalIcon
+					icon="trash"
+					label="Delete"
+					class="menu__item menu__item--danger"
+					title="Delete network?"
+					confirm={() => deleteNetwork(resource)}
+				/>
+			{/snippet}
+		</RowMenu>
 	{/snippet}
 
 	{#snippet list(networks)}

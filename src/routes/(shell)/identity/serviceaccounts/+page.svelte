@@ -18,6 +18,7 @@
 	import Placeholder from '$lib/layouts/Placeholder.svelte';
 	import SubtleButton from '$lib/forms/SubtleButton.svelte';
 	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
+	import RowMenu from '$lib/layouts/RowMenu.svelte';
 	const settings: ShellPageSettings = {
 		feature: 'Identity',
 		name: 'Service Accounts',
@@ -80,7 +81,18 @@
 		<td><span class="mono">{resource.status.expiry.toISOString().slice(0, 10)}</span></td>
 		<td>{resource.metadata.createdBy}</td>
 		<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
-		<td></td>
+		<RowMenu>
+			{#snippet menu()}
+				<ModalIcon
+					icon="trash"
+					label="Delete"
+					class="menu__item menu__item--danger"
+					title="Delete service account?"
+					confirm={() => deleteServiceAccount(resource.metadata.id)}
+					>Removing "{resource.metadata.name}" may break automation.</ModalIcon
+				>
+			{/snippet}
+		</RowMenu>
 	{/snippet}
 
 	{#snippet tools()}<SubtleButton
