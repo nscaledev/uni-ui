@@ -148,16 +148,24 @@ resource's detail/edit page.
    is present. The networks page currently renders a full `<tr>` (pre-dates this
    contract) and will need updating when BulkBar is wired to the table view.
 
-### Pages still needing rich table columns
+### Pages with rich table columns implemented
 
-- `compute/instances` — power state, primary IP, flavor/size
-- `kubernetes/clusters` — node count, Kubernetes version, region
-- `kubernetes/clustermanagers` — cluster count
-- `network/securitygroups` — associated network, rule count
-- `identity/users` — email/subject, last active, account state
-- `identity/groups` — member count
-- `identity/serviceaccounts` — expiry date
-- All other identity and infrastructure pages as relevant
+All primary resource pages now have `tableRow` snippets:
+
+| Page                         | Key columns                                                        |
+| ---------------------------- | ------------------------------------------------------------------ |
+| `network/networks`           | Status · Project · Region · Prefix · Owner · Age                   |
+| `network/securitygroups`     | Status · Project · Region · Network · Owner · Age                  |
+| `compute/instances`          | Status (power state) · Project · Region · Private IP · Owner · Age |
+| `kubernetes/clusters`        | Status (health) · Project · Region · K8s Version · Owner · Age     |
+| `kubernetes/clustermanagers` | Status · Owner · Age                                               |
+| `identity/users`             | Status (account state) · Last Active · Age                         |
+| `identity/groups`            | Status · Members · Owner · Age                                     |
+| `identity/serviceaccounts`   | Status · Expiry · Owner · Age                                      |
+
+Remaining identity pages (oauth2providers, projects, sshcertificateauthorities) fall
+back to the generic Name / Status / Age columns. Add `tableRow` snippets as needed
+following the pattern above.
 
 ---
 
