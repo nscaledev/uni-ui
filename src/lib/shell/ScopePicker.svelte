@@ -123,10 +123,10 @@
 	<!-- ── LEFT: organizations ── -->
 	<div class="menu-col">
 		<div class="menu-col__head">
-			<span>
+			<div class="menu__title" style="padding: 0">
 				Organization
 				<span class="menu-col__count">{organizations.length}</span>
-			</span>
+			</div>
 			<div class="menu-search">
 				<Icon name="search" size={13} class="menu-search-icon" />
 				<input type="search" placeholder="Search…" bind:value={orgQuery} autofocus />
@@ -180,10 +180,10 @@
 	<!-- ── RIGHT: projects ── -->
 	<div class="menu-col">
 		<div class="menu-col__head">
-			<span>
+			<div class="menu__title" style="padding: 0">
 				Project
 				<span class="menu-col__count">{browseProjects.length}</span>
-			</span>
+			</div>
 			<div class="menu-search">
 				<Icon name="search" size={13} class="menu-search-icon" />
 				<input type="search" placeholder="Search…" bind:value={projQuery} />
