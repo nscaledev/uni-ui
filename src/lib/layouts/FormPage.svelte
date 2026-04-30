@@ -11,6 +11,7 @@
 		breadcrumb: Array<BreadcrumbItem>;
 		cancelHref: string;
 		submitLabel?: string;
+		description?: string;
 		onSubmit: () => void;
 		valid?: boolean;
 		submitting?: boolean;
@@ -22,6 +23,7 @@
 		breadcrumb,
 		cancelHref,
 		submitLabel = 'Create',
+		description,
 		onSubmit,
 		valid = false,
 		submitting = false,
@@ -43,6 +45,12 @@
 
 <div class="form-layout" class:form-layout--no-aside={!summary}>
 	<div class="form-main">
+		{#if description}
+			<div class="form-intro">
+				<div class="form-intro__title">{submitLabel}</div>
+				<div class="form-intro__desc">{description}</div>
+			</div>
+		{/if}
 		{@render form()}
 	</div>
 

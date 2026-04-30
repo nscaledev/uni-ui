@@ -113,6 +113,7 @@
 	breadcrumb={[{ label: 'Kubernetes Clusters', href: '/kubernetes/clusters' }, { label: 'Create' }]}
 	cancelHref="/kubernetes/clusters"
 	submitLabel="Create Cluster"
+	description="Provision a managed Kubernetes cluster in your chosen region."
 	onSubmit={submit}
 	{valid}
 >

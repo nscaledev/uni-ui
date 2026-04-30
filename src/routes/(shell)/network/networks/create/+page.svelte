@@ -55,6 +55,7 @@
 	breadcrumb={[{ label: 'Networks', href: '/network/networks' }, { label: 'Create' }]}
 	cancelHref="/network/networks"
 	submitLabel="Create Network"
+	description="Provision an isolated virtual network for your resources."
 	onSubmit={submit}
 	{valid}
 >

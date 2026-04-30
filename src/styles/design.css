@@ -1407,6 +1407,10 @@ tr.has-warn td:first-child,
 }
 .form-side { position: sticky; top: 72px; align-self: start; }
 
+.form-intro { padding-bottom: 2px; }
+.form-intro__title { font-size: 20px; font-weight: 700; color: var(--text-1); letter-spacing: -0.025em; line-height: 1.15; }
+.form-intro__desc { font-size: 13px; color: var(--text-3); margin-top: 5px; }
+
 .form-section {
   background: var(--bg-2);
   border: 1px solid var(--line);

@@ -85,6 +85,7 @@
 	breadcrumb={[{ label: 'Compute Instances', href: '/compute/instances' }, { label: 'Create' }]}
 	cancelHref="/compute/instances"
 	submitLabel="Create Instance"
+	description="Launch a virtual machine on your chosen network."
 	onSubmit={submit}
 	{valid}
 >

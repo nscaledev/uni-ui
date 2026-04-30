@@ -59,6 +59,7 @@
 	breadcrumb={[{ label: 'Security Groups', href: '/network/securitygroups' }, { label: 'Create' }]}
 	cancelHref="/network/securitygroups"
 	submitLabel="Create Security Group"
+	description="Define ingress and egress rules to control network access."
 	onSubmit={submit}
 	{valid}
 >
