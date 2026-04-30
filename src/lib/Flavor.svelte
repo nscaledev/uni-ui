@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Icon from '$lib/primitives/Icon.svelte';
 	import * as Region from '$lib/openapi/region';
 
 	interface Props {
@@ -10,33 +9,39 @@
 </script>
 
 {#if flavor}
-	<div class="flex flex-col lg:flex-row lg:items-center gap-6">
-		<div class="flex items-center gap-2">
-			<Icon name="cpu" size={20} class="text-2xl" />
-			<div class="flex flex-col lg:flex-row gap-2 lg:gap-4">
-				<div class="flex flex-col items-start">
-					{flavor.spec.cpus} core, {flavor.spec.memory} GiB RAM
-					<div class="text-xs">
-						{flavor.spec.disk} GiB Storage
-					</div>
-				</div>
-				{#if flavor.spec.gpu}
-					<div class="flex flex-col items-start">
-						<div class="flex gap-2 items-center">
-							{flavor.spec.gpu.physicalCount}
-							{#if flavor.spec.gpu.vendor == 'AMD'}
-								<Icon name="cpu" size={20} />
-							{:else if flavor.spec.gpu.vendor == 'NVIDIA'}
-								<Icon name="cpu" size={20} />
-							{/if}
-							{flavor.spec.gpu.model}
-						</div>
-						<div class="text-xs">
-							{flavor.spec.gpu.logicalCount} core {flavor.spec.gpu.memory} GiB
-						</div>
-					</div>
-				{/if}
-			</div>
-		</div>
-	</div>
+	<dl class="attrs">
+		<dt>CPU</dt>
+		<dd>{flavor.spec.cpus} core</dd>
+		<dt>RAM</dt>
+		<dd>{flavor.spec.memory} GiB</dd>
+		<dt>Disk</dt>
+		<dd>{flavor.spec.disk} GiB</dd>
+		{#if flavor.spec.gpu}
+			<dt>GPU</dt>
+			<dd>
+				{flavor.spec.gpu.physicalCount}×
+				{flavor.spec.gpu.model} · {flavor.spec.gpu.logicalCount} logical · {flavor.spec.gpu.memory} GiB
+			</dd>
+		{/if}
+	</dl>
 {/if}
+
+<style>
+	.attrs {
+		display: grid;
+		grid-template-columns: 36px minmax(0, 1fr);
+		gap: 3px 10px;
+		margin: 0;
+		font-size: 12px;
+	}
+
+	.attrs dt {
+		color: var(--text-3);
+		font-weight: 500;
+	}
+
+	.attrs dd {
+		margin: 0;
+		color: var(--text-1);
+	}
+</style>
