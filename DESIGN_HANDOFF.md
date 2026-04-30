@@ -88,9 +88,7 @@ unzip ~/Downloads/unikorn.zip -d /tmp/unikorn-design
 
 ## Known visual gaps (implemented but diverging from design)
 
-| Location                                              | Gap                                                                                                                                                                                                                                                                                       | Fix                                                                                                         |
-| ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| **Scope picker** — `src/lib/shell/ScopePicker.svelte` | The "Organization" and "Project" column headers use a plain `<span>` instead of `<div class="menu__title">`. The design renders them as small-caps eyebrow labels (uppercase, `var(--text-4)`, `letter-spacing: 0.12em`, `font-size: 10.5px`). Currently they render as normal body text. | Replace the wrapping `<span>` in each `menu-col__head` with `<div class="menu__title" style="padding: 0">`. |
+None currently recorded.
 
 ---
 
