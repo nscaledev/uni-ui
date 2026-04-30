@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { computePosition, flip, offset, shift } from '@floating-ui/dom';
 	import Icon from '$lib/primitives/Icon.svelte';
 
 	interface Props {
@@ -16,31 +15,19 @@
 
 	let open = $state(false);
 	let triggerEl: HTMLButtonElement;
-	let floatingEl: HTMLDivElement;
+	let menuEl: HTMLDivElement | undefined = $state();
+	let menuStyle = $state('');
 
-	async function reposition() {
-		if (!triggerEl || !floatingEl) return;
-		const { x, y } = await computePosition(triggerEl, floatingEl, {
-			strategy: 'fixed',
-			placement: 'bottom-start',
-			middleware: [
-				offset(4),
-				flip(),
-				shift({ padding: 8 }),
-				// Match the trigger's width
-				{
-					name: 'sameWidth',
-					async fn({ rects, elements }) {
-						elements.floating.style.width = `${rects.reference.width}px`;
-						return {};
-					}
-				}
-			]
-		});
-		Object.assign(floatingEl.style, { left: `${x}px`, top: `${y}px` });
+	function portal(node: HTMLElement) {
+		document.body.appendChild(node);
+		return { destroy: () => node.remove() };
 	}
 
 	function toggle() {
+		if (!open) {
+			const rect = triggerEl.getBoundingClientRect();
+			menuStyle = `top:${rect.bottom + 4}px;left:${rect.left}px;width:${rect.width}px`;
+		}
 		open = !open;
 	}
 
@@ -56,17 +43,19 @@
 	function onwindowpointerdown(e: PointerEvent) {
 		if (!open) return;
 		const target = e.target as Node;
-		if (!triggerEl?.contains(target) && !floatingEl?.contains(target)) {
-			open = false;
-		}
+		if (!triggerEl?.contains(target) && !menuEl?.contains(target)) open = false;
 	}
 
-	$effect(() => {
-		if (open) reposition();
-	});
+	function onwindowscroll() {
+		if (open) open = false;
+	}
 </script>
 
-<svelte:window onkeydown={onwindowkeydown} onpointerdown={onwindowpointerdown} />
+<svelte:window
+	onkeydown={onwindowkeydown}
+	onpointerdown={onwindowpointerdown}
+	onscroll={onwindowscroll}
+/>
 
 <div class="form-row">
 	<div class="form-row__left">
@@ -93,10 +82,11 @@
 
 {#if open}
 	<div
-		bind:this={floatingEl}
+		use:portal
+		bind:this={menuEl}
 		class="menu rich-select__menu"
 		role="listbox"
-		style="position: fixed; z-index: 200;"
+		style="position: fixed; z-index: 200; {menuStyle}"
 	>
 		{#each options as o}
 			<button
