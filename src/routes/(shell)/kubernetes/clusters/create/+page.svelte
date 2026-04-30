@@ -4,6 +4,7 @@
 	import { uniqueNamesGenerator, adjectives, animals } from 'unique-names-generator';
 	import * as Clients from '$lib/clients';
 	import * as Kubernetes from '$lib/openapi/kubernetes';
+	import * as RegionUtil from '$lib/regionutil';
 	import FormPage from '$lib/layouts/FormPage.svelte';
 	import ShellMetadataSection from '$lib/layouts/ShellMetadataSection.svelte';
 	import ShellSection from '$lib/layouts/ShellSection.svelte';
@@ -73,6 +74,10 @@
 		const poolNames = resource.spec.workloadPools.map((x) => x.name);
 		return poolNames.length === new Set(poolNames).size;
 	});
+	const projectName = $derived(
+		data.projects?.find((p) => p.metadata.id === data.projectID)?.metadata.name ?? data.projectID
+	);
+	const regionName = $derived(RegionUtil.name(data.regions, data.regionID));
 	let metadataValid = $state(false);
 	let valid = $derived(
 		metadataValid &&
@@ -111,6 +116,19 @@
 	onSubmit={submit}
 	{valid}
 >
+	{#snippet summary()}
+		<dl class="summary">
+			<dt>Project</dt>
+			<dd>{projectName}</dd>
+			<dt>Region</dt>
+			<dd>{RegionUtil.flag(data.regions, data.regionID)} {regionName}</dd>
+			<dt>Name</dt>
+			<dd>{resource.metadata.name || '—'}</dd>
+			<dt>Version</dt>
+			<dd>{resource.spec.version}</dd>
+		</dl>
+	{/snippet}
+
 	{#snippet form()}
 		<ShellMetadataSection metadata={resource.metadata} {names} bind:valid={metadataValid} />
 		<ShellSection title="Kubernetes Configuration">

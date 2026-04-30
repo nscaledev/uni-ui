@@ -3,6 +3,7 @@
 	let { data }: { data: PageData } = $props();
 	import * as Clients from '$lib/clients';
 	import * as Region from '$lib/openapi/region';
+	import * as RegionUtil from '$lib/regionutil';
 	import FormPage from '$lib/layouts/FormPage.svelte';
 	import ShellMetadataSection from '$lib/layouts/ShellMetadataSection.svelte';
 	import ResourceList from '$lib/layouts/ResourceList.svelte';
@@ -40,6 +41,11 @@
 		if (!rule.portMax) return rule.port.toString();
 		return rule.port + '–' + rule.portMax;
 	}
+	const projectName = $derived(
+		data.projects?.find((p) => p.metadata.id === data.network.metadata.projectId)?.metadata.name ??
+			data.network.metadata.projectId
+	);
+	const regionName = $derived(RegionUtil.name(data.regions, data.network.status.regionId));
 	function submit() {
 		resource.spec.rules = rules;
 		Clients.region()
@@ -56,6 +62,19 @@
 	onSubmit={submit}
 	{valid}
 >
+	{#snippet summary()}
+		<dl class="summary">
+			<dt>Project</dt>
+			<dd>{projectName}</dd>
+			<dt>Region</dt>
+			<dd>{RegionUtil.flag(data.regions, data.network.status.regionId)} {regionName}</dd>
+			<dt>Network</dt>
+			<dd>{data.network.metadata.name}</dd>
+			<dt>Name</dt>
+			<dd>{resource.metadata.name || '—'}</dd>
+		</dl>
+	{/snippet}
+
 	{#snippet form()}
 		<ShellMetadataSection metadata={resource.metadata} {names} bind:valid={metadataValid} />
 		<ResourceList

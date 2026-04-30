@@ -4,6 +4,7 @@
 	import { uniqueNamesGenerator, adjectives, animals } from 'unique-names-generator';
 	import * as Clients from '$lib/clients';
 	import * as Compute from '$lib/openapi/compute';
+	import * as RegionUtil from '$lib/regionutil';
 	import FormPage from '$lib/layouts/FormPage.svelte';
 	import ShellMetadataSection from '$lib/layouts/ShellMetadataSection.svelte';
 	import ShellSection from '$lib/layouts/ShellSection.svelte';
@@ -57,6 +58,13 @@
 		if (images.find((x) => x.metadata.id == resource.spec.imageId)) return;
 		resource.spec.imageId = images.length ? images[0].metadata.id : '';
 	});
+	const projectName = $derived(
+		data.projects?.find((p) => p.metadata.id === projectID)?.metadata.name ?? projectID
+	);
+	const regionName = $derived(RegionUtil.name(data.regions, data.regionID));
+	const networkName = $derived(
+		data.networks?.find((n) => n.metadata.id === networkID)?.metadata.name ?? networkID
+	);
 	let metadataValid = $state(false);
 	let valid = $derived(metadataValid && !!resource.spec.flavorId && !!resource.spec.imageId);
 	function submit() {
@@ -80,6 +88,19 @@
 	onSubmit={submit}
 	{valid}
 >
+	{#snippet summary()}
+		<dl class="summary">
+			<dt>Project</dt>
+			<dd>{projectName}</dd>
+			<dt>Region</dt>
+			<dd>{RegionUtil.flag(data.regions, data.regionID)} {regionName}</dd>
+			<dt>Network</dt>
+			<dd>{networkName}</dd>
+			<dt>Name</dt>
+			<dd>{resource.metadata.name || '—'}</dd>
+		</dl>
+	{/snippet}
+
 	{#snippet form()}
 		<ShellMetadataSection metadata={resource.metadata} {names} bind:valid={metadataValid} />
 		<ShellSection title="Topology">
