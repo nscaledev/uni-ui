@@ -5,6 +5,8 @@
 	import { startAutoRefresh } from '$lib/loadutil';
 	let { data }: { data: PageData } = $props();
 	import * as Clients from '$lib/clients';
+	import { resolveChip } from '$lib/layouts/effectiveStatus';
+	import { ageFormatter } from '$lib/formatters';
 	import type { ShellPageSettings } from '$lib/layouts/types.ts';
 	import ListPage from '$lib/layouts/ListPage.svelte';
 	import ShellList from '$lib/layouts/ShellList.svelte';
@@ -34,7 +36,30 @@
 	}
 </script>
 
-<ListPage {settings} resources={data.serviceAccounts || []}>
+<ListPage
+	{settings}
+	resources={data.serviceAccounts || []}
+	tableHeaders={['Name', 'Status', 'Expiry', 'Owner', 'Age', '']}
+>
+	{#snippet tableRow(resource)}
+		{@const chip = resolveChip(resource.metadata.provisioningStatus, null)}
+		<tr>
+			<td class="primary">
+				<div>{resource.metadata.name}</div>
+				<div class="sub">{resource.metadata.id}</div>
+			</td>
+			<td>
+				{#if chip}<span class="chip chip--{chip.chipClass}"
+						><span class="dot"></span>{chip.label}</span
+					>{/if}
+			</td>
+			<td><span class="mono">{resource.status.expiry.toISOString().slice(0, 10)}</span></td>
+			<td>{resource.metadata.createdBy}</td>
+			<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
+			<td></td>
+		</tr>
+	{/snippet}
+
 	{#snippet tools()}<SubtleButton
 			icon="plus"
 			label="Create"

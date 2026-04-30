@@ -7,6 +7,8 @@
 	let { data }: { data: PageData } = $props();
 
 	import * as Clients from '$lib/clients';
+	import { resolveChip } from '$lib/layouts/effectiveStatus';
+	import { ageFormatter } from '$lib/formatters';
 	import type { ShellPageSettings } from '$lib/layouts/types.ts';
 	import ListPage from '$lib/layouts/ListPage.svelte';
 	import ShellList from '$lib/layouts/ShellList.svelte';
@@ -17,6 +19,7 @@
 	import Placeholder from '$lib/layouts/Placeholder.svelte';
 	import SubtleButton from '$lib/forms/SubtleButton.svelte';
 	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
+	import Icon from '$lib/primitives/Icon.svelte';
 
 	const settings: ShellPageSettings = {
 		feature: 'Identity',
@@ -38,7 +41,35 @@
 	}
 </script>
 
-<ListPage {settings} resources={data.groups || []}>
+<ListPage
+	{settings}
+	resources={data.groups || []}
+	tableHeaders={['Name', 'Status', 'Members', 'Owner', 'Age', '']}
+>
+	{#snippet tableRow(resource)}
+		{@const chip = resolveChip(resource.metadata.provisioningStatus, null)}
+		{@const members = (resource.spec.userIDs?.length ?? 0) + resource.spec.serviceAccountIDs.length}
+		<tr>
+			<td class="primary">
+				<div>{resource.metadata.name}</div>
+				<div class="sub">{resource.metadata.id}</div>
+			</td>
+			<td>
+				{#if chip}<span class="chip chip--{chip.chipClass}"
+						><span class="dot"></span>{chip.label}</span
+					>{/if}
+			</td>
+			<td>{members}</td>
+			<td>{resource.metadata.createdBy}</td>
+			<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
+			<td class="col-actions">
+				<a class="row-action" href="/identity/groups/view/{resource.metadata.id}" title="View">
+					<Icon name="eye" size={14} />
+				</a>
+			</td>
+		</tr>
+	{/snippet}
+
 	{#snippet tools()}
 		<SubtleButton icon="plus" label="Create" href="/identity/groups/create" />
 	{/snippet}

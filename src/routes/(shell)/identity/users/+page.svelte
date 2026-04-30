@@ -6,7 +6,7 @@
 	let { data }: { data: PageData } = $props();
 	import * as Clients from '$lib/clients';
 	import * as Identity from '$lib/openapi/identity';
-	import { fromUserState } from '$lib/layouts/effectiveStatus';
+	import { resolveChip, fromUserState } from '$lib/layouts/effectiveStatus';
 	import * as Formatters from '$lib/formatters';
 	import type { ShellPageSettings } from '$lib/layouts/types.ts';
 	import ListPage from '$lib/layouts/ListPage.svelte';
@@ -44,7 +44,29 @@
 	{settings}
 	resources={data.users || []}
 	filterFn={(r, q) => r.spec.subject.toLowerCase().includes(q)}
+	tableHeaders={['Subject', 'Status', 'Last Active', 'Age', '']}
 >
+	{#snippet tableRow(resource)}
+		{@const chip = resolveChip(
+			resource.metadata.provisioningStatus,
+			fromUserState(resource.spec.state)
+		)}
+		<tr>
+			<td class="primary">
+				<div>{resource.spec.subject}</div>
+				<div class="sub">{resource.metadata.id}</div>
+			</td>
+			<td>
+				{#if chip}<span class="chip chip--{chip.chipClass}"
+						><span class="dot"></span>{chip.label}</span
+					>{/if}
+			</td>
+			<td>{userLastActive(resource)}</td>
+			<td><span class="mono">{Formatters.ageFormatter(resource.metadata.creationTime)}</span></td>
+			<td></td>
+		</tr>
+	{/snippet}
+
 	{#snippet tools()}<SubtleButton
 			icon="plus"
 			label="Create"
