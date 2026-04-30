@@ -870,10 +870,10 @@ tr:hover .row-action { opacity: 1; }
   backdrop-filter: var(--glass-blur);
   border: 1px solid var(--line);
   box-shadow: var(--shadow-inset);
-  transition: border-color 120ms var(--ease), transform 140ms var(--ease);
+  transition: border-color 120ms var(--ease);
   position: relative;
 }
-.rcard:hover { border-color: var(--line-strong); transform: translateY(-1px); }
+.rcard:hover { border-color: var(--line-strong); }
 .rcard__head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
 .rcard__name { font-weight: 600; font-size: 15px; color: var(--text-1); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .rcard__id { font: 12px/1 var(--font-mono); color: var(--text-3); margin-bottom: 8px; }
