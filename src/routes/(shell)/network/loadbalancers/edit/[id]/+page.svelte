@@ -5,22 +5,15 @@
 
 	import * as Clients from '$lib/clients';
 	import * as Region from '$lib/openapi/region';
+	import * as RegionUtil from '$lib/regionutil';
 
-	import type { ShellPageSettings } from '$lib/layouts/types.ts';
-	import ShellPageHeader from '$lib/layouts/ShellPageHeader.svelte';
+	import FormPage from '$lib/layouts/FormPage.svelte';
 	import ShellMetadataSection from '$lib/layouts/ShellMetadataSection.svelte';
 	import ShellSection from '$lib/layouts/ShellSection.svelte';
 	import ResourceList from '$lib/layouts/ResourceList.svelte';
-	import Button from '$lib/forms/Button.svelte';
 	import Switch from '$lib/forms/Switch.svelte';
 	import LoadBalancerListenerV2 from '$lib/layouts/LoadBalancerListenerV2.svelte';
-
-	const settings: ShellPageSettings = {
-		feature: 'Network',
-		name: 'Update Load Balancer',
-		description: 'Update an existing load balancer.',
-		icon: 'mdi:router-network-wireless'
-	};
+	import Icon from '$lib/primitives/Icon.svelte';
 
 	function initialDraft(): Region.LoadBalancerV2Update {
 		return data.draft;
@@ -42,6 +35,12 @@
 		metadataValid && !listenerActive && listenerValid && resource.spec.listeners.length > 0
 	);
 
+	const networkName = $derived(
+		data.networks.find((n) => n.metadata.id === data.loadBalancer.status.networkId)?.metadata
+			.name || data.loadBalancer.status.networkId
+	);
+	const regionName = $derived(RegionUtil.name(data.regions, data.loadBalancer.status.regionId));
+
 	function defaultListener(index: number): Region.LoadBalancerListenerV2 {
 		return {
 			name: `listener-${index}`,
@@ -59,7 +58,6 @@
 
 	function addListener(): number {
 		resource.spec.listeners.push(defaultListener(resource.spec.listeners.length + 1));
-
 		return resource.spec.listeners.length - 1;
 	}
 
@@ -68,13 +66,11 @@
 	}
 
 	function submit() {
-		const parameters: Region.ApiV2LoadbalancersLoadBalancerIDPutRequest = {
-			loadBalancerID: data.loadBalancer.metadata.id,
-			loadBalancerV2Update: resource
-		};
-
 		Clients.region()
-			.apiV2LoadbalancersLoadBalancerIDPut(parameters)
+			.apiV2LoadbalancersLoadBalancerIDPut({
+				loadBalancerID: data.loadBalancer.metadata.id,
+				loadBalancerV2Update: resource
+			})
 			.then(() =>
 				window.location.assign(`/network/loadbalancers/view/${data.loadBalancer.metadata.id}`)
 			)
@@ -86,76 +82,92 @@
 	}
 </script>
 
-<ShellPageHeader {settings} />
-
-<ShellMetadataSection metadata={resource.metadata} {names} bind:valid={metadataValid} />
-
-<ShellSection title="Configuration">
-	<Switch
-		name="edit-load-balancer-public-ip"
-		initial={resource.spec.publicIP ?? false}
-		label="Allocate a public IP."
-		onCheckedChange={(event) => (resource.spec.publicIP = event.checked)}
-	/>
-</ShellSection>
-
-<ShellSection title="Listeners">
-	<p class="text-sm text-surface-700-300">
-		Protocol or port changes on existing listeners may be rejected by the backend. If that happens,
-		remove and recreate the listener with the desired settings.
-	</p>
-</ShellSection>
-
-<ResourceList
-	title="Listeners"
-	titleClass="h3"
-	columns={4}
-	items={resource.spec.listeners}
-	bind:active={listenerActive}
-	valid={listenerValid}
-	add={addListener}
-	remove={removeListener}
+<FormPage
+	breadcrumb={[
+		{ label: 'Load Balancers', href: '/network/loadbalancers' },
+		{ label: data.loadBalancer.metadata.name }
+	]}
+	cancelHref="/network/loadbalancers/view/{data.loadBalancer.metadata.id}"
+	submitLabel="Save Changes"
+	description="Update load balancer configuration and listeners."
+	onSubmit={submit}
+	{valid}
 >
-	{#snippet normal(listener: Region.LoadBalancerListenerV2, index: number)}
-		<div class="flex gap-2 items-center">
-			<iconify-icon icon="mdi:label-outline" class="text-2xl"></iconify-icon>
-			{listener.name || `Listener ${index + 1}`}
-		</div>
-		<div class="flex gap-2 items-center">
-			<iconify-icon icon="mdi:transit-connection-variant" class="text-2xl"></iconify-icon>
-			{printListenerProtocol(listener)}
-		</div>
-		<div class="flex gap-2 items-center">
-			<iconify-icon icon="fluent:usb-port-24-regular" class="text-2xl"></iconify-icon>
-			{listener.port}
-		</div>
-		<div class="flex gap-2 items-center">
-			<iconify-icon icon="mdi:server-network-outline" class="text-2xl"></iconify-icon>
-			{listener.pool.members.length} members
-		</div>
+	{#snippet summary()}
+		<dl class="summary">
+			<dt>Network</dt>
+			<dd>{networkName}</dd>
+			<dt>Region</dt>
+			<dd>{RegionUtil.flag(data.regions, data.loadBalancer.status.regionId)} {regionName}</dd>
+			<dt>Name</dt>
+			<dd>{resource.metadata.name || '—'}</dd>
+			<dt>Listeners</dt>
+			<dd>{resource.spec.listeners.length}</dd>
+		</dl>
 	{/snippet}
 
-	<!-- eslint-disable @typescript-eslint/no-unused-vars -->
-	{#snippet expanded(listener: Region.LoadBalancerListenerV2, index: number)}
-		<LoadBalancerListenerV2
-			bind:listener={resource.spec.listeners[index]}
-			bind:valid={listenerValid}
-		/>
-	{/snippet}
-</ResourceList>
+	{#snippet form()}
+		<ShellMetadataSection metadata={resource.metadata} {names} bind:valid={metadataValid} />
 
-<div class="flex justify-between">
-	<Button
-		icon="mdi:cancel-bold"
-		label="Cancel"
-		class="preset-outlined-surface-600-400"
-		href="/network/loadbalancers/view/{data.loadBalancer.metadata.id}"
-	/>
-	<Button
-		icon="mdi:tick"
-		label="Update"
-		class="preset-filled-primary-500"
-		clicked={submit}
-		disabled={!valid}
-	/>
-</div>
+		<ShellSection title="Configuration">
+			<Switch
+				name="edit-load-balancer-public-ip"
+				initial={resource.spec.publicIP ?? false}
+				label="Allocate a public IP."
+				onCheckedChange={(event) => (resource.spec.publicIP = event.checked)}
+			/>
+		</ShellSection>
+
+		<ShellSection title="Listeners">
+			<p class="listener-note">
+				Protocol or port changes on existing listeners may be rejected by the backend. If that
+				happens, remove and recreate the listener with the desired settings.
+			</p>
+		</ShellSection>
+
+		<ResourceList
+			title="Listeners"
+			columns={4}
+			items={resource.spec.listeners}
+			bind:active={listenerActive}
+			valid={listenerValid}
+			add={addListener}
+			remove={removeListener}
+		>
+			{#snippet normal(listener: Region.LoadBalancerListenerV2, index: number)}
+				<div class="listener-cell">
+					<Icon name="tag" size={14} />{listener.name || `Listener ${index + 1}`}
+				</div>
+				<div class="listener-cell">
+					<Icon name="link" size={14} />{printListenerProtocol(listener)}
+				</div>
+				<div class="listener-cell"><Icon name="usb" size={14} />{listener.port}</div>
+				<div class="listener-cell">
+					<Icon name="network" size={14} />{listener.pool.members.length} members
+				</div>
+			{/snippet}
+
+			<!-- eslint-disable @typescript-eslint/no-unused-vars -->
+			{#snippet expanded(listener: Region.LoadBalancerListenerV2, index: number)}
+				<LoadBalancerListenerV2
+					bind:listener={resource.spec.listeners[index]}
+					bind:valid={listenerValid}
+				/>
+			{/snippet}
+		</ResourceList>
+	{/snippet}
+</FormPage>
+
+<style>
+	.listener-cell {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		font-size: 13px;
+	}
+
+	.listener-note {
+		font-size: 13px;
+		color: var(--text-3);
+	}
+</style>

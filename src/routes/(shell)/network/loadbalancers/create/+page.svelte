@@ -9,23 +9,18 @@
 	import * as Region from '$lib/openapi/region';
 	import * as RegionUtil from '$lib/regionutil';
 
-	import type { ShellPageSettings } from '$lib/layouts/types.ts';
-	import ShellPageHeader from '$lib/layouts/ShellPageHeader.svelte';
+	import FormPage from '$lib/layouts/FormPage.svelte';
 	import ShellMetadataSection from '$lib/layouts/ShellMetadataSection.svelte';
 	import ShellSection from '$lib/layouts/ShellSection.svelte';
-	import ShellMetadataItem from '$lib/layouts/ShellMetadataItem.svelte';
 	import ResourceList from '$lib/layouts/ResourceList.svelte';
-	import Button from '$lib/forms/Button.svelte';
 	import TextInput from '$lib/forms/TextInput.svelte';
 	import Switch from '$lib/forms/Switch.svelte';
 	import LoadBalancerListenerV2 from '$lib/layouts/LoadBalancerListenerV2.svelte';
+	import Icon from '$lib/primitives/Icon.svelte';
 
-	const settings: ShellPageSettings = {
-		feature: 'Network',
-		name: 'Create Load Balancer',
-		description: 'Create and deploy a new load balancer.',
-		icon: 'mdi:router-network-wireless'
-	};
+	function initialNetworkID(): string {
+		return data.network.metadata.id;
+	}
 
 	function defaultListener(index: number): Region.LoadBalancerListenerV2 {
 		return {
@@ -40,10 +35,6 @@
 				healthCheck: undefined
 			}
 		};
-	}
-
-	function initialNetworkID(): string {
-		return data.network.metadata.id;
 	}
 
 	let resource: Region.LoadBalancerV2Create = $state({
@@ -73,16 +64,10 @@
 		metadataValid && !listenerActive && listenerValid && resource.spec.listeners.length > 0
 	);
 
-	function lookupProjectName(): string {
-		return (
-			data.projects.find((x) => x.metadata.id == data.network.metadata.projectId)?.metadata.name ||
-			''
-		);
-	}
+	const regionName = $derived(RegionUtil.name(data.regions, data.network.status.regionId));
 
 	function addListener(): number {
 		resource.spec.listeners.push(defaultListener(resource.spec.listeners.length + 1));
-
 		return resource.spec.listeners.length - 1;
 	}
 
@@ -108,12 +93,8 @@
 			request.spec.vipAddress = resource.spec.vipAddress;
 		}
 
-		const parameters: Region.ApiV2LoadbalancersPostRequest = {
-			loadBalancerV2Create: request
-		};
-
 		Clients.region()
-			.apiV2LoadbalancersPost(parameters)
+			.apiV2LoadbalancersPost({ loadBalancerV2Create: request })
 			.then((response) =>
 				window.location.assign(
 					response.metadata.id
@@ -129,93 +110,86 @@
 	}
 </script>
 
-<ShellPageHeader {settings} />
-
-<ShellMetadataSection metadata={resource.metadata} {names} bind:valid={metadataValid} />
-
-<ShellSection title="Context">
-	<div class="grid grid-cols-[repeat(3,max-content)] gap-2 text-sm">
-		<ShellMetadataItem icon="mdi:folder-open-outline" label="Project" value={lookupProjectName()} />
-		<ShellMetadataItem
-			icon={RegionUtil.flag(data.regions, data.network.status.regionId)}
-			label="Region"
-			value={RegionUtil.name(data.regions, data.network.status.regionId)}
-		/>
-		<ShellMetadataItem
-			icon="mdi:network-outline"
-			label="Network"
-			value={data.network.metadata.name}
-		/>
-	</div>
-</ShellSection>
-
-<ShellSection title="Configuration">
-	<div class="flex flex-col gap-6">
-		<Switch
-			name="load-balancer-public-ip"
-			initial={resource.spec.publicIP ?? false}
-			label="Allocate a public IP."
-			onCheckedChange={(event) => (resource.spec.publicIP = event.checked)}
-		/>
-
-		<TextInput
-			bind:value={resource.spec.vipAddress}
-			label="Requested VIP address."
-			hint="Leave this empty to let the backend choose an address."
-		/>
-	</div>
-</ShellSection>
-
-<ResourceList
-	title="Listeners"
-	titleClass="h3"
-	columns={4}
-	items={resource.spec.listeners}
-	bind:active={listenerActive}
-	valid={listenerValid}
-	add={addListener}
-	remove={removeListener}
+<FormPage
+	breadcrumb={[{ label: 'Load Balancers', href: '/network/loadbalancers' }, { label: 'Create' }]}
+	cancelHref="/network/loadbalancers"
+	submitLabel="Create Load Balancer"
+	description="Configure and deploy a new load balancer."
+	onSubmit={submit}
+	{valid}
 >
-	{#snippet normal(listener: Region.LoadBalancerListenerV2, index: number)}
-		<div class="flex gap-2 items-center">
-			<iconify-icon icon="mdi:label-outline" class="text-2xl"></iconify-icon>
-			{listener.name || `Listener ${index + 1}`}
-		</div>
-		<div class="flex gap-2 items-center">
-			<iconify-icon icon="mdi:transit-connection-variant" class="text-2xl"></iconify-icon>
-			{printListenerProtocol(listener)}
-		</div>
-		<div class="flex gap-2 items-center">
-			<iconify-icon icon="fluent:usb-port-24-regular" class="text-2xl"></iconify-icon>
-			{listener.port}
-		</div>
-		<div class="flex gap-2 items-center">
-			<iconify-icon icon="mdi:server-network-outline" class="text-2xl"></iconify-icon>
-			{listener.pool.members.length} members
-		</div>
+	{#snippet summary()}
+		<dl class="summary">
+			<dt>Network</dt>
+			<dd>{data.network.metadata.name}</dd>
+			<dt>Region</dt>
+			<dd>{RegionUtil.flag(data.regions, data.network.status.regionId)} {regionName}</dd>
+			<dt>Name</dt>
+			<dd>{resource.metadata.name || '—'}</dd>
+			<dt>Listeners</dt>
+			<dd>{resource.spec.listeners.length}</dd>
+			{#if resource.spec.publicIP}
+				<dt>Public IP</dt>
+				<dd>Requested</dd>
+			{/if}
+		</dl>
 	{/snippet}
 
-	<!-- eslint-disable @typescript-eslint/no-unused-vars -->
-	{#snippet expanded(listener: Region.LoadBalancerListenerV2, index: number)}
-		<LoadBalancerListenerV2
-			bind:listener={resource.spec.listeners[index]}
-			bind:valid={listenerValid}
-		/>
-	{/snippet}
-</ResourceList>
+	{#snippet form()}
+		<ShellMetadataSection metadata={resource.metadata} {names} bind:valid={metadataValid} />
 
-<div class="flex justify-between">
-	<Button
-		icon="mdi:cancel-bold"
-		label="Cancel"
-		class="preset-outlined-surface-600-400"
-		href="/network/loadbalancers"
-	/>
-	<Button
-		icon="mdi:tick"
-		label="Create"
-		class="preset-filled-primary-500"
-		clicked={submit}
-		disabled={!valid}
-	/>
-</div>
+		<ShellSection title="Configuration">
+			<Switch
+				name="load-balancer-public-ip"
+				initial={resource.spec.publicIP ?? false}
+				label="Allocate a public IP."
+				onCheckedChange={(event) => (resource.spec.publicIP = event.checked)}
+			/>
+			<TextInput
+				bind:value={resource.spec.vipAddress}
+				label="Requested VIP address."
+				hint="Leave this empty to let the backend choose an address."
+			/>
+		</ShellSection>
+
+		<ResourceList
+			title="Listeners"
+			columns={4}
+			items={resource.spec.listeners}
+			bind:active={listenerActive}
+			valid={listenerValid}
+			add={addListener}
+			remove={removeListener}
+		>
+			{#snippet normal(listener: Region.LoadBalancerListenerV2, index: number)}
+				<div class="listener-cell">
+					<Icon name="tag" size={14} />{listener.name || `Listener ${index + 1}`}
+				</div>
+				<div class="listener-cell">
+					<Icon name="link" size={14} />{printListenerProtocol(listener)}
+				</div>
+				<div class="listener-cell"><Icon name="usb" size={14} />{listener.port}</div>
+				<div class="listener-cell">
+					<Icon name="network" size={14} />{listener.pool.members.length} members
+				</div>
+			{/snippet}
+
+			<!-- eslint-disable @typescript-eslint/no-unused-vars -->
+			{#snippet expanded(listener: Region.LoadBalancerListenerV2, index: number)}
+				<LoadBalancerListenerV2
+					bind:listener={resource.spec.listeners[index]}
+					bind:valid={listenerValid}
+				/>
+			{/snippet}
+		</ResourceList>
+	{/snippet}
+</FormPage>
+
+<style>
+	.listener-cell {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		font-size: 13px;
+	}
+</style>
