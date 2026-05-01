@@ -16,7 +16,7 @@ function persisted<T extends string>(key: string, fallback: T) {
 	return store;
 }
 
-export const appearance = persisted<Appearance>('uk:appearance', 'dark');
+export const appearance = persisted<Appearance>('uk:appearance', 'light');
 export const surface = persisted<Surface>('uk:surface', 'solid');
 export const view = persisted<View>('uk:view', 'table');
 
