@@ -1,14 +1,9 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-
 	let { data }: { data: PageData } = $props();
-
-	import { uniqueNamesGenerator, adjectives, animals } from 'unique-names-generator';
-
 	import * as Clients from '$lib/clients';
 	import * as Region from '$lib/openapi/region';
 	import * as RegionUtil from '$lib/regionutil';
-
 	import FormPage from '$lib/layouts/FormPage.svelte';
 	import ShellMetadataSection from '$lib/layouts/ShellMetadataSection.svelte';
 	import ShellSection from '$lib/layouts/ShellSection.svelte';
@@ -17,28 +12,22 @@
 	import InputChips from '$lib/forms/InputChips.svelte';
 	import Icon from '$lib/primitives/Icon.svelte';
 
-	// eslint-disable-next-line svelte/valid-compile
-	const organizationID = data.organizationID;
-	// eslint-disable-next-line svelte/valid-compile
-	const projectID = data.projectID;
-	// eslint-disable-next-line svelte/valid-compile
-	const regionID = data.regionID;
+	const projectName = $derived(
+		data.projects.find((p) => p.metadata.id === data.network.metadata.projectId)?.metadata.name ??
+			data.network.metadata.projectId
+	);
+	const regionName = $derived(RegionUtil.name(data.regions, data.network.status.regionId));
 
-	let resource: Region.NetworkV2Create = $state({
-		metadata: {
-			name: uniqueNamesGenerator({ dictionaries: [adjectives, animals], separator: '-', length: 2 })
-		},
-		spec: {
-			organizationId: organizationID,
-			projectId: projectID,
-			regionId: regionID,
-			prefix: '192.168.0.0/24',
-			dnsNameservers: [],
-			routes: []
-		}
+	let resource = $derived.by(() => {
+		let n = $state(data.network);
+		return n;
 	});
 
-	let routes: Array<Region.Route> = $state([]);
+	let routes: Array<Region.Route> = $derived.by(() => {
+		let r = $state(data.network.spec.routes ?? []);
+		return r;
+	});
+
 	let metadataValid = $state(false);
 	let routeActive = $state(false);
 	let valid = $derived(metadataValid && !routeActive);
@@ -53,36 +42,45 @@
 	}
 
 	function submit() {
-		resource.spec.routes = routes.length > 0 ? routes : undefined;
+		const update: Region.NetworkV2Update = {
+			metadata: { name: resource.metadata.name },
+			spec: {
+				dnsNameservers: resource.spec.dnsNameservers,
+				routes: routes.length > 0 ? routes : undefined
+			}
+		};
 		Clients.region()
-			.apiV2NetworksPost({ networkV2Create: resource })
+			.apiV2NetworksNetworkIDPut({ networkID: resource.metadata.id, networkV2Update: update })
 			.then(() => window.location.assign('/network/networks'))
 			.catch((e: Error) => Clients.error(e));
 	}
-
-	const projectName = $derived(
-		data.projects?.find((p) => p.metadata.id === projectID)?.metadata.name ?? projectID
-	);
-	const regionName = $derived(RegionUtil.name(data.regions, regionID));
 </script>
 
 <FormPage
-	breadcrumb={[{ label: 'Networks', href: '/network/networks' }, { label: 'Create' }]}
+	breadcrumb={[{ label: 'Networks', href: '/network/networks' }, { label: resource.metadata.name }]}
 	cancelHref="/network/networks"
-	submitLabel="Create Network"
-	description="Provision an isolated virtual network for your resources."
+	submitLabel="Save Changes"
+	description="Modify network DNS and host routes."
 	onSubmit={submit}
 	{valid}
 >
+	{#snippet summary()}
+		<dl class="summary">
+			<dt>Project</dt>
+			<dd>{projectName}</dd>
+			<dt>Region</dt>
+			<dd>{RegionUtil.flag(data.regions, data.network.status.regionId)} {regionName}</dd>
+			<dt>Name</dt>
+			<dd>{resource.metadata.name || '—'}</dd>
+			<dt>Prefix</dt>
+			<dd>{data.network.status.prefix}</dd>
+		</dl>
+	{/snippet}
+
 	{#snippet form()}
 		<ShellMetadataSection metadata={resource.metadata} names={[]} bind:valid={metadataValid} />
 
 		<ShellSection title="Configuration">
-			<TextInput
-				label="Network prefix"
-				hint="Must be at least a /24. The top /25 is reserved for storage integration."
-				bind:value={resource.spec.prefix}
-			/>
 			<InputChips
 				label="DNS nameservers"
 				hint="Explicit nameservers prevent instances on the same network from resolving each other."
@@ -117,27 +115,6 @@
 				/>
 			{/snippet}
 		</ResourceList>
-	{/snippet}
-
-	{#snippet summary()}
-		<dl class="summary">
-			<dt>Project</dt>
-			<dd>{projectName}</dd>
-			<dt>Region</dt>
-			<dd>{RegionUtil.flag(data.regions, regionID)} {regionName}</dd>
-			<dt>Name</dt>
-			<dd>{resource.metadata.name || '—'}</dd>
-			<dt>Prefix</dt>
-			<dd>{resource.spec.prefix}</dd>
-			{#if resource.spec.dnsNameservers?.length}
-				<dt>DNS</dt>
-				<dd>{resource.spec.dnsNameservers.join(', ')}</dd>
-			{/if}
-			{#if routes.length}
-				<dt>Routes</dt>
-				<dd>{routes.length} host route{routes.length === 1 ? '' : 's'}</dd>
-			{/if}
-		</dl>
 	{/snippet}
 </FormPage>
 

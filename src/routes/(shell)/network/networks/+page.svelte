@@ -158,7 +158,7 @@
 	{#snippet tableRow(resource)}
 		{@const proj = networkProject(resource)}
 		<td class="primary">
-			<div>{resource.metadata.name}</div>
+			<a href="/network/networks/edit/{resource.metadata.id}">{resource.metadata.name}</a>
 			<div class="sub">{resource.metadata.id}</div>
 		</td>
 		<td>
@@ -186,6 +186,9 @@
 		<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
 		<RowMenu>
 			{#snippet menu()}
+				<a href="/network/networks/edit/{resource.metadata.id}" class="menu__item">
+					<Icon name="edit" size={14} /> Edit
+				</a>
 				<ModalIcon
 					icon="trash"
 					label="Delete"
@@ -202,7 +205,10 @@
 			{#each networks as resource}
 				<ShellListItem id={resource.metadata.id}>
 					{#snippet main()}
-						<ShellListItemHeader metadata={resource.metadata} />
+						<ShellListItemHeader
+							metadata={resource.metadata}
+							href="/network/networks/edit/{resource.metadata.id}"
+						/>
 					{/snippet}
 
 					{#snippet badges()}
@@ -217,6 +223,9 @@
 					{/snippet}
 
 					{#snippet menu()}
+						<a href="/network/networks/edit/{resource.metadata.id}" class="menu__item">
+							<Icon name="edit" size={14} /> Edit
+						</a>
 						<ModalIcon
 							icon="trash"
 							label="Delete"
