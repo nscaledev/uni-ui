@@ -5,6 +5,7 @@
 	import { startAutoRefresh } from '$lib/loadutil';
 	let { data }: { data: PageData } = $props();
 	import * as Clients from '$lib/clients';
+	import * as Identity from '$lib/openapi/identity';
 	import { resolveChip } from '$lib/layouts/effectiveStatus';
 	import { ageFormatter } from '$lib/formatters';
 	import type { ShellPageSettings } from '$lib/layouts/types.ts';
@@ -18,7 +19,9 @@
 	import Placeholder from '$lib/layouts/Placeholder.svelte';
 	import SubtleButton from '$lib/forms/SubtleButton.svelte';
 	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
+	import Clipboard from '$lib/forms/Clipboard.svelte';
 	import RowMenu from '$lib/layouts/RowMenu.svelte';
+	import Icon from '$lib/primitives/Icon.svelte';
 	const settings: ShellPageSettings = {
 		feature: 'Identity',
 		name: 'Service Accounts',
@@ -26,6 +29,9 @@
 		icon: 'key'
 	};
 	onMount(() => startAutoRefresh('layout:serviceaccounts'));
+
+	let rotatedToken: string | undefined = $state();
+
 	async function bulkDeleteServiceAccounts(ids: Set<string>, clear: () => void) {
 		await Promise.allSettled(
 			[...ids].map((id) =>
@@ -48,7 +54,33 @@
 			.then(() => invalidate('layout:serviceaccounts'))
 			.catch((e: Error) => Clients.error(e));
 	}
+
+	function rotateServiceAccount(id: string) {
+		Clients.identity()
+			.apiV1OrganizationsOrganizationIDServiceaccountsServiceAccountIDRotatePost({
+				organizationID: data.organizationID,
+				serviceAccountID: id
+			})
+			.then((result: Identity.ServiceAccountCreate) => {
+				rotatedToken = result.status.accessToken;
+				invalidate('layout:serviceaccounts');
+			})
+			.catch((e: Error) => Clients.error(e));
+	}
 </script>
+
+{#if rotatedToken}
+	<div class="token-reveal">
+		<div class="token-reveal__header">
+			<Icon name="key" size={16} />
+			<span>New access token — copy it now, it won't be shown again.</span>
+		</div>
+		<Clipboard id="rotated-token" value={rotatedToken} />
+		<button class="btn btn--ghost btn--sm" onclick={() => (rotatedToken = undefined)}
+			>Dismiss</button
+		>
+	</div>
+{/if}
 
 <ListPage
 	{settings}
@@ -83,6 +115,9 @@
 		<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
 		<RowMenu>
 			{#snippet menu()}
+				<button class="menu__item" onclick={() => rotateServiceAccount(resource.metadata.id)}>
+					<Icon name="refresh" size={14} /> Rotate token
+				</button>
 				<ModalIcon
 					icon="trash"
 					label="Delete"
@@ -104,14 +139,19 @@
 			>{#each accounts as resource}<ShellListItem id={resource.metadata.id}>
 					{#snippet main()}<ShellListItemHeader metadata={resource.metadata} />{/snippet}
 					{#snippet badges()}<ShellListItemBadges metadata={resource.metadata} />{/snippet}
-					{#snippet menu()}<ModalIcon
+					{#snippet menu()}
+						<button class="menu__item" onclick={() => rotateServiceAccount(resource.metadata.id)}>
+							<Icon name="refresh" size={14} /> Rotate token
+						</button>
+						<ModalIcon
 							icon="trash"
 							label="Delete"
 							class="menu__item menu__item--danger"
 							title="Delete service account?"
 							confirm={() => deleteServiceAccount(resource.metadata.id)}
 							>Removing "{resource.metadata.name}" may break automation.</ModalIcon
-						>{/snippet}
+						>
+					{/snippet}
 					<ShellListItemMetadata metadata={resource.metadata} />
 					<ShellMetadataItem
 						icon="clock"
@@ -122,3 +162,24 @@
 		>{/snippet}
 	{#snippet empty()}<Placeholder>No service accounts yet.</Placeholder>{/snippet}
 </ListPage>
+
+<style>
+	.token-reveal {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		padding: 14px 16px;
+		margin-bottom: 16px;
+		background: color-mix(in oklch, var(--warn, #f59e0b) 8%, var(--bg-0));
+		border: 1px solid color-mix(in oklch, var(--warn, #f59e0b) 30%, transparent);
+		border-radius: var(--r-md);
+	}
+	.token-reveal__header {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		font-size: 13px;
+		font-weight: 500;
+		color: var(--text-1);
+	}
+</style>
