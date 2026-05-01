@@ -13,6 +13,7 @@
 	import InputChips from '$lib/forms/InputChips.svelte';
 	import Flavor from '$lib/Flavor.svelte';
 	import Image from '$lib/Image.svelte';
+	import * as RegionUtil from '$lib/regionutil';
 	let resource = $derived.by(() => {
 		let instance = $state(data.instance);
 		return instance;
@@ -48,6 +49,15 @@
 		if (images.find((x) => x.metadata.id == resource.spec.imageId)) return;
 		resource.spec.imageId = images.length ? images[0].metadata.id : '';
 	});
+	const projectName = $derived(
+		data.projects.find((p) => p.metadata.id === data.instance.metadata.projectId)?.metadata.name ??
+			data.instance.metadata.projectId
+	);
+	const regionName = $derived(RegionUtil.name(data.regions, data.instance.status.regionId));
+	const networkName = $derived(
+		data.networks.find((n) => n.metadata.id === data.instance.status.networkId)?.metadata.name ??
+			data.instance.status.networkId
+	);
 	let metadataValid = $state(false);
 	let valid = $derived(metadataValid && !!resource.spec.flavorId && !!resource.spec.imageId);
 	function submit() {
@@ -70,9 +80,23 @@
 	]}
 	cancelHref="/compute/instances"
 	submitLabel="Save Changes"
+	description="Update your compute instance configuration."
 	onSubmit={submit}
 	{valid}
 >
+	{#snippet summary()}
+		<dl class="summary">
+			<dt>Project</dt>
+			<dd>{projectName}</dd>
+			<dt>Region</dt>
+			<dd>{RegionUtil.flag(data.regions, data.instance.status.regionId)} {regionName}</dd>
+			<dt>Network</dt>
+			<dd>{networkName}</dd>
+			<dt>Name</dt>
+			<dd>{resource.metadata.name || '—'}</dd>
+		</dl>
+	{/snippet}
+
 	{#snippet form()}
 		<ShellMetadataSection
 			metadata={resource.metadata}

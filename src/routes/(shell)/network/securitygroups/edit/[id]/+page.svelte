@@ -3,12 +3,22 @@
 	let { data }: { data: PageData } = $props();
 	import * as Clients from '$lib/clients';
 	import * as Region from '$lib/openapi/region';
+	import * as RegionUtil from '$lib/regionutil';
 	import FormPage from '$lib/layouts/FormPage.svelte';
 	import ShellMetadataSection from '$lib/layouts/ShellMetadataSection.svelte';
 	import ResourceList from '$lib/layouts/ResourceList.svelte';
 	import SecurityGroupRuleV2 from '$lib/SecurityGroupRuleV2.svelte';
 	import Icon from '$lib/primitives/Icon.svelte';
 	let names: Array<string> = [];
+	const projectName = $derived(
+		data.projects.find((p) => p.metadata.id === data.securityGroup.metadata.projectId)?.metadata
+			.name ?? data.securityGroup.metadata.projectId
+	);
+	const regionName = $derived(RegionUtil.name(data.regions, data.securityGroup.status.regionId));
+	const networkName = $derived(
+		data.networks.find((n) => n.metadata.id === data.securityGroup.status.networkId)?.metadata
+			.name ?? data.securityGroup.status.networkId
+	);
 	let resource = $derived.by(() => {
 		let sg = $state(data.securityGroup);
 		return sg;
@@ -60,9 +70,23 @@
 	]}
 	cancelHref="/network/securitygroups"
 	submitLabel="Save Changes"
+	description="Modify security group rules and settings."
 	onSubmit={submit}
 	{valid}
 >
+	{#snippet summary()}
+		<dl class="summary">
+			<dt>Project</dt>
+			<dd>{projectName}</dd>
+			<dt>Region</dt>
+			<dd>{RegionUtil.flag(data.regions, data.securityGroup.status.regionId)} {regionName}</dd>
+			<dt>Network</dt>
+			<dd>{networkName}</dd>
+			<dt>Name</dt>
+			<dd>{resource.metadata.name || '—'}</dd>
+		</dl>
+	{/snippet}
+
 	{#snippet form()}
 		<ShellMetadataSection metadata={resource.metadata} {names} bind:valid={metadataValid} />
 		<ResourceList
