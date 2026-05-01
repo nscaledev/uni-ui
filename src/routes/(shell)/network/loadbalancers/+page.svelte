@@ -67,6 +67,16 @@
 			.then(() => invalidate('layout:loadbalancers'))
 			.catch((e: Error) => Clients.error(e));
 	}
+
+	async function bulkDeleteLoadBalancers(ids: Set<string>, clear: () => void) {
+		await Promise.allSettled(
+			[...ids].map((id) =>
+				Clients.region().apiV2LoadbalancersLoadBalancerIDDelete({ loadBalancerID: id })
+			)
+		);
+		clear();
+		invalidate('layout:loadbalancers');
+	}
 </script>
 
 <ListPage
@@ -75,6 +85,18 @@
 	regions={data.regions}
 	tableHeaders={['Name', 'Status', 'Network', 'Region', 'Listeners', 'VIP', 'Owner', 'Age', '']}
 >
+	{#snippet bulkbar({ ids, clear })}
+		<ModalIcon
+			icon="trash"
+			label="Delete ({ids.size})"
+			class="btn btn--sm btn--danger"
+			title="Delete {ids.size} load balancer{ids.size === 1 ? '' : 's'}?"
+			confirm={() => bulkDeleteLoadBalancers(ids, clear)}
+		>
+			This will permanently remove {ids.size} load balancer{ids.size === 1 ? '' : 's'}.
+		</ModalIcon>
+	{/snippet}
+
 	{#snippet tools()}
 		{#if data.networks.length}
 			{#if skipPopup}
@@ -158,14 +180,12 @@
 					{/snippet}
 
 					{#snippet badges()}
-						<ShellListItemBadges metadata={resource.metadata}>
+						<ShellListItemBadges metadata={resource.metadata} projects={data.projects}>
 							{#snippet extra()}
 								<Badge>
 									{RegionUtil.flag(data.regions, resource.status.regionId)}
 									{RegionUtil.name(data.regions, resource.status.regionId)}
 								</Badge>
-								<Badge icon="network">{lookupNetworkName(resource.status.networkId)}</Badge>
-								<Badge icon="link">{resource.spec.listeners.length} listeners</Badge>
 							{/snippet}
 						</ShellListItemBadges>
 					{/snippet}
@@ -192,6 +212,16 @@
 					<ShellListItemMetadata>
 						<ShellMetadataItem
 							icon="network"
+							label="Network"
+							value={lookupNetworkName(resource.status.networkId)}
+						/>
+						<ShellMetadataItem
+							icon="link"
+							label="Listeners"
+							value={resource.spec.listeners.length.toString()}
+						/>
+						<ShellMetadataItem
+							icon="dns"
 							label="VIP"
 							value={resource.status.vipAddress || 'Not yet assigned'}
 						/>
