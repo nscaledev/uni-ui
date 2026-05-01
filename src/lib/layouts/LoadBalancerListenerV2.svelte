@@ -191,11 +191,11 @@
 			deactivate={() => (activeMemberIndex = null)}
 		>
 			{#snippet normal(member: Region.LoadBalancerMemberV2, index: number)}
-				<div class="member-cell">
+				<div class="icon-cell">
 					<Icon name="dns" size={16} />
 					{member.address || `Member ${index + 1}`}
 				</div>
-				<div class="member-cell">
+				<div class="icon-cell">
 					<Icon name="usb" size={16} />
 					{member.port}
 				</div>
@@ -265,13 +265,6 @@
 {/if}
 
 <style>
-	.member-cell {
-		display: flex;
-		align-items: center;
-		gap: 6px;
-		font-size: 13px;
-	}
-
 	.pool-members {
 		margin-top: 14px;
 		padding-top: 12px;

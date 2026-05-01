@@ -1693,3 +1693,119 @@ tr.has-warn td:first-child,
 :root[data-surface="glass"] .shell {
   background: transparent;
 }
+
+/* ── Shared icon+label row (used in ResourceList normal snippets) ─────────── */
+.icon-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+
+/* ── Auth / onboarding screens ───────────────────────────────────────────── */
+.auth-screen {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  background: var(--bg-0);
+}
+
+.auth-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 40px;
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-md);
+  min-width: 320px;
+}
+
+.auth-card__logo {
+  display: flex;
+  justify-content: center;
+}
+
+.auth-logo {
+  height: 48px;
+  width: auto;
+}
+
+.auth-card__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.auth-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.auth-section__label {
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+.auth-divider {
+  font-size: 12px;
+  color: var(--text-3);
+  font-style: italic;
+}
+
+.auth-providers {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.auth-provider-btn {
+  min-width: 90px;
+  font-size: 13px;
+}
+
+.auth-welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+}
+
+.auth-welcome__title {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-1);
+}
+
+.auth-welcome__subtitle {
+  font-size: 13px;
+  color: var(--text-3);
+}
+
+.auth-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.auth-loading__label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-2);
+}

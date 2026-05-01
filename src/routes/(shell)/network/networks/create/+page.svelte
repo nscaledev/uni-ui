@@ -100,8 +100,8 @@
 			remove={routeRemove}
 		>
 			{#snippet normal(route: Region.Route)}
-				<div class="route-cell"><Icon name="network" size={16} />{route.prefix || '—'}</div>
-				<div class="route-cell"><Icon name="arrowRight" size={16} />{route.nexthop || '—'}</div>
+				<div class="icon-cell"><Icon name="network" size={16} />{route.prefix || '—'}</div>
+				<div class="icon-cell"><Icon name="arrowRight" size={16} />{route.nexthop || '—'}</div>
 			{/snippet}
 			<!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
 			{#snippet expanded(_route: Region.Route, index: number)}
@@ -140,12 +140,3 @@
 		</dl>
 	{/snippet}
 </FormPage>
-
-<style>
-	.route-cell {
-		display: flex;
-		align-items: center;
-		gap: 6px;
-		font-size: 13px;
-	}
-</style>

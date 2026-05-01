@@ -135,14 +135,14 @@
 			remove={removeListener}
 		>
 			{#snippet normal(listener: Region.LoadBalancerListenerV2, index: number)}
-				<div class="listener-cell">
+				<div class="icon-cell">
 					<Icon name="tag" size={14} />{listener.name || `Listener ${index + 1}`}
 				</div>
-				<div class="listener-cell">
+				<div class="icon-cell">
 					<Icon name="link" size={14} />{printListenerProtocol(listener)}
 				</div>
-				<div class="listener-cell"><Icon name="usb" size={14} />{listener.port}</div>
-				<div class="listener-cell">
+				<div class="icon-cell"><Icon name="usb" size={14} />{listener.port}</div>
+				<div class="icon-cell">
 					<Icon name="network" size={14} />{listener.pool.members.length} members
 				</div>
 			{/snippet}
@@ -159,13 +159,6 @@
 </FormPage>
 
 <style>
-	.listener-cell {
-		display: flex;
-		align-items: center;
-		gap: 6px;
-		font-size: 13px;
-	}
-
 	.listener-note {
 		font-size: 13px;
 		color: var(--text-3);
