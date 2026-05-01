@@ -8,7 +8,6 @@
 
 	const KIND_ICONS: Record<string, string> = {
 		'kubernetes:clusters': 'k8s',
-		'kubernetes:clustermanagers': 'layers',
 		'compute:instances': 'cpu',
 		'network:networks': 'network',
 		'network:securitygroups': 'shield',

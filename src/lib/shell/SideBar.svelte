@@ -37,13 +37,6 @@
 						]
 					},
 					{
-						label: 'OAuth2 Providers',
-						href: 'oauth2providers',
-						rbac: [
-							{ endpoint: 'identity:oauth2providers', operations: [Identity.AclOperation.Read] }
-						]
-					},
-					{
 						label: 'Quotas',
 						href: 'quotas',
 						rbac: [{ endpoint: 'identity:quotas', operations: [Identity.AclOperation.Update] }]
@@ -142,13 +135,6 @@
 						label: 'Clusters',
 						href: 'clusters',
 						rbac: [{ endpoint: 'kubernetes:clusters', operations: [Identity.AclOperation.Read] }]
-					},
-					{
-						label: 'Cluster Managers',
-						href: 'clustermanagers',
-						rbac: [
-							{ endpoint: 'kubernetes:clustermanagers', operations: [Identity.AclOperation.Read] }
-						]
 					}
 				]
 			}
