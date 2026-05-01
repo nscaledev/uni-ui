@@ -23,9 +23,11 @@
 
 	let menuOpen = $state(false);
 	let menuWrapEl: HTMLDivElement;
+	let menuEl: HTMLDivElement | undefined;
 
 	function onwindowpointerdown(e: PointerEvent) {
-		if (menuOpen && !menuWrapEl?.contains(e.target as Node)) menuOpen = false;
+		if (menuOpen && !menuWrapEl?.contains(e.target as Node) && !menuEl?.contains(e.target as Node))
+			menuOpen = false;
 	}
 </script>
 
@@ -58,7 +60,7 @@
 					<Icon name="more" size={14} />
 				</button>
 				{#if menuOpen}
-					<div class="menu card-menu" role="menu" onclick={() => (menuOpen = false)}>
+					<div bind:this={menuEl} class="menu card-menu" role="menu">
 						{@render menu()}
 					</div>
 				{/if}
