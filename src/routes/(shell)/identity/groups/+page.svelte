@@ -75,10 +75,8 @@
 		{@const chip = resolveChip(resource.metadata.provisioningStatus, null)}
 		{@const members = (resource.spec.userIDs?.length ?? 0) + resource.spec.serviceAccountIDs.length}
 		<td class="primary">
-			<a href="/identity/groups/view/{resource.metadata.id}">
-				<div>{resource.metadata.name}</div>
-				<div class="sub">{resource.metadata.id}</div>
-			</a>
+			<a href="/identity/groups/view/{resource.metadata.id}">{resource.metadata.name}</a>
+			<div class="sub">{resource.metadata.id}</div>
 		</td>
 		<td>
 			{#if chip}<span class="chip chip--{chip.chipClass}"

@@ -12,22 +12,18 @@
 	const name = $derived(title ?? metadata?.name ?? '');
 </script>
 
-{#snippet content()}
-	<div class="rcard__name">{name}</div>
-	{#if metadata?.id}
-		<div class="rcard__id">{metadata.id}</div>
-	{/if}
-	{#if metadata?.description}
-		<div class="rcard__desc">{metadata.description}</div>
-	{/if}
-{/snippet}
-
 {#if href}
 	<a {href} class="card-name-link">
-		{@render content()}
+		<div class="rcard__name">{name}</div>
 	</a>
 {:else}
-	{@render content()}
+	<div class="rcard__name">{name}</div>
+{/if}
+{#if metadata?.id}
+	<div class="rcard__id">{metadata.id}</div>
+{/if}
+{#if metadata?.description}
+	<div class="rcard__desc">{metadata.description}</div>
 {/if}
 
 <style>

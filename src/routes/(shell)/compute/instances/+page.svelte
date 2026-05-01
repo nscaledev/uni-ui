@@ -145,10 +145,8 @@
 		)}
 		{@const proj = instanceProject(resource)}
 		<td class="primary">
-			<a href="/compute/instances/edit/{resource.metadata.id}">
-				<div>{resource.metadata.name}</div>
-				<div class="sub">{resource.metadata.id}</div>
-			</a>
+			<a href="/compute/instances/edit/{resource.metadata.id}">{resource.metadata.name}</a>
+			<div class="sub">{resource.metadata.id}</div>
 		</td>
 		<td>
 			{#if chip}<span class="chip chip--{chip.chipClass}"

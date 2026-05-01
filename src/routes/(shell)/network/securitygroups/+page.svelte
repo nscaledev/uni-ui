@@ -99,10 +99,8 @@
 		{@const chip = resolveChip(resource.metadata.provisioningStatus, null)}
 		{@const proj = securityGroupProject(resource)}
 		<td class="primary">
-			<a href="/network/securitygroups/edit/{resource.metadata.id}">
-				<div>{resource.metadata.name}</div>
-				<div class="sub">{resource.metadata.id}</div>
-			</a>
+			<a href="/network/securitygroups/edit/{resource.metadata.id}">{resource.metadata.name}</a>
+			<div class="sub">{resource.metadata.id}</div>
 		</td>
 		<td>
 			{#if chip}<span class="chip chip--{chip.chipClass}"
