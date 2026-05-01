@@ -20,31 +20,33 @@ import { exists, mapValues } from '../runtime';
  */
 export interface TokenRequestOptions {
     /**
-     * Supported grant type.  Must be either "code", "refresh_token" or "client_credentials".
+     * Supported grant type. One of "authorization_code", "refresh_token",
+     * "client_credentials", or "urn:ietf:params:oauth:grant-type:token-exchange"
+     * (RFC 8693).
      * @type {string}
      * @memberof TokenRequestOptions
      */
     grantType: string;
     /**
-     * Authorization code. Required with the "code" grant type.
+     * Authorization code. Required with the "authorization_code" grant type.
      * @type {string}
      * @memberof TokenRequestOptions
      */
     code?: string | null;
     /**
-     * Client ID. Required with the "code" and "refresh_token" grant types.
+     * Client ID. Required with the "authorization_code" and "refresh_token" grant types.
      * @type {string}
      * @memberof TokenRequestOptions
      */
     clientId?: string | null;
     /**
-     * Client secret. Required with the "code" and "refresh_token" grant types.
+     * Client secret. Required with the "authorization_code" and "refresh_token" grant types.
      * @type {string}
      * @memberof TokenRequestOptions
      */
     clientSecret?: string | null;
     /**
-     * Client redirect URI. Required with the "code" grant type.
+     * Client redirect URI. Required with the "authorization_code" grant type.
      * @type {string}
      * @memberof TokenRequestOptions
      */
@@ -61,6 +63,68 @@ export interface TokenRequestOptions {
      * @memberof TokenRequestOptions
      */
     refreshToken?: string | null;
+    /**
+     * The security token that represents the identity of the party on behalf
+     * of whom the request is being made. Required for the token-exchange grant
+     * (RFC 8693 section 2.1).
+     * @type {string}
+     * @memberof TokenRequestOptions
+     */
+    subjectToken?: string | null;
+    /**
+     * An identifier that indicates the type of the security token in the
+     * "subject_token" parameter. Required for the token-exchange grant
+     * (RFC 8693 section 2.1).
+     * @type {string}
+     * @memberof TokenRequestOptions
+     */
+    subjectTokenType?: string | null;
+    /**
+     * An identifier for the type of the requested security token. Optional for
+     * the token-exchange grant; defaults to the implementation-defined exchanged
+     * token type URI when omitted (RFC 8693 section 2.1).
+     * @type {string}
+     * @memberof TokenRequestOptions
+     */
+    requestedTokenType?: string | null;
+    /**
+     * The logical name of the target service where the client intends to use
+     * the requested security token. Optional for the token-exchange grant
+     * (RFC 8693 section 2.1).
+     * @type {string}
+     * @memberof TokenRequestOptions
+     */
+    audience?: string | null;
+    /**
+     * A URI that indicates the target service or resource where the client
+     * intends to use the requested security token. Optional for the
+     * token-exchange grant (RFC 8693 section 2.1).
+     * @type {string}
+     * @memberof TokenRequestOptions
+     */
+    resource?: string | null;
+    /**
+     * A list of space-delimited, case-sensitive strings that specify the
+     * requested scope of the issued token. Optional for the token-exchange
+     * grant (RFC 8693 section 2.1).
+     * @type {string}
+     * @memberof TokenRequestOptions
+     */
+    scope?: string | null;
+    /**
+     * Optional organization context to scope the issued token ACL to. Used
+     * with the token-exchange grant.
+     * @type {string}
+     * @memberof TokenRequestOptions
+     */
+    xOrganizationId?: string | null;
+    /**
+     * Optional project context to include in the issued token. Used with
+     * the token-exchange grant.
+     * @type {string}
+     * @memberof TokenRequestOptions
+     */
+    xProjectId?: string | null;
 }
 
 /**
@@ -90,6 +154,14 @@ export function TokenRequestOptionsFromJSONTyped(json: any, ignoreDiscriminator:
         'redirectUri': !exists(json, 'redirect_uri') ? undefined : json['redirect_uri'],
         'codeVerifier': !exists(json, 'code_verifier') ? undefined : json['code_verifier'],
         'refreshToken': !exists(json, 'refresh_token') ? undefined : json['refresh_token'],
+        'subjectToken': !exists(json, 'subject_token') ? undefined : json['subject_token'],
+        'subjectTokenType': !exists(json, 'subject_token_type') ? undefined : json['subject_token_type'],
+        'requestedTokenType': !exists(json, 'requested_token_type') ? undefined : json['requested_token_type'],
+        'audience': !exists(json, 'audience') ? undefined : json['audience'],
+        'resource': !exists(json, 'resource') ? undefined : json['resource'],
+        'scope': !exists(json, 'scope') ? undefined : json['scope'],
+        'xOrganizationId': !exists(json, 'x_organization_id') ? undefined : json['x_organization_id'],
+        'xProjectId': !exists(json, 'x_project_id') ? undefined : json['x_project_id'],
     };
 }
 
@@ -109,6 +181,14 @@ export function TokenRequestOptionsToJSON(value?: TokenRequestOptions | null): a
         'redirect_uri': value.redirectUri,
         'code_verifier': value.codeVerifier,
         'refresh_token': value.refreshToken,
+        'subject_token': value.subjectToken,
+        'subject_token_type': value.subjectTokenType,
+        'requested_token_type': value.requestedTokenType,
+        'audience': value.audience,
+        'resource': value.resource,
+        'scope': value.scope,
+        'x_organization_id': value.xOrganizationId,
+        'x_project_id': value.xProjectId,
     };
 }
 

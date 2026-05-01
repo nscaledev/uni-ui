@@ -1,4 +1,11 @@
 apis/DefaultApi.ts
+apis/FileStorageApi.ts
+apis/FileStorageClassesApi.ts
+apis/ImagesApi.ts
+apis/LoadBalancersApi.ts
+apis/NetworksApi.ts
+apis/SSHCertificateAuthoritiesApi.ts
+apis/SecurityGroupsApi.ts
 apis/index.ts
 index.ts
 models/Architecture.ts
@@ -53,8 +60,6 @@ models/NetworkWrite.ts
 models/NetworkWriteSpec.ts
 models/OpenidProtectedResource.ts
 models/OrganizationScopedResourceReadMetadata.ts
-models/OsDistro.ts
-models/OsFamily.ts
 models/OsKernel.ts
 models/ProjectScopedResourceReadMetadata.ts
 models/RegionDetailKubernetes.ts

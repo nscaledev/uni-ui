@@ -52,8 +52,6 @@ export * from './NetworkWrite';
 export * from './NetworkWriteSpec';
 export * from './OpenidProtectedResource';
 export * from './OrganizationScopedResourceReadMetadata';
-export * from './OsDistro';
-export * from './OsFamily';
 export * from './OsKernel';
 export * from './ProjectScopedResourceReadMetadata';
 export * from './RegionDetailKubernetes';

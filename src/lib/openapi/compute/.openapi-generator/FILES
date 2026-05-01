@@ -1,4 +1,8 @@
 apis/DefaultApi.ts
+apis/FlavorsApi.ts
+apis/ImagesApi.ts
+apis/InstancesApi.ts
+apis/RegionsApi.ts
 apis/index.ts
 index.ts
 models/AllowedAddressPair.ts

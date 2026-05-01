@@ -1,4 +1,11 @@
 apis/DefaultApi.ts
+apis/GroupsApi.ts
+apis/OrganizationsApi.ts
+apis/ProjectsApi.ts
+apis/QuotasApi.ts
+apis/RolesApi.ts
+apis/ServiceAccountsApi.ts
+apis/UsersApi.ts
 apis/index.ts
 index.ts
 models/Acl.ts
