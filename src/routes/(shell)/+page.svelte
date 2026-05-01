@@ -3,6 +3,7 @@
 
 	let { data }: { data: PageData } = $props();
 
+	import prettyBytes from 'pretty-bytes';
 	import Icon from '$lib/primitives/Icon.svelte';
 	import ProgressRing from '$lib/primitives/ProgressRing.svelte';
 
@@ -20,6 +21,11 @@
 
 	function quotaIcon(kind: string): string {
 		return KIND_ICONS[kind] ?? 'layers';
+	}
+
+	function formatQuotaValue(kind: string, value: number): string {
+		if (kind === 'filestorage') return prettyBytes(value, { binary: true });
+		return String(value);
 	}
 </script>
 
@@ -51,15 +57,15 @@
 				/>
 				<dl class="util-card__grid">
 					<dt>Total</dt>
-					<dd>{quota.quantity}</dd>
+					<dd>{formatQuotaValue(quota.kind, quota.quantity)}</dd>
 					<dt>Used</dt>
-					<dd>{quota.used}</dd>
+					<dd>{formatQuotaValue(quota.kind, quota.used)}</dd>
 					<dt class="free">Free</dt>
-					<dd class="free">{quota.free}</dd>
+					<dd class="free">{formatQuotaValue(quota.kind, quota.free)}</dd>
 					<dt>Committed</dt>
-					<dd>{quota.committed}</dd>
+					<dd>{formatQuotaValue(quota.kind, quota.committed)}</dd>
 					<dt>Reserved</dt>
-					<dd>{quota.reserved}</dd>
+					<dd>{formatQuotaValue(quota.kind, quota.reserved)}</dd>
 				</dl>
 			</div>
 		</div>
