@@ -124,7 +124,7 @@
 	resources={data.instances}
 	projects={data.projectID ? [] : data.projects}
 	regions={data.regions}
-	tableHeaders={['Name', 'Status', 'Project', 'Region', 'Private IP', 'Owner', 'Age', '']}
+	tableHeaders={['Name', 'Status', 'Project', 'Region', 'IP', 'Owner', 'Age', '']}
 >
 	{#snippet bulkbar({ ids, clear })}
 		<ModalIcon
@@ -166,7 +166,16 @@
 				{RegionUtil.name(data.regions, resource.status.regionId)}
 			</span>
 		</td>
-		<td><span class="mono">{resource.status.privateIP ?? '—'}</span></td>
+		<td>
+			{#if resource.status.privateIP}
+				<span class="mono">{resource.status.privateIP}</span>
+				{#if resource.status.publicIP}
+					<div class="sub">{resource.status.publicIP}</div>
+				{/if}
+			{:else}
+				<span class="mono">—</span>
+			{/if}
+		</td>
 		<td>{resource.metadata.createdBy}</td>
 		<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
 		<RowMenu>
