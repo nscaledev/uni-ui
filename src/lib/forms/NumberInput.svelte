@@ -14,6 +14,6 @@
 
 <FieldWrapper {label} {hint}>
 	{#snippet control()}
-		<input class="input" type="number" bind:value {min} {max} />
+		<div class="input"><input type="number" bind:value {min} {max} /></div>
 	{/snippet}
 </FieldWrapper>
