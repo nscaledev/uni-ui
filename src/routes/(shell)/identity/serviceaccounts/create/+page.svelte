@@ -58,6 +58,7 @@
 		]}
 		cancelHref="/identity/serviceaccounts"
 		submitLabel="Create Service Account"
+		description="Create a machine account for automation and programmatic access."
 		onSubmit={submit}
 		{valid}
 	>

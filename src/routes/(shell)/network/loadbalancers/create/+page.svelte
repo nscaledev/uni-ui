@@ -137,7 +137,7 @@
 	<div class="grid grid-cols-[repeat(3,max-content)] gap-2 text-sm">
 		<ShellMetadataItem icon="mdi:folder-open-outline" label="Project" value={lookupProjectName()} />
 		<ShellMetadataItem
-			icon={RegionUtil.icon(data.regions, data.network.status.regionId)}
+			icon={RegionUtil.flag(data.regions, data.network.status.regionId)}
 			label="Region"
 			value={RegionUtil.name(data.regions, data.network.status.regionId)}
 		/>

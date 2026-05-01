@@ -100,7 +100,6 @@
 			{#snippet main()}
 				<ShellListItemHeader
 					metadata={resource.metadata}
-					projects={data.projects}
 					href="/network/loadbalancers/view/{resource.metadata.id}"
 				/>
 			{/snippet}
@@ -108,7 +107,7 @@
 			{#snippet badges()}
 				<ShellListItemBadges metadata={resource.metadata}>
 					{#snippet extra()}
-						<Badge icon={RegionUtil.icon(data.regions, resource.status.regionId)}>
+						<Badge icon={RegionUtil.flag(data.regions, resource.status.regionId)}>
 							{RegionUtil.name(data.regions, resource.status.regionId)}
 						</Badge>
 						<Badge icon="mdi:network-outline">
@@ -121,7 +120,7 @@
 				</ShellListItemBadges>
 			{/snippet}
 
-			{#snippet trail()}
+			{#snippet menu()}
 				<ModalIcon
 					icon="mdi:trash-can-outline"
 					label="Delete"

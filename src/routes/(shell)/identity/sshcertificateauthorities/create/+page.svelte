@@ -45,6 +45,7 @@
 	]}
 	cancelHref="/identity/sshcertificateauthorities"
 	submitLabel="Create CA"
+	description="Generate an SSH certificate authority for user certificate-based instance access."
 	onSubmit={submit}
 	{valid}
 >

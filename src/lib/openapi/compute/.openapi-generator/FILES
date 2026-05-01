@@ -48,8 +48,6 @@ models/MachinePool.ts
 models/ModelError.ts
 models/OpenidProtectedResource.ts
 models/OrganizationScopedResourceReadMetadata.ts
-models/OsDistro.ts
-models/OsFamily.ts
 models/OsKernel.ts
 models/PoolV2.ts
 models/PoolV2Status.ts

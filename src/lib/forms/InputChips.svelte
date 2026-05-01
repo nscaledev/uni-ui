@@ -3,7 +3,7 @@
 
 	interface Props {
 		name?: string;
-		value: Array<string>;
+		value: Array<string> | undefined;
 		label: string;
 		hint?: string;
 		placeholder?: string;

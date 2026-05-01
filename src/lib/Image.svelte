@@ -1,9 +1,8 @@
 <script lang="ts">
-	import * as Region from '$lib/openapi/region';
 	import * as Compute from '$lib/openapi/compute';
 
 	interface Props {
-		image?: Region.Image;
+		image?: Compute.Image;
 		selector?: Compute.ImageSelector;
 	}
 

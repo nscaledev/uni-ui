@@ -78,7 +78,7 @@
 
 <ShellViewHeader metadata={data.loadBalancer.metadata}>
 	{#snippet badges()}
-		<Badge icon={RegionUtil.icon(data.regions, data.loadBalancer.status.regionId)}>
+		<Badge icon={RegionUtil.flag(data.regions, data.loadBalancer.status.regionId)}>
 			{RegionUtil.name(data.regions, data.loadBalancer.status.regionId)}
 		</Badge>
 		<Badge icon="mdi:network-outline">{lookupNetworkName()}</Badge>
@@ -119,7 +119,7 @@
 <ShellSection title="Observed State">
 	<div class="grid grid-cols-[repeat(3,max-content)] gap-2 text-sm">
 		<ShellMetadataItem
-			icon={RegionUtil.icon(data.regions, data.loadBalancer.status.regionId)}
+			icon={RegionUtil.flag(data.regions, data.loadBalancer.status.regionId)}
 			label="Region"
 			value={RegionUtil.name(data.regions, data.loadBalancer.status.regionId)}
 		/>

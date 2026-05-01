@@ -62,6 +62,12 @@ export interface ServerV2Status {
      * @memberof ServerV2Status
      */
     publicIP?: string;
+    /**
+     * The MAC address of the server.
+     * @type {string}
+     * @memberof ServerV2Status
+     */
+    macAddress?: string;
 }
 
 /**
@@ -91,6 +97,7 @@ export function ServerV2StatusFromJSONTyped(json: any, ignoreDiscriminator: bool
         'powerState': !exists(json, 'powerState') ? undefined : InstanceLifecyclePhaseFromJSON(json['powerState']),
         'privateIP': !exists(json, 'privateIP') ? undefined : json['privateIP'],
         'publicIP': !exists(json, 'publicIP') ? undefined : json['publicIP'],
+        'macAddress': !exists(json, 'macAddress') ? undefined : json['macAddress'],
     };
 }
 
@@ -109,6 +116,7 @@ export function ServerV2StatusToJSON(value?: ServerV2Status | null): any {
         'powerState': InstanceLifecyclePhaseToJSON(value.powerState),
         'privateIP': value.privateIP,
         'publicIP': value.publicIP,
+        'macAddress': value.macAddress,
     };
 }
 

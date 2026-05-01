@@ -32,6 +32,7 @@
 	]}
 	cancelHref="/identity/projects"
 	submitLabel="Save"
+	description="Edit project name and group access."
 	onSubmit={submit}
 	{valid}
 >

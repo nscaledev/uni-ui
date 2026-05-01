@@ -30,6 +30,7 @@
 	breadcrumb={[{ label: 'Users', href: '/identity/users' }, { label: 'Create' }]}
 	cancelHref="/identity/users"
 	submitLabel="Create User"
+	description="Invite a user to your organization."
 	onSubmit={submit}
 	{valid}
 >

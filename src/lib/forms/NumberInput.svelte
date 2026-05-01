@@ -2,7 +2,7 @@
 	import FieldWrapper from '$lib/primitives/FieldWrapper.svelte';
 
 	interface Props {
-		value: number;
+		value: number | undefined;
 		label: string;
 		hint?: string;
 		min?: number;

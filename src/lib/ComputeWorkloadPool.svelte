@@ -51,7 +51,7 @@
 	// If a flavorID is selected, by the workload pool, extract that flavor.
 	let flavor = $derived(flavors.find((x) => x.metadata.id == pool.machine.flavorId));
 
-	function osKey(distro: Compute.OsDistro, variant: string | undefined, version: string): string {
+	function osKey(distro: string, variant: string | undefined, version: string): string {
 		if (!variant) return distro + ':' + version;
 
 		return distro + ':' + variant + ':' + version;

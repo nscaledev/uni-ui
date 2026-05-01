@@ -30,7 +30,7 @@
 		{#if validators.length}
 			<input type="text" {placeholder} bind:value />
 		{:else}
-			<input class="input" type="text" {placeholder} bind:value />
+			<div class="input"><input type="text" {placeholder} bind:value /></div>
 		{/if}
 	{/snippet}
 </FieldWrapper>
