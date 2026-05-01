@@ -18,7 +18,7 @@ function persisted<T extends string>(key: string, fallback: T) {
 
 export const appearance = persisted<Appearance>('uk:appearance', 'light');
 export const surface = persisted<Surface>('uk:surface', 'solid');
-export const view = persisted<View>('uk:view', 'table');
+export const view = persisted<View>('uk:view', 'cards');
 
 // Not persisted — panel is closed by default on every load.
 export const tweaksOpen = writable(false);
