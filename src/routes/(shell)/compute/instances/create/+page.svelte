@@ -13,6 +13,7 @@
 	import MultiSelect from '$lib/forms/MultiSelect.svelte';
 	import Switch from '$lib/forms/Switch.svelte';
 	import InputChips from '$lib/forms/InputChips.svelte';
+	import Textarea from '$lib/forms/Textarea.svelte';
 	import Flavor from '$lib/Flavor.svelte';
 	import Image from '$lib/Image.svelte';
 	// eslint-disable-next-line svelte/valid-compile
@@ -36,6 +37,7 @@
 			sshCertificateAuthorityId: undefined
 		}
 	});
+	let userData = $state('');
 	let securityGroups: Array<string> = $state([]);
 	let publicIP = $state(true);
 	let allowedSourceAddresses: Array<string> = $state([]);
@@ -69,6 +71,7 @@
 	let valid = $derived(metadataValid && !!resource.spec.flavorId && !!resource.spec.imageId);
 	function submit() {
 		if (!resource.spec.sshCertificateAuthorityId) delete resource.spec.sshCertificateAuthorityId;
+		if (userData) resource.spec.userData = btoa(unescape(encodeURIComponent(userData)));
 		resource.spec.networking = {};
 		if (securityGroups.length) resource.spec.networking.securityGroups = securityGroups;
 		if (publicIP) resource.spec.networking.publicIP = publicIP;
@@ -148,9 +151,11 @@
 				hint="Additional prefixes allowed to egress, for NFV use cases such as routing."
 				bind:value={allowedSourceAddresses}
 			/>
+		</ShellSection>
+		<ShellSection title="Security">
 			<Select
 				label="SSH certificate CA"
-				hint="Optionally attach an SSH certificate authority for user certificate-based access."
+				hint="Attach an SSH certificate authority for user certificate-based access."
 				bind:value={resource.spec.sshCertificateAuthorityId}
 			>
 				<option value="">None</option>
@@ -158,6 +163,14 @@
 						>{ca.metadata.name}</option
 					>{/each}
 			</Select>
+		</ShellSection>
+		<ShellSection title="User Data">
+			<Textarea
+				label="Cloud-init user data"
+				hint="Optional cloud-init script or YAML configuration applied on first boot."
+				placeholder="#cloud-config"
+				bind:value={userData}
+			/>
 		</ShellSection>
 	{/snippet}
 </FormPage>

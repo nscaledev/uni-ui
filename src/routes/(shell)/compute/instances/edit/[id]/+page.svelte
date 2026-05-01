@@ -9,8 +9,10 @@
 	import ShellSection from '$lib/layouts/ShellSection.svelte';
 	import RichSelect from '$lib/forms/RichSelect.svelte';
 	import MultiSelect from '$lib/forms/MultiSelect.svelte';
+	import Select from '$lib/forms/Select.svelte';
 	import Switch from '$lib/forms/Switch.svelte';
 	import InputChips from '$lib/forms/InputChips.svelte';
+	import Textarea from '$lib/forms/Textarea.svelte';
 	import Flavor from '$lib/Flavor.svelte';
 	import Image from '$lib/Image.svelte';
 	import * as RegionUtil from '$lib/regionutil';
@@ -27,9 +29,19 @@
 	function initAllowedSourceAddresses() {
 		return data.instance.spec.networking?.allowedSourceAddresses || [];
 	}
+	function initUserData() {
+		const encoded = data.instance.spec.userData;
+		if (!encoded) return '';
+		try {
+			return decodeURIComponent(escape(atob(encoded)));
+		} catch {
+			return '';
+		}
+	}
 	let securityGroups: Array<string> = $state(initSecurityGroups());
 	let publicIP = $state(initPublicIP());
 	let allowedSourceAddresses: Array<string> = $state(initAllowedSourceAddresses());
+	let userData = $state(initUserData());
 	let flavors = $derived(
 		data.flavors.filter((x) => data.images.some((y) => x.spec.disk >= y.spec.sizeGiB))
 	);
@@ -66,6 +78,8 @@
 		if (publicIP) resource.spec.networking.publicIP = publicIP;
 		if (allowedSourceAddresses.length)
 			resource.spec.networking.allowedSourceAddresses = allowedSourceAddresses;
+		resource.spec.userData = userData ? btoa(unescape(encodeURIComponent(userData))) : undefined;
+		if (!resource.spec.sshCertificateAuthorityId) delete resource.spec.sshCertificateAuthorityId;
 		Clients.compute()
 			.apiV2InstancesInstanceIDPut({ instanceID: resource.metadata.id, instanceUpdate: resource })
 			.then(() => window.location.assign('/compute/instances'))
@@ -146,6 +160,26 @@
 				label="Allowed source addresses"
 				hint="Additional prefixes allowed to egress."
 				bind:value={allowedSourceAddresses}
+			/>
+		</ShellSection>
+		<ShellSection title="Security">
+			<Select
+				label="SSH certificate CA"
+				hint="Attach an SSH certificate authority for user certificate-based access."
+				bind:value={resource.spec.sshCertificateAuthorityId}
+			>
+				<option value="">None</option>
+				{#each data.sshCertificateAuthorities as ca}<option value={ca.metadata.id}
+						>{ca.metadata.name}</option
+					>{/each}
+			</Select>
+		</ShellSection>
+		<ShellSection title="User Data">
+			<Textarea
+				label="Cloud-init user data"
+				hint="Optional cloud-init script or YAML configuration applied on first boot."
+				placeholder="#cloud-config"
+				bind:value={userData}
 			/>
 		</ShellSection>
 	{/snippet}
