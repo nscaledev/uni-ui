@@ -3,6 +3,7 @@
 	let { data }: { data: PageData } = $props();
 	import * as Identity from '$lib/openapi/identity';
 	import Logo from '$lib/logos/Logo.svelte';
+	import ProviderIcon from '$lib/logos/ProviderIcon.svelte';
 
 	function login(provider: Identity.Oauth2ProviderType) {
 		const providerInput = document.getElementById('provider') as HTMLInputElement;
@@ -55,6 +56,7 @@
 					{#each providers as provider}
 						{#if data.providers.includes(provider.type)}
 							<button class="btn auth-provider-btn" onclick={() => login(provider.type)}>
+								<ProviderIcon type={provider.type} />
 								{provider.label}
 							</button>
 						{/if}
