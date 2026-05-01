@@ -25,13 +25,13 @@
 	let menuWrapEl: HTMLDivElement;
 	let menuEl: HTMLDivElement | undefined;
 
-	function onwindowpointerdown(e: PointerEvent) {
+	function onwindowclick(e: MouseEvent) {
 		if (menuOpen && !menuWrapEl?.contains(e.target as Node) && !menuEl?.contains(e.target as Node))
 			menuOpen = false;
 	}
 </script>
 
-<svelte:window onpointerdown={onwindowpointerdown} />
+<svelte:window onclick={onwindowclick} />
 
 <article class="rcard" class:selected>
 	<div class="rcard__head">
