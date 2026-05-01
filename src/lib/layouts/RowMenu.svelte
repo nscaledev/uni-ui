@@ -10,6 +10,7 @@
 
 	let open = $state(false);
 	let buttonEl: HTMLButtonElement;
+	let menuEl: HTMLDivElement | undefined;
 	let menuStyle = $state('');
 
 	function portal(node: HTMLElement) {
@@ -27,7 +28,8 @@
 	}
 
 	function onwindowpointerdown(e: PointerEvent) {
-		if (open && !buttonEl?.contains(e.target as Node)) open = false;
+		if (open && !buttonEl?.contains(e.target as Node) && !menuEl?.contains(e.target as Node))
+			open = false;
 	}
 
 	function onwindowscroll() {
@@ -50,11 +52,11 @@
 	</button>
 	{#if open}
 		<div
+			bind:this={menuEl}
 			use:portal
 			class="menu"
 			role="menu"
 			style="position:fixed;min-width:160px;z-index:200;{menuStyle}"
-			onclick={() => (open = false)}
 		>
 			{@render menu()}
 		</div>

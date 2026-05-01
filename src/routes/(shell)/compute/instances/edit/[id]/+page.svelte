@@ -5,7 +5,6 @@
 	import * as Compute from '$lib/openapi/compute';
 	import FormPage from '$lib/layouts/FormPage.svelte';
 	import ShellMetadataSection from '$lib/layouts/ShellMetadataSection.svelte';
-	import ShellMetadataItem from '$lib/layouts/ShellMetadataItem.svelte';
 	import ShellSection from '$lib/layouts/ShellSection.svelte';
 	import RichSelect from '$lib/forms/RichSelect.svelte';
 	import MultiSelect from '$lib/forms/MultiSelect.svelte';
