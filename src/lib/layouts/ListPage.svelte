@@ -285,7 +285,7 @@
 		<div class="stat__label">Needs attention</div>
 		<div class="stat__value" class:danger={stats.needsAttention > 0}>{stats.needsAttention}</div>
 		{#if stats.needsAttention > 0}
-			<div class="stat__sub down">● error + degraded</div>
+			<div class="stat__sub down">● error</div>
 		{/if}
 	</div>
 	<div class="stat">

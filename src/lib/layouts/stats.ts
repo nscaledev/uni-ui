@@ -20,7 +20,7 @@ export function computeStats(resources: Array<StatResource>): Stats {
 	return {
 		total: resources.length,
 		provisioned: resources.filter((r) => r.metadata.provisioningStatus === 'provisioned').length,
-		needsAttention: resources.filter((r) => r.metadata.provisioningStatus !== 'provisioned').length,
+		needsAttention: resources.filter((r) => r.metadata.provisioningStatus === 'error').length,
 		recent: resources.filter((r) => r.metadata.creationTime.getTime() > cutoff).length
 	};
 }

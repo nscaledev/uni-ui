@@ -42,7 +42,7 @@ describe('computeStats', () => {
 		expect(computeStats(resources).provisioned).toBe(2);
 	});
 
-	it('counts everything except provisioned as needsAttention', () => {
+	it('counts only error status as needsAttention', () => {
 		const resources = [
 			makeResource('provisioned', 1),
 			makeResource('error', 2),
@@ -50,7 +50,7 @@ describe('computeStats', () => {
 			makeResource('provisioning', 4),
 			makeResource('unknown', 5)
 		];
-		expect(computeStats(resources).needsAttention).toBe(4);
+		expect(computeStats(resources).needsAttention).toBe(1);
 	});
 
 	it('counts resources created within 7 days as recent', () => {
@@ -66,13 +66,12 @@ describe('computeStats', () => {
 		expect(stats.recent).toBeLessThanOrEqual(3);
 	});
 
-	it('total equals provisioned + needsAttention', () => {
+	it('provisioning/pending/deprovisioning do not count as needsAttention', () => {
 		const resources = [
-			makeResource('provisioned', 1),
-			makeResource('error', 2),
-			makeResource('pending', 3)
+			makeResource('provisioning', 1),
+			makeResource('pending', 2),
+			makeResource('deprovisioning', 3)
 		];
-		const stats = computeStats(resources);
-		expect(stats.provisioned + stats.needsAttention).toBe(stats.total);
+		expect(computeStats(resources).needsAttention).toBe(0);
 	});
 });
