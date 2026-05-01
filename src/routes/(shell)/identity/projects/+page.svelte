@@ -15,6 +15,7 @@
 	import Placeholder from '$lib/layouts/Placeholder.svelte';
 	import SubtleButton from '$lib/forms/SubtleButton.svelte';
 	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
+	import Icon from '$lib/primitives/Icon.svelte';
 	const settings: ShellPageSettings = {
 		feature: 'Identity',
 		name: 'Projects',
@@ -41,16 +42,24 @@
 		/>{/snippet}
 	{#snippet list(projects)}<ShellList
 			>{#each projects as resource}<ShellListItem id={resource.metadata.id}>
-					{#snippet main()}<ShellListItemHeader metadata={resource.metadata} />{/snippet}
+					{#snippet main()}<ShellListItemHeader
+							metadata={resource.metadata}
+							href="/identity/projects/view/{resource.metadata.id}"
+						/>{/snippet}
 					{#snippet badges()}<ShellListItemBadges metadata={resource.metadata} />{/snippet}
-					{#snippet menu()}<ModalIcon
+					{#snippet menu()}
+						<a href="/identity/projects/view/{resource.metadata.id}" class="menu__item">
+							<Icon name="edit" size={14} /> Edit
+						</a>
+						<ModalIcon
 							icon="trash"
 							label="Delete"
 							class="menu__item menu__item--danger"
 							title="Delete project?"
 							confirm={() => deleteProject(resource.metadata.id)}
 							>Removing "{resource.metadata.name}" removes all infrastructure owned by it.</ModalIcon
-						>{/snippet}
+						>
+					{/snippet}
 					<ShellListItemMetadata metadata={resource.metadata} />
 				</ShellListItem>{/each}</ShellList
 		>{/snippet}
