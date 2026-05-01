@@ -34,6 +34,7 @@
 	breadcrumb={[{ label: 'Groups', href: '/identity/groups' }, { label: 'Create' }]}
 	cancelHref="/identity/groups"
 	submitLabel="Create Group"
+	description="Create a group to assign roles to users and service accounts."
 	onSubmit={submit}
 	{valid}
 >
@@ -53,7 +54,8 @@
 		</ShellSection>
 		<ShellSection title="Users">
 			<MultiSelect
-				label="Select group members."
+				label="Users"
+				hint="Human user accounts to add to this group."
 				options={users}
 				value={resource.spec.userIDs || []}
 				onValueChange={(e) => (resource.spec.userIDs = e.value)}
@@ -64,7 +66,8 @@
 		</ShellSection>
 		<ShellSection title="Service Accounts">
 			<MultiSelect
-				label="Select group members."
+				label="Service accounts"
+				hint="Machine accounts for programmatic access."
 				options={serviceAccounts}
 				value={resource.spec.serviceAccountIDs}
 				onValueChange={(e) => (resource.spec.serviceAccountIDs = e.value)}

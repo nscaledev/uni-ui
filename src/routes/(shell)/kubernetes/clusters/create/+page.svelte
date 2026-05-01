@@ -176,7 +176,7 @@
 			<Switch
 				name="hardwareenablement"
 				label="Enable hardware operators"
-				hint="Enable this if your workload pools use GPU flavors."
+				hint="Required for GPU workload pools or specialized network drivers."
 				onCheckedChange={(e) => (resource.spec.features = { hardwareEnablement: e.checked })}
 			/>
 		</ShellSection>

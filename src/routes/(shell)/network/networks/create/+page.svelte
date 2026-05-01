@@ -85,7 +85,7 @@
 			/>
 			<InputChips
 				label="DNS nameservers"
-				hint="Explicit nameservers prevent instances on the same network from resolving each other."
+				hint="Leave empty to use the platform's internal DNS, which lets hosts on this network resolve each other by name. Explicit nameservers (e.g. 8.8.8.8) disable internal host resolution."
 				name="dns-nameservers"
 				bind:value={resource.spec.dnsNameservers}
 			/>

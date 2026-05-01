@@ -140,7 +140,7 @@
 		<ShellSection title="Networking">
 			<MultiSelect
 				label="Security groups"
-				hint="Security groups to apply to the instance."
+				hint="Security groups to apply to the instance. By default all egress is allowed and no ingress."
 				value={securityGroups}
 				onValueChange={(e) => (securityGroups = e.value)}
 				options={data.securityGroups.map((x) => ({ value: x.metadata.id, label: x.metadata.name }))}
@@ -177,7 +177,7 @@
 		<ShellSection title="User Data">
 			<Textarea
 				label="Cloud-init user data"
-				hint="Optional cloud-init script or YAML configuration applied on first boot."
+				hint="Cloud-init configuration applied on first boot. Accepts a shell script, cloud-config YAML, or a MIME multipart archive."
 				placeholder="#cloud-config"
 				bind:value={userData}
 			/>

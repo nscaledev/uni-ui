@@ -167,7 +167,7 @@
 		<ShellSection title="User Data">
 			<Textarea
 				label="Cloud-init user data"
-				hint="Optional cloud-init script or YAML configuration applied on first boot."
+				hint="Cloud-init configuration applied on first boot. Accepts a shell script, cloud-config YAML, or a MIME multipart archive."
 				placeholder="#cloud-config"
 				bind:value={userData}
 			/>
