@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ShellPageSettings } from '$lib/layouts/types.ts';
-	import Icon from '$lib/primitives/Icon.svelte';
+	import PageHeader from '$lib/layouts/PageHeader.svelte';
 
 	interface Props {
 		settings: ShellPageSettings;
@@ -11,21 +11,13 @@
 	let { settings, tools, children }: Props = $props();
 </script>
 
-<nav class="breadcrumb" aria-label="Breadcrumb">
-	<span>{settings.feature}</span>
-	<span class="sep">/</span>
-	<span>{settings.name}</span>
-</nav>
-
-<div class="page-head">
-	<div>
-		<h1>{settings.name}</h1>
-		{#if settings.description}
-			<div class="sub">{settings.description}</div>
-		{/if}
-	</div>
-	<div class="actions">
+<PageHeader
+	breadcrumb={[{ label: settings.feature }, { label: settings.name }]}
+	title={settings.name}
+	description={settings.description}
+>
+	{#snippet actions()}
 		{@render tools?.()}
 		{@render children?.()}
-	</div>
-</div>
+	{/snippet}
+</PageHeader>

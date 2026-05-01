@@ -14,7 +14,7 @@
 	import ShellListItemMetadata from '$lib/layouts/ShellListItemMetadata.svelte';
 	import ShellMetadataItem from '$lib/layouts/ShellMetadataItem.svelte';
 	import Placeholder from '$lib/layouts/Placeholder.svelte';
-	import SubtleButton from '$lib/forms/SubtleButton.svelte';
+	import Button from '$lib/forms/Button.svelte';
 	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
 	const settings: ShellPageSettings = {
 		feature: 'Identity',
@@ -34,9 +34,10 @@
 </script>
 
 <ListPage {settings} resources={data.sshCertificateAuthorities || []}>
-	{#snippet tools()}<SubtleButton
+	{#snippet tools()}<Button
 			icon="plus"
 			label="Create"
+			class="btn--primary"
 			href="/identity/sshcertificateauthorities/create"
 		/>{/snippet}
 	{#snippet list(cas)}<ShellList

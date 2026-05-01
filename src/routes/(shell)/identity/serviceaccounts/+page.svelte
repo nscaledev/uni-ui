@@ -17,7 +17,7 @@
 	import ShellListItemMetadata from '$lib/layouts/ShellListItemMetadata.svelte';
 	import ShellMetadataItem from '$lib/layouts/ShellMetadataItem.svelte';
 	import Placeholder from '$lib/layouts/Placeholder.svelte';
-	import SubtleButton from '$lib/forms/SubtleButton.svelte';
+	import Button from '$lib/forms/Button.svelte';
 	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
 	import Clipboard from '$lib/forms/Clipboard.svelte';
 	import RowMenu from '$lib/layouts/RowMenu.svelte';
@@ -130,9 +130,10 @@
 		</RowMenu>
 	{/snippet}
 
-	{#snippet tools()}<SubtleButton
+	{#snippet tools()}<Button
 			icon="plus"
 			label="Create"
+			class="btn--primary"
 			href="/identity/serviceaccounts/create"
 		/>{/snippet}
 	{#snippet list(accounts)}<ShellList

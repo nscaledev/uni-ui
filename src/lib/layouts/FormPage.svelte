@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import Button from '$lib/forms/Button.svelte';
+	import PageHeader from '$lib/layouts/PageHeader.svelte';
 
 	interface BreadcrumbItem {
 		label: string;
@@ -11,7 +12,7 @@
 		breadcrumb: Array<BreadcrumbItem>;
 		cancelHref: string;
 		submitLabel?: string;
-		description?: string;
+		description: string;
 		onSubmit: () => void;
 		valid?: boolean;
 		submitting?: boolean;
@@ -32,23 +33,7 @@
 	}: Props = $props();
 </script>
 
-<nav class="breadcrumb" aria-label="Breadcrumb">
-	{#each breadcrumb as item, i}
-		{#if i > 0}<span class="sep">/</span>{/if}
-		{#if item.href}
-			<a href={item.href}>{item.label}</a>
-		{:else}
-			<span>{item.label}</span>
-		{/if}
-	{/each}
-</nav>
-
-{#if description}
-	<div class="form-intro">
-		<div class="form-intro__title">{submitLabel}</div>
-		<div class="form-intro__desc">{description}</div>
-	</div>
-{/if}
+<PageHeader {breadcrumb} title={submitLabel} {description} />
 
 <div class="form-layout" class:form-layout--no-aside={!summary}>
 	<div class="form-main">

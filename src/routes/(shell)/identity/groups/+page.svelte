@@ -17,7 +17,7 @@
 	import ShellListItemBadges from '$lib/layouts/ShellListItemBadges.svelte';
 	import ShellListItemMetadata from '$lib/layouts/ShellListItemMetadata.svelte';
 	import Placeholder from '$lib/layouts/Placeholder.svelte';
-	import SubtleButton from '$lib/forms/SubtleButton.svelte';
+	import Button from '$lib/forms/Button.svelte';
 	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
 	import RowMenu from '$lib/layouts/RowMenu.svelte';
 
@@ -104,7 +104,7 @@
 	{/snippet}
 
 	{#snippet tools()}
-		<SubtleButton icon="plus" label="Create" href="/identity/groups/create" />
+		<Button icon="plus" label="Create" class="btn--primary" href="/identity/groups/create" />
 	{/snippet}
 
 	{#snippet list(groups)}

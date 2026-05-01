@@ -13,7 +13,7 @@
 	import ShellListItemBadges from '$lib/layouts/ShellListItemBadges.svelte';
 	import ShellListItemMetadata from '$lib/layouts/ShellListItemMetadata.svelte';
 	import Placeholder from '$lib/layouts/Placeholder.svelte';
-	import SubtleButton from '$lib/forms/SubtleButton.svelte';
+	import Button from '$lib/forms/Button.svelte';
 	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
 	import Icon from '$lib/primitives/Icon.svelte';
 	const settings: ShellPageSettings = {
@@ -35,9 +35,10 @@
 </script>
 
 <ListPage {settings} resources={data.projects || []}>
-	{#snippet tools()}<SubtleButton
+	{#snippet tools()}<Button
 			icon="plus"
 			label="Create"
+			class="btn--primary"
 			href="/identity/projects/create"
 		/>{/snippet}
 	{#snippet list(projects)}<ShellList
