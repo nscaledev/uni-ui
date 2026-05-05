@@ -135,6 +135,7 @@
 			label="Create"
 			class="btn--primary"
 			href="/identity/serviceaccounts/create"
+			disabled={!data.groups.length}
 		/>{/snippet}
 	{#snippet list(accounts)}<ShellList
 			>{#each accounts as resource}<ShellListItem id={resource.metadata.id}>
@@ -161,7 +162,15 @@
 					/>
 				</ShellListItem>{/each}</ShellList
 		>{/snippet}
-	{#snippet empty()}<Placeholder>No service accounts yet.</Placeholder>{/snippet}
+	{#snippet empty()}
+		{#if !data.groups.length}
+			<Placeholder
+				>No groups exist yet — create a group before adding a service account.</Placeholder
+			>
+		{:else}
+			<Placeholder>No service accounts yet — create one to get started.</Placeholder>
+		{/if}
+	{/snippet}
 </ListPage>
 
 <style>

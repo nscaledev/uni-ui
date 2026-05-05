@@ -39,6 +39,7 @@
 			label="Create"
 			class="btn--primary"
 			href="/identity/sshcertificateauthorities/create"
+			disabled={!data.projects.length}
 		/>{/snippet}
 	{#snippet list(cas)}<ShellList
 			>{#each cas as resource}<ShellListItem id={resource.metadata.id}>
@@ -60,5 +61,11 @@
 					/>
 				</ShellListItem>{/each}</ShellList
 		>{/snippet}
-	{#snippet empty()}<Placeholder>No SSH certificate authorities yet.</Placeholder>{/snippet}
+	{#snippet empty()}
+		{#if !data.projects.length}
+			<Placeholder>No projects exist yet — create a project before adding an SSH CA.</Placeholder>
+		{:else}
+			<Placeholder>No SSH certificate authorities yet — create one to get started.</Placeholder>
+		{/if}
+	{/snippet}
 </ListPage>

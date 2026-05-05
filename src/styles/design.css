@@ -313,6 +313,7 @@ button { cursor: pointer; border: 0; background: none; padding: 0; }
     0 4px 12px var(--accent-glow);
 }
 .btn--primary:hover { filter: brightness(1.05); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
 .btn--ghost {
   background: transparent;

@@ -25,7 +25,7 @@
 	{#if label}<span>{label}</span>{/if}
 {/snippet}
 
-{#if href}
+{#if href && !disabled}
 	<a {href} class="btn {cls}">
 		{@render content()}
 	</a>

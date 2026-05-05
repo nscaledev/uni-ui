@@ -9,11 +9,10 @@ export const load: LayoutLoad = async ({ fetch, depends, parent }) => {
 
 	const { organizationID } = await parent();
 
-	const projects = Clients.identity(fetch).apiV1OrganizationsOrganizationIDProjectsGet({
-		organizationID: organizationID
-	});
+	const [projects, groups] = await Promise.all([
+		Clients.identity(fetch).apiV1OrganizationsOrganizationIDProjectsGet({ organizationID }),
+		Clients.identity(fetch).apiV1OrganizationsOrganizationIDGroupsGet({ organizationID })
+	]);
 
-	return {
-		projects: await projects
-	};
+	return { projects, groups };
 };

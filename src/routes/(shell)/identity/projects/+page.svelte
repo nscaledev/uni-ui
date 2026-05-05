@@ -40,6 +40,7 @@
 			label="Create"
 			class="btn--primary"
 			href="/identity/projects/create"
+			disabled={!data.groups.length}
 		/>{/snippet}
 	{#snippet list(projects)}<ShellList
 			>{#each projects as resource}<ShellListItem id={resource.metadata.id}>
@@ -64,5 +65,11 @@
 					<ShellListItemMetadata metadata={resource.metadata} />
 				</ShellListItem>{/each}</ShellList
 		>{/snippet}
-	{#snippet empty()}<Placeholder>No projects yet.</Placeholder>{/snippet}
+	{#snippet empty()}
+		{#if !data.groups.length}
+			<Placeholder>No groups exist yet — create a group before creating a project.</Placeholder>
+		{:else}
+			<Placeholder>No projects yet — create one to get started.</Placeholder>
+		{/if}
+	{/snippet}
 </ListPage>

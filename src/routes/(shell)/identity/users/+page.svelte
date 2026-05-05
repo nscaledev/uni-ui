@@ -106,6 +106,7 @@
 			label="Create"
 			class="btn--primary"
 			href="/identity/users/create"
+			disabled={!data.groups.length}
 		/>{/snippet}
 	{#snippet list(users)}<ShellList
 			>{#each users as resource}<ShellListItem id={resource.metadata.id}>
@@ -127,5 +128,11 @@
 					<ShellMetadataItem icon="bolt" label="Last Active" value={userLastActive(resource)} />
 				</ShellListItem>{/each}</ShellList
 		>{/snippet}
-	{#snippet empty()}<Placeholder>No users yet.</Placeholder>{/snippet}
+	{#snippet empty()}
+		{#if !data.groups.length}
+			<Placeholder>No groups exist yet — create a group before adding a user.</Placeholder>
+		{:else}
+			<Placeholder>No users yet — create one to get started.</Placeholder>
+		{/if}
+	{/snippet}
 </ListPage>

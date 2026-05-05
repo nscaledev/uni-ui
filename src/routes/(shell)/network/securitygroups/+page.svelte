@@ -137,30 +137,30 @@
 	{/snippet}
 
 	{#snippet tools()}
-		{#if data.projects.length}
-			{#if skipPopup}
-				<a href={createURL} class="btn btn--primary"><Icon name="plus" size={16} /> Create</a>
-			{:else}
-				<PopupButton icon="plus" label="Create">
-					{#snippet contents(close)}
-						<div class="create-popup">
-							<div class="menu__title" style="padding-inline: 0">Network</div>
-							<div class="picker">
-								<Icon name="network" size={14} />
-								<select bind:value={createNetworkID}>
-									{#each data.networks as n}
-										<option value={n.metadata.id}>{n.metadata.name}</option>
-									{/each}
-								</select>
-							</div>
-							<div class="create-popup__footer">
-								<button onclick={close} class="btn btn--ghost btn--sm">Cancel</button>
-								<a href={createURL} class="btn btn--primary btn--sm">Continue</a>
-							</div>
+		{#if !data.projects.length || !data.networks.length}
+			<button class="btn btn--primary" disabled><Icon name="plus" size={16} /> Create</button>
+		{:else if skipPopup}
+			<a href={createURL} class="btn btn--primary"><Icon name="plus" size={16} /> Create</a>
+		{:else}
+			<PopupButton icon="plus" label="Create">
+				{#snippet contents(close)}
+					<div class="create-popup">
+						<div class="menu__title" style="padding-inline: 0">Network</div>
+						<div class="picker">
+							<Icon name="network" size={14} />
+							<select bind:value={createNetworkID}>
+								{#each data.networks as n}
+									<option value={n.metadata.id}>{n.metadata.name}</option>
+								{/each}
+							</select>
 						</div>
-					{/snippet}
-				</PopupButton>
-			{/if}
+						<div class="create-popup__footer">
+							<button onclick={close} class="btn btn--ghost btn--sm">Cancel</button>
+							<a href={createURL} class="btn btn--primary btn--sm">Continue</a>
+						</div>
+					</div>
+				{/snippet}
+			</PopupButton>
 		{/if}
 	{/snippet}
 	{#snippet list(groups)}<ShellList
@@ -197,6 +197,17 @@
 					</ShellListItemMetadata>
 				</ShellListItem>{/each}</ShellList
 		>{/snippet}
-	{#snippet empty()}<Placeholder>No security groups yet — create one to get started.</Placeholder
-		>{/snippet}
+	{#snippet empty()}
+		{#if !data.projects.length}
+			<Placeholder
+				>You are not a member of any projects — ask an administrator to add you.</Placeholder
+			>
+		{:else if !data.networks.length}
+			<Placeholder
+				>No networks exist yet — create a network before adding a security group.</Placeholder
+			>
+		{:else}
+			<Placeholder>No security groups yet — create one to get started.</Placeholder>
+		{/if}
+	{/snippet}
 </ListPage>

@@ -170,43 +170,43 @@
 	{/snippet}
 
 	{#snippet tools()}
-		{#if data.projects.length}
-			{#if skipPopup}
-				<a href={createURL} class="btn btn--primary"><Icon name="plus" size={16} /> Create</a>
-			{:else}
-				<PopupButton icon="plus" label="Create">
-					{#snippet contents(close)}
-						<div class="create-popup">
-							{#if !data.projectID}
-								<div class="menu__title" style="padding-inline: 0">Project</div>
-								<div class="picker">
-									<Icon name="folder" size={14} />
-									<select bind:value={createProjectID}>
-										{#each data.projects as p}
-											<option value={p.metadata.id}>{p.metadata.name}</option>
-										{/each}
-									</select>
-								</div>
-							{/if}
-							{#if data.regions.length > 1}
-								<div class="menu__title" style="padding-inline: 0">Region</div>
-								<div class="picker">
-									<Icon name="globe" size={14} />
-									<select bind:value={createRegionID}>
-										{#each data.regions as r}
-											<option value={r.metadata.id}>{r.metadata.name}</option>
-										{/each}
-									</select>
-								</div>
-							{/if}
-							<div class="create-popup__footer">
-								<button onclick={close} class="btn btn--ghost btn--sm">Cancel</button>
-								<a href={createURL} class="btn btn--primary btn--sm">Continue</a>
+		{#if !data.projects.length}
+			<button class="btn btn--primary" disabled><Icon name="plus" size={16} /> Create</button>
+		{:else if skipPopup}
+			<a href={createURL} class="btn btn--primary"><Icon name="plus" size={16} /> Create</a>
+		{:else}
+			<PopupButton icon="plus" label="Create">
+				{#snippet contents(close)}
+					<div class="create-popup">
+						{#if !data.projectID}
+							<div class="menu__title" style="padding-inline: 0">Project</div>
+							<div class="picker">
+								<Icon name="folder" size={14} />
+								<select bind:value={createProjectID}>
+									{#each data.projects as p}
+										<option value={p.metadata.id}>{p.metadata.name}</option>
+									{/each}
+								</select>
 							</div>
+						{/if}
+						{#if data.regions.length > 1}
+							<div class="menu__title" style="padding-inline: 0">Region</div>
+							<div class="picker">
+								<Icon name="globe" size={14} />
+								<select bind:value={createRegionID}>
+									{#each data.regions as r}
+										<option value={r.metadata.id}>{r.metadata.name}</option>
+									{/each}
+								</select>
+							</div>
+						{/if}
+						<div class="create-popup__footer">
+							<button onclick={close} class="btn btn--ghost btn--sm">Cancel</button>
+							<a href={createURL} class="btn btn--primary btn--sm">Continue</a>
 						</div>
-					{/snippet}
-				</PopupButton>
-			{/if}
+					</div>
+				{/snippet}
+			</PopupButton>
 		{/if}
 	{/snippet}
 	{#snippet list(clusters)}<ShellList
@@ -243,5 +243,13 @@
 					<ShellListItemMetadata metadata={resource.metadata} />
 				</ShellListItem>{/each}</ShellList
 		>{/snippet}
-	{#snippet empty()}<Placeholder>No Kubernetes clusters yet.</Placeholder>{/snippet}
+	{#snippet empty()}
+		{#if !data.projects.length}
+			<Placeholder
+				>You are not a member of any projects — ask an administrator to add you.</Placeholder
+			>
+		{:else}
+			<Placeholder>No Kubernetes clusters yet — create one to get started.</Placeholder>
+		{/if}
+	{/snippet}
 </ListPage>
