@@ -16,7 +16,6 @@
 	import ShellListItemHeader from '$lib/layouts/ShellListItemHeader.svelte';
 	import ShellListItemBadges from '$lib/layouts/ShellListItemBadges.svelte';
 	import ShellListItemMetadata from '$lib/layouts/ShellListItemMetadata.svelte';
-	import Badge from '$lib/layouts/Badge.svelte';
 	import Placeholder from '$lib/layouts/Placeholder.svelte';
 	import PopupButton from '$lib/forms/PopupButton.svelte';
 	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
@@ -136,8 +135,10 @@
 				>{/if}
 		</td>
 		<td>
-			{#if proj}<span class="chip"
-					><span class="dot" style="background:{proj.color}"></span>{proj.name}</span
+			{#if proj}<span class="chip chip--name" title={proj.name}
+					><span class="dot" style="background:{proj.color}"></span><span class="chip-label"
+						>{proj.name}</span
+					></span
 				>{/if}
 		</td>
 		<td>
@@ -211,18 +212,19 @@
 	{/snippet}
 	{#snippet list(clusters)}<ShellList
 			>{#each clusters as resource}<ShellListItem id={resource.metadata.id}>
-					{#snippet main()}<ShellListItemHeader metadata={resource.metadata} />{/snippet}
+					{#snippet main()}
+						<span class="mono region-cell">
+							{RegionUtil.flag(data.regions, resource.spec.regionId)}
+							{RegionUtil.name(data.regions, resource.spec.regionId)}
+						</span>
+						<ShellListItemHeader metadata={resource.metadata} />
+					{/snippet}
 					{#snippet badges()}
 						<ShellListItemBadges
 							metadata={resource.metadata}
 							projects={data.projects}
 							operationalStatus={fromHealthStatus(resource.metadata.healthStatus)}
-						>
-							{#snippet extra()}<Badge
-									>{RegionUtil.flag(data.regions, resource.spec.regionId)}
-									{RegionUtil.name(data.regions, resource.spec.regionId)}</Badge
-								>{/snippet}
-						</ShellListItemBadges>
+						/>
 					{/snippet}
 					{#snippet menu()}
 						<div class="menu__title">Access</div>

@@ -20,7 +20,6 @@
 	import ShellListItemBadges from '$lib/layouts/ShellListItemBadges.svelte';
 	import ShellListItemMetadata from '$lib/layouts/ShellListItemMetadata.svelte';
 	import ShellMetadataItem from '$lib/layouts/ShellMetadataItem.svelte';
-	import Badge from '$lib/layouts/Badge.svelte';
 	import Placeholder from '$lib/layouts/Placeholder.svelte';
 	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
 	import RowMenu from '$lib/layouts/RowMenu.svelte';
@@ -173,6 +172,10 @@
 			{#each loadBalancers as resource}
 				<ShellListItem id={resource.metadata.id}>
 					{#snippet main()}
+						<span class="mono region-cell">
+							{RegionUtil.flag(data.regions, resource.status.regionId)}
+							{RegionUtil.name(data.regions, resource.status.regionId)}
+						</span>
 						<ShellListItemHeader
 							metadata={resource.metadata}
 							href="/network/loadbalancers/view/{resource.metadata.id}"
@@ -180,14 +183,7 @@
 					{/snippet}
 
 					{#snippet badges()}
-						<ShellListItemBadges metadata={resource.metadata} projects={data.projects}>
-							{#snippet extra()}
-								<Badge>
-									{RegionUtil.flag(data.regions, resource.status.regionId)}
-									{RegionUtil.name(data.regions, resource.status.regionId)}
-								</Badge>
-							{/snippet}
-						</ShellListItemBadges>
+						<ShellListItemBadges metadata={resource.metadata} projects={data.projects} />
 					{/snippet}
 
 					{#snippet menu()}

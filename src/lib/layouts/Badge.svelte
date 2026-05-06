@@ -6,17 +6,18 @@
 		icon?: string;
 		// CSS class applied to the icon (e.g. Tailwind color class during migration).
 		iconcolor?: string;
+		title?: string;
 		children?: import('svelte').Snippet;
 	}
 
-	let { icon = '', iconcolor = '', children }: Props = $props();
+	let { icon = '', iconcolor = '', title, children }: Props = $props();
 </script>
 
-<span class="badge">
+<span class="badge" {title}>
 	{#if icon !== ''}
 		<Icon name={icon} size={14} class={iconcolor} />
 	{/if}
-	{@render children?.()}
+	<span class="badge-text">{@render children?.()}</span>
 </span>
 
 <style>
@@ -34,5 +35,12 @@
 		border: 1px solid var(--line);
 		box-shadow: var(--shadow-inset);
 		white-space: nowrap;
+		max-width: 130px;
+	}
+
+	.badge-text {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		min-width: 0;
 	}
 </style>

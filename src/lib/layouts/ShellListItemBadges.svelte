@@ -37,9 +37,9 @@
 
 <div class="badges">
 	{#if project}
-		<span class="chip">
+		<span class="chip chip--name" title={project.name}>
 			<span class="dot" style="background:{project.color}"></span>
-			{project.name}
+			<span class="chip-label">{project.name}</span>
 		</span>
 	{/if}
 
@@ -59,5 +59,7 @@
 		flex-wrap: wrap;
 		align-items: center;
 		gap: 6px;
+		flex: 1 1 0;
+		min-width: 0;
 	}
 </style>
