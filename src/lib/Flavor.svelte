@@ -11,7 +11,7 @@
 {#if flavor}
 	<span class="flavor">
 		<span class="k">CPU</span>
-		{flavor.spec.cpus} core
+		{flavor.spec.cpus}× {flavor.spec.architecture}
 		<span class="sep">·</span>
 		<span class="k">RAM</span>
 		{flavor.spec.memory} GiB
@@ -21,8 +21,8 @@
 		{#if flavor.spec.gpu}
 			<span class="sep">·</span>
 			<span class="k">GPU</span>
-			{flavor.spec.gpu.physicalCount}× {flavor.spec.gpu.model} · {flavor.spec.gpu.logicalCount} logical
-			· {flavor.spec.gpu.memory} GiB
+			{flavor.spec.gpu.physicalCount}× {flavor.spec.gpu.model} ({flavor.spec.gpu.logicalCount} logical
+			· {flavor.spec.gpu.memory} GiB)
 		{/if}
 	</span>
 {/if}

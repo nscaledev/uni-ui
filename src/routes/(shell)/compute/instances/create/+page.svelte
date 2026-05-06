@@ -42,7 +42,11 @@
 	let publicIP = $state(true);
 	let allowedSourceAddresses: Array<string> = $state([]);
 	let flavors = $derived(
-		data.flavors.filter((x) => data.images.some((y) => x.spec.disk >= y.spec.sizeGiB))
+		data.flavors.filter((x) =>
+			data.images.some(
+				(y) => x.spec.disk >= y.spec.sizeGiB && x.spec.architecture === y.spec.architecture
+			)
+		)
 	);
 	$effect.pre(() => {
 		resource.spec.flavorId = flavors[0].metadata.id;
@@ -51,7 +55,11 @@
 		return flavors.find((x) => x.metadata.id == id) as Compute.Flavor;
 	}
 	let images = $derived(
-		data.images.filter((x) => x.spec.sizeGiB <= lookupFlavor(resource.spec.flavorId).spec.disk)
+		data.images.filter(
+			(x) =>
+				x.spec.sizeGiB <= lookupFlavor(resource.spec.flavorId).spec.disk &&
+				x.spec.architecture === lookupFlavor(resource.spec.flavorId).spec.architecture
+		)
 	);
 	function lookupImage(id: string): Compute.Image {
 		return images.find((x) => x.metadata.id == id) as Compute.Image;
