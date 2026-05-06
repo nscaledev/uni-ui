@@ -20,7 +20,6 @@
 	import ShellListItemBadges from '$lib/layouts/ShellListItemBadges.svelte';
 	import ShellListItemMetadata from '$lib/layouts/ShellListItemMetadata.svelte';
 	import ShellMetadataItem from '$lib/layouts/ShellMetadataItem.svelte';
-	import Badge from '$lib/layouts/Badge.svelte';
 	import Placeholder from '$lib/layouts/Placeholder.svelte';
 	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
 	import RowMenu from '$lib/layouts/RowMenu.svelte';
@@ -169,9 +168,9 @@
 		</td>
 		<td>
 			{#if proj}
-				<span class="chip">
+				<span class="chip chip--name" title={proj.name}>
 					<span class="dot" style="background:{proj.color}"></span>
-					{proj.name}
+					<span class="chip-label">{proj.name}</span>
 				</span>
 			{/if}
 		</td>
@@ -205,6 +204,10 @@
 			{#each networks as resource}
 				<ShellListItem id={resource.metadata.id}>
 					{#snippet main()}
+						<span class="mono region-cell">
+							{RegionUtil.flag(data.regions, resource.status.regionId)}
+							{RegionUtil.name(data.regions, resource.status.regionId)}
+						</span>
 						<ShellListItemHeader
 							metadata={resource.metadata}
 							href="/network/networks/edit/{resource.metadata.id}"
@@ -212,14 +215,7 @@
 					{/snippet}
 
 					{#snippet badges()}
-						<ShellListItemBadges metadata={resource.metadata} projects={data.projects}>
-							{#snippet extra()}
-								<Badge>
-									{RegionUtil.flag(data.regions, resource.status.regionId)}
-									{RegionUtil.name(data.regions, resource.status.regionId)}
-								</Badge>
-							{/snippet}
-						</ShellListItemBadges>
+						<ShellListItemBadges metadata={resource.metadata} projects={data.projects} />
 					{/snippet}
 
 					{#snippet menu()}

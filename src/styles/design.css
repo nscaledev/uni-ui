@@ -280,6 +280,8 @@ button { cursor: pointer; border: 0; background: none; padding: 0; }
 .chip--err   { color: var(--danger); }
 .chip--info  { color: var(--info); }
 .chip--muted { color: var(--text-3); }
+.chip--name  { max-width: 130px; overflow: hidden; }
+.chip-label  { overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 
 /* buttons */
 .btn {
@@ -882,7 +884,7 @@ tr:hover .row-action { opacity: 1; }
   position: relative;
 }
 .rcard:hover { border-color: var(--line-strong); }
-.rcard__head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+.rcard__head { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 10px; }
 .rcard__name { font-weight: 600; font-size: 15px; color: var(--text-1); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .rcard__id { font: 12px/1 var(--font-mono); color: var(--text-3); margin-bottom: 8px; }
 .rcard__grid { display: grid; grid-template-columns: auto 1fr; gap: 6px 10px; font-size: 12px; }
