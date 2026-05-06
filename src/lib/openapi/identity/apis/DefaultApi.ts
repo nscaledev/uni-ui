@@ -19,8 +19,6 @@ import type {
   AllocationRead,
   AllocationWrite,
   AuthorizationRequestOptions,
-  GroupRead,
-  GroupWrite,
   JsonWebKeySet,
   LoginRequestOptions,
   ModelError,
@@ -32,18 +30,10 @@ import type {
   OpenidProtectedResource,
   OrganizationRead,
   OrganizationWrite,
-  ProjectRead,
-  ProjectWrite,
   QuotasRead,
   QuotasWrite,
-  RoleRead,
-  ServiceAccountCreate,
-  ServiceAccountRead,
-  ServiceAccountWrite,
   Token,
   TokenRequestOptions,
-  UserRead,
-  UserWrite,
   Userinfo,
   UserinfoRequestOptions,
 } from '../models/index';
@@ -56,10 +46,6 @@ import {
     AllocationWriteToJSON,
     AuthorizationRequestOptionsFromJSON,
     AuthorizationRequestOptionsToJSON,
-    GroupReadFromJSON,
-    GroupReadToJSON,
-    GroupWriteFromJSON,
-    GroupWriteToJSON,
     JsonWebKeySetFromJSON,
     JsonWebKeySetToJSON,
     LoginRequestOptionsFromJSON,
@@ -82,39 +68,19 @@ import {
     OrganizationReadToJSON,
     OrganizationWriteFromJSON,
     OrganizationWriteToJSON,
-    ProjectReadFromJSON,
-    ProjectReadToJSON,
-    ProjectWriteFromJSON,
-    ProjectWriteToJSON,
     QuotasReadFromJSON,
     QuotasReadToJSON,
     QuotasWriteFromJSON,
     QuotasWriteToJSON,
-    RoleReadFromJSON,
-    RoleReadToJSON,
-    ServiceAccountCreateFromJSON,
-    ServiceAccountCreateToJSON,
-    ServiceAccountReadFromJSON,
-    ServiceAccountReadToJSON,
-    ServiceAccountWriteFromJSON,
-    ServiceAccountWriteToJSON,
     TokenFromJSON,
     TokenToJSON,
     TokenRequestOptionsFromJSON,
     TokenRequestOptionsToJSON,
-    UserReadFromJSON,
-    UserReadToJSON,
-    UserWriteFromJSON,
-    UserWriteToJSON,
     UserinfoFromJSON,
     UserinfoToJSON,
     UserinfoRequestOptionsFromJSON,
     UserinfoRequestOptionsToJSON,
 } from '../models/index';
-
-export interface ApiV1OrganizationsGetRequest {
-    email?: string;
-}
 
 export interface ApiV1OrganizationsOrganizationIDAclGetRequest {
     organizationID: string;
@@ -122,35 +88,6 @@ export interface ApiV1OrganizationsOrganizationIDAclGetRequest {
 
 export interface ApiV1OrganizationsOrganizationIDDeleteRequest {
     organizationID: string;
-}
-
-export interface ApiV1OrganizationsOrganizationIDGetRequest {
-    organizationID: string;
-}
-
-export interface ApiV1OrganizationsOrganizationIDGroupsGetRequest {
-    organizationID: string;
-}
-
-export interface ApiV1OrganizationsOrganizationIDGroupsGroupidDeleteRequest {
-    organizationID: string;
-    groupid: string;
-}
-
-export interface ApiV1OrganizationsOrganizationIDGroupsGroupidGetRequest {
-    organizationID: string;
-    groupid: string;
-}
-
-export interface ApiV1OrganizationsOrganizationIDGroupsGroupidPutRequest {
-    organizationID: string;
-    groupid: string;
-    groupWrite: GroupWrite;
-}
-
-export interface ApiV1OrganizationsOrganizationIDGroupsPostRequest {
-    organizationID: string;
-    groupWrite: GroupWrite;
 }
 
 export interface ApiV1OrganizationsOrganizationIDOauth2providersGetRequest {
@@ -171,15 +108,6 @@ export interface ApiV1OrganizationsOrganizationIDOauth2providersProviderIDPutReq
     organizationID: string;
     providerID: string;
     oauth2ProviderWrite: Oauth2ProviderWrite;
-}
-
-export interface ApiV1OrganizationsOrganizationIDProjectsGetRequest {
-    organizationID: string;
-}
-
-export interface ApiV1OrganizationsOrganizationIDProjectsPostRequest {
-    organizationID: string;
-    projectWrite: ProjectWrite;
 }
 
 export interface ApiV1OrganizationsOrganizationIDProjectsProjectIDAllocationsAllocationIDDeleteRequest {
@@ -207,22 +135,6 @@ export interface ApiV1OrganizationsOrganizationIDProjectsProjectIDAllocationsPos
     allocationWrite: AllocationWrite;
 }
 
-export interface ApiV1OrganizationsOrganizationIDProjectsProjectIDDeleteRequest {
-    organizationID: string;
-    projectID: string;
-}
-
-export interface ApiV1OrganizationsOrganizationIDProjectsProjectIDGetRequest {
-    organizationID: string;
-    projectID: string;
-}
-
-export interface ApiV1OrganizationsOrganizationIDProjectsProjectIDPutRequest {
-    organizationID: string;
-    projectID: string;
-    projectWrite: ProjectWrite;
-}
-
 export interface ApiV1OrganizationsOrganizationIDProjectsProjectIDReferencesReferenceDeleteRequest {
     organizationID: string;
     projectID: string;
@@ -235,67 +147,9 @@ export interface ApiV1OrganizationsOrganizationIDProjectsProjectIDReferencesRefe
     reference: string;
 }
 
-export interface ApiV1OrganizationsOrganizationIDPutRequest {
-    organizationID: string;
-    organizationWrite: OrganizationWrite;
-}
-
-export interface ApiV1OrganizationsOrganizationIDQuotasGetRequest {
-    organizationID: string;
-}
-
 export interface ApiV1OrganizationsOrganizationIDQuotasPutRequest {
     organizationID: string;
     quotasWrite: QuotasWrite;
-}
-
-export interface ApiV1OrganizationsOrganizationIDRolesGetRequest {
-    organizationID: string;
-}
-
-export interface ApiV1OrganizationsOrganizationIDServiceaccountsGetRequest {
-    organizationID: string;
-}
-
-export interface ApiV1OrganizationsOrganizationIDServiceaccountsPostRequest {
-    organizationID: string;
-    serviceAccountWrite: ServiceAccountWrite;
-}
-
-export interface ApiV1OrganizationsOrganizationIDServiceaccountsServiceAccountIDDeleteRequest {
-    organizationID: string;
-    serviceAccountID: string;
-}
-
-export interface ApiV1OrganizationsOrganizationIDServiceaccountsServiceAccountIDPutRequest {
-    organizationID: string;
-    serviceAccountID: string;
-    serviceAccountWrite: ServiceAccountWrite;
-}
-
-export interface ApiV1OrganizationsOrganizationIDServiceaccountsServiceAccountIDRotatePostRequest {
-    organizationID: string;
-    serviceAccountID: string;
-}
-
-export interface ApiV1OrganizationsOrganizationIDUsersGetRequest {
-    organizationID: string;
-}
-
-export interface ApiV1OrganizationsOrganizationIDUsersPostRequest {
-    organizationID: string;
-    userWrite: UserWrite;
-}
-
-export interface ApiV1OrganizationsOrganizationIDUsersUserIDDeleteRequest {
-    organizationID: string;
-    userID: string;
-}
-
-export interface ApiV1OrganizationsOrganizationIDUsersUserIDPutRequest {
-    organizationID: string;
-    userID: string;
-    userWrite: UserWrite;
 }
 
 export interface ApiV1OrganizationsPostRequest {
@@ -390,43 +244,6 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
-     * Returns a list of organizations that the user is a member of.  If an email address is provided in the query this allows a user with sufficient privilege to check if a given user is a member of any organizations.
-     * List organizations
-     */
-    async apiV1OrganizationsGetRaw(requestParameters: ApiV1OrganizationsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<OrganizationRead>>> {
-        const queryParameters: any = {};
-
-        if (requestParameters.email !== undefined) {
-            queryParameters['email'] = requestParameters.email;
-        }
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v1/organizations`,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(OrganizationReadFromJSON));
-    }
-
-    /**
-     * Returns a list of organizations that the user is a member of.  If an email address is provided in the query this allows a user with sufficient privilege to check if a given user is a member of any organizations.
-     * List organizations
-     */
-    async apiV1OrganizationsGet(requestParameters: ApiV1OrganizationsGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<OrganizationRead>> {
-        const response = await this.apiV1OrganizationsGetRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
      * Returns access control properties for the user.
      */
     async apiV1OrganizationsOrganizationIDAclGetRaw(requestParameters: ApiV1OrganizationsOrganizationIDAclGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Acl>> {
@@ -493,252 +310,6 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async apiV1OrganizationsOrganizationIDDelete(requestParameters: ApiV1OrganizationsOrganizationIDDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.apiV1OrganizationsOrganizationIDDeleteRaw(requestParameters, initOverrides);
-    }
-
-    /**
-     * Get an organization.
-     * Get organization
-     */
-    async apiV1OrganizationsOrganizationIDGetRaw(requestParameters: ApiV1OrganizationsOrganizationIDGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<OrganizationRead>> {
-        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
-            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV1OrganizationsOrganizationIDGet.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v1/organizations/{organizationID}`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => OrganizationReadFromJSON(jsonValue));
-    }
-
-    /**
-     * Get an organization.
-     * Get organization
-     */
-    async apiV1OrganizationsOrganizationIDGet(requestParameters: ApiV1OrganizationsOrganizationIDGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<OrganizationRead> {
-        const response = await this.apiV1OrganizationsOrganizationIDGetRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Returns a list of groups that are defined for the organization.
-     * List groups
-     */
-    async apiV1OrganizationsOrganizationIDGroupsGetRaw(requestParameters: ApiV1OrganizationsOrganizationIDGroupsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<GroupRead>>> {
-        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
-            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV1OrganizationsOrganizationIDGroupsGet.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v1/organizations/{organizationID}/groups`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(GroupReadFromJSON));
-    }
-
-    /**
-     * Returns a list of groups that are defined for the organization.
-     * List groups
-     */
-    async apiV1OrganizationsOrganizationIDGroupsGet(requestParameters: ApiV1OrganizationsOrganizationIDGroupsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<GroupRead>> {
-        const response = await this.apiV1OrganizationsOrganizationIDGroupsGetRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Allows the deletion of an existing group.
-     * Delete group
-     */
-    async apiV1OrganizationsOrganizationIDGroupsGroupidDeleteRaw(requestParameters: ApiV1OrganizationsOrganizationIDGroupsGroupidDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
-        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
-            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV1OrganizationsOrganizationIDGroupsGroupidDelete.');
-        }
-
-        if (requestParameters.groupid === null || requestParameters.groupid === undefined) {
-            throw new runtime.RequiredError('groupid','Required parameter requestParameters.groupid was null or undefined when calling apiV1OrganizationsOrganizationIDGroupsGroupidDelete.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v1/organizations/{organizationID}/groups/{groupid}`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))).replace(`{${"groupid"}}`, encodeURIComponent(String(requestParameters.groupid))),
-            method: 'DELETE',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.VoidApiResponse(response);
-    }
-
-    /**
-     * Allows the deletion of an existing group.
-     * Delete group
-     */
-    async apiV1OrganizationsOrganizationIDGroupsGroupidDelete(requestParameters: ApiV1OrganizationsOrganizationIDGroupsGroupidDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.apiV1OrganizationsOrganizationIDGroupsGroupidDeleteRaw(requestParameters, initOverrides);
-    }
-
-    /**
-     * Allows a single group to be polled.
-     * Get group
-     */
-    async apiV1OrganizationsOrganizationIDGroupsGroupidGetRaw(requestParameters: ApiV1OrganizationsOrganizationIDGroupsGroupidGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GroupRead>> {
-        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
-            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV1OrganizationsOrganizationIDGroupsGroupidGet.');
-        }
-
-        if (requestParameters.groupid === null || requestParameters.groupid === undefined) {
-            throw new runtime.RequiredError('groupid','Required parameter requestParameters.groupid was null or undefined when calling apiV1OrganizationsOrganizationIDGroupsGroupidGet.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v1/organizations/{organizationID}/groups/{groupid}`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))).replace(`{${"groupid"}}`, encodeURIComponent(String(requestParameters.groupid))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => GroupReadFromJSON(jsonValue));
-    }
-
-    /**
-     * Allows a single group to be polled.
-     * Get group
-     */
-    async apiV1OrganizationsOrganizationIDGroupsGroupidGet(requestParameters: ApiV1OrganizationsOrganizationIDGroupsGroupidGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GroupRead> {
-        const response = await this.apiV1OrganizationsOrganizationIDGroupsGroupidGetRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Allows a group to be updated.
-     * Update group
-     */
-    async apiV1OrganizationsOrganizationIDGroupsGroupidPutRaw(requestParameters: ApiV1OrganizationsOrganizationIDGroupsGroupidPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
-        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
-            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV1OrganizationsOrganizationIDGroupsGroupidPut.');
-        }
-
-        if (requestParameters.groupid === null || requestParameters.groupid === undefined) {
-            throw new runtime.RequiredError('groupid','Required parameter requestParameters.groupid was null or undefined when calling apiV1OrganizationsOrganizationIDGroupsGroupidPut.');
-        }
-
-        if (requestParameters.groupWrite === null || requestParameters.groupWrite === undefined) {
-            throw new runtime.RequiredError('groupWrite','Required parameter requestParameters.groupWrite was null or undefined when calling apiV1OrganizationsOrganizationIDGroupsGroupidPut.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v1/organizations/{organizationID}/groups/{groupid}`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))).replace(`{${"groupid"}}`, encodeURIComponent(String(requestParameters.groupid))),
-            method: 'PUT',
-            headers: headerParameters,
-            query: queryParameters,
-            body: GroupWriteToJSON(requestParameters.groupWrite),
-        }, initOverrides);
-
-        return new runtime.VoidApiResponse(response);
-    }
-
-    /**
-     * Allows a group to be updated.
-     * Update group
-     */
-    async apiV1OrganizationsOrganizationIDGroupsGroupidPut(requestParameters: ApiV1OrganizationsOrganizationIDGroupsGroupidPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.apiV1OrganizationsOrganizationIDGroupsGroupidPutRaw(requestParameters, initOverrides);
-    }
-
-    /**
-     * Allows creation of a new group.
-     * Create group
-     */
-    async apiV1OrganizationsOrganizationIDGroupsPostRaw(requestParameters: ApiV1OrganizationsOrganizationIDGroupsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GroupRead>> {
-        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
-            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV1OrganizationsOrganizationIDGroupsPost.');
-        }
-
-        if (requestParameters.groupWrite === null || requestParameters.groupWrite === undefined) {
-            throw new runtime.RequiredError('groupWrite','Required parameter requestParameters.groupWrite was null or undefined when calling apiV1OrganizationsOrganizationIDGroupsPost.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v1/organizations/{organizationID}/groups`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))),
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: GroupWriteToJSON(requestParameters.groupWrite),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => GroupReadFromJSON(jsonValue));
-    }
-
-    /**
-     * Allows creation of a new group.
-     * Create group
-     */
-    async apiV1OrganizationsOrganizationIDGroupsPost(requestParameters: ApiV1OrganizationsOrganizationIDGroupsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GroupRead> {
-        const response = await this.apiV1OrganizationsOrganizationIDGroupsPostRaw(requestParameters, initOverrides);
-        return await response.value();
     }
 
     /**
@@ -899,87 +470,6 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async apiV1OrganizationsOrganizationIDOauth2providersProviderIDPut(requestParameters: ApiV1OrganizationsOrganizationIDOauth2providersProviderIDPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.apiV1OrganizationsOrganizationIDOauth2providersProviderIDPutRaw(requestParameters, initOverrides);
-    }
-
-    /**
-     * List all projects for the organization.
-     * List projects
-     */
-    async apiV1OrganizationsOrganizationIDProjectsGetRaw(requestParameters: ApiV1OrganizationsOrganizationIDProjectsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<ProjectRead>>> {
-        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
-            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV1OrganizationsOrganizationIDProjectsGet.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v1/organizations/{organizationID}/projects`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(ProjectReadFromJSON));
-    }
-
-    /**
-     * List all projects for the organization.
-     * List projects
-     */
-    async apiV1OrganizationsOrganizationIDProjectsGet(requestParameters: ApiV1OrganizationsOrganizationIDProjectsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<ProjectRead>> {
-        const response = await this.apiV1OrganizationsOrganizationIDProjectsGetRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Creates a new project resource for the user\'s organization.
-     * Create project
-     */
-    async apiV1OrganizationsOrganizationIDProjectsPostRaw(requestParameters: ApiV1OrganizationsOrganizationIDProjectsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ProjectRead>> {
-        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
-            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV1OrganizationsOrganizationIDProjectsPost.');
-        }
-
-        if (requestParameters.projectWrite === null || requestParameters.projectWrite === undefined) {
-            throw new runtime.RequiredError('projectWrite','Required parameter requestParameters.projectWrite was null or undefined when calling apiV1OrganizationsOrganizationIDProjectsPost.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v1/organizations/{organizationID}/projects`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))),
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: ProjectWriteToJSON(requestParameters.projectWrite),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => ProjectReadFromJSON(jsonValue));
-    }
-
-    /**
-     * Creates a new project resource for the user\'s organization.
-     * Create project
-     */
-    async apiV1OrganizationsOrganizationIDProjectsPost(requestParameters: ApiV1OrganizationsOrganizationIDProjectsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ProjectRead> {
-        const response = await this.apiV1OrganizationsOrganizationIDProjectsPostRaw(requestParameters, initOverrides);
-        return await response.value();
     }
 
     /**
@@ -1164,134 +654,6 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
-     * Deletes the project associated with the authenticated user\'s scoped authorization token. This is a cascading operation and will delete all contained cluster managers and clusters.
-     * Delete project
-     */
-    async apiV1OrganizationsOrganizationIDProjectsProjectIDDeleteRaw(requestParameters: ApiV1OrganizationsOrganizationIDProjectsProjectIDDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
-        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
-            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV1OrganizationsOrganizationIDProjectsProjectIDDelete.');
-        }
-
-        if (requestParameters.projectID === null || requestParameters.projectID === undefined) {
-            throw new runtime.RequiredError('projectID','Required parameter requestParameters.projectID was null or undefined when calling apiV1OrganizationsOrganizationIDProjectsProjectIDDelete.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v1/organizations/{organizationID}/projects/{projectID}`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))).replace(`{${"projectID"}}`, encodeURIComponent(String(requestParameters.projectID))),
-            method: 'DELETE',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.VoidApiResponse(response);
-    }
-
-    /**
-     * Deletes the project associated with the authenticated user\'s scoped authorization token. This is a cascading operation and will delete all contained cluster managers and clusters.
-     * Delete project
-     */
-    async apiV1OrganizationsOrganizationIDProjectsProjectIDDelete(requestParameters: ApiV1OrganizationsOrganizationIDProjectsProjectIDDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.apiV1OrganizationsOrganizationIDProjectsProjectIDDeleteRaw(requestParameters, initOverrides);
-    }
-
-    /**
-     * Gets a project.
-     * Get project
-     */
-    async apiV1OrganizationsOrganizationIDProjectsProjectIDGetRaw(requestParameters: ApiV1OrganizationsOrganizationIDProjectsProjectIDGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ProjectRead>> {
-        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
-            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV1OrganizationsOrganizationIDProjectsProjectIDGet.');
-        }
-
-        if (requestParameters.projectID === null || requestParameters.projectID === undefined) {
-            throw new runtime.RequiredError('projectID','Required parameter requestParameters.projectID was null or undefined when calling apiV1OrganizationsOrganizationIDProjectsProjectIDGet.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v1/organizations/{organizationID}/projects/{projectID}`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))).replace(`{${"projectID"}}`, encodeURIComponent(String(requestParameters.projectID))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => ProjectReadFromJSON(jsonValue));
-    }
-
-    /**
-     * Gets a project.
-     * Get project
-     */
-    async apiV1OrganizationsOrganizationIDProjectsProjectIDGet(requestParameters: ApiV1OrganizationsOrganizationIDProjectsProjectIDGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ProjectRead> {
-        const response = await this.apiV1OrganizationsOrganizationIDProjectsProjectIDGetRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Updates a project.
-     * Update project
-     */
-    async apiV1OrganizationsOrganizationIDProjectsProjectIDPutRaw(requestParameters: ApiV1OrganizationsOrganizationIDProjectsProjectIDPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
-        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
-            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV1OrganizationsOrganizationIDProjectsProjectIDPut.');
-        }
-
-        if (requestParameters.projectID === null || requestParameters.projectID === undefined) {
-            throw new runtime.RequiredError('projectID','Required parameter requestParameters.projectID was null or undefined when calling apiV1OrganizationsOrganizationIDProjectsProjectIDPut.');
-        }
-
-        if (requestParameters.projectWrite === null || requestParameters.projectWrite === undefined) {
-            throw new runtime.RequiredError('projectWrite','Required parameter requestParameters.projectWrite was null or undefined when calling apiV1OrganizationsOrganizationIDProjectsProjectIDPut.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v1/organizations/{organizationID}/projects/{projectID}`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))).replace(`{${"projectID"}}`, encodeURIComponent(String(requestParameters.projectID))),
-            method: 'PUT',
-            headers: headerParameters,
-            query: queryParameters,
-            body: ProjectWriteToJSON(requestParameters.projectWrite),
-        }, initOverrides);
-
-        return new runtime.VoidApiResponse(response);
-    }
-
-    /**
-     * Updates a project.
-     * Update project
-     */
-    async apiV1OrganizationsOrganizationIDProjectsProjectIDPut(requestParameters: ApiV1OrganizationsOrganizationIDProjectsProjectIDPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.apiV1OrganizationsOrganizationIDProjectsProjectIDPutRaw(requestParameters, initOverrides);
-    }
-
-    /**
      * Idempotent interface for removing external references from a resource. 
      */
     async apiV1OrganizationsOrganizationIDProjectsProjectIDReferencesReferenceDeleteRaw(requestParameters: ApiV1OrganizationsOrganizationIDProjectsProjectIDReferencesReferenceDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
@@ -1376,86 +738,6 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
-     * Update an organization.
-     * Update organization
-     */
-    async apiV1OrganizationsOrganizationIDPutRaw(requestParameters: ApiV1OrganizationsOrganizationIDPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
-        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
-            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV1OrganizationsOrganizationIDPut.');
-        }
-
-        if (requestParameters.organizationWrite === null || requestParameters.organizationWrite === undefined) {
-            throw new runtime.RequiredError('organizationWrite','Required parameter requestParameters.organizationWrite was null or undefined when calling apiV1OrganizationsOrganizationIDPut.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v1/organizations/{organizationID}`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))),
-            method: 'PUT',
-            headers: headerParameters,
-            query: queryParameters,
-            body: OrganizationWriteToJSON(requestParameters.organizationWrite),
-        }, initOverrides);
-
-        return new runtime.VoidApiResponse(response);
-    }
-
-    /**
-     * Update an organization.
-     * Update organization
-     */
-    async apiV1OrganizationsOrganizationIDPut(requestParameters: ApiV1OrganizationsOrganizationIDPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.apiV1OrganizationsOrganizationIDPutRaw(requestParameters, initOverrides);
-    }
-
-    /**
-     * Gets quotas for the organization.
-     * List quotas
-     */
-    async apiV1OrganizationsOrganizationIDQuotasGetRaw(requestParameters: ApiV1OrganizationsOrganizationIDQuotasGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<QuotasRead>> {
-        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
-            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV1OrganizationsOrganizationIDQuotasGet.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v1/organizations/{organizationID}/quotas`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => QuotasReadFromJSON(jsonValue));
-    }
-
-    /**
-     * Gets quotas for the organization.
-     * List quotas
-     */
-    async apiV1OrganizationsOrganizationIDQuotasGet(requestParameters: ApiV1OrganizationsOrganizationIDQuotasGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<QuotasRead> {
-        const response = await this.apiV1OrganizationsOrganizationIDQuotasGetRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
      * Sets quotas for the organization.
      */
     async apiV1OrganizationsOrganizationIDQuotasPutRaw(requestParameters: ApiV1OrganizationsOrganizationIDQuotasPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<QuotasRead>> {
@@ -1494,422 +776,6 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async apiV1OrganizationsOrganizationIDQuotasPut(requestParameters: ApiV1OrganizationsOrganizationIDQuotasPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<QuotasRead> {
         const response = await this.apiV1OrganizationsOrganizationIDQuotasPutRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Returns roles that can be used by the organization.
-     * List roles
-     */
-    async apiV1OrganizationsOrganizationIDRolesGetRaw(requestParameters: ApiV1OrganizationsOrganizationIDRolesGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<RoleRead>>> {
-        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
-            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV1OrganizationsOrganizationIDRolesGet.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v1/organizations/{organizationID}/roles`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(RoleReadFromJSON));
-    }
-
-    /**
-     * Returns roles that can be used by the organization.
-     * List roles
-     */
-    async apiV1OrganizationsOrganizationIDRolesGet(requestParameters: ApiV1OrganizationsOrganizationIDRolesGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<RoleRead>> {
-        const response = await this.apiV1OrganizationsOrganizationIDRolesGetRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Lists all service accounts.
-     * List service accounts
-     */
-    async apiV1OrganizationsOrganizationIDServiceaccountsGetRaw(requestParameters: ApiV1OrganizationsOrganizationIDServiceaccountsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<ServiceAccountRead>>> {
-        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
-            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV1OrganizationsOrganizationIDServiceaccountsGet.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v1/organizations/{organizationID}/serviceaccounts`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(ServiceAccountReadFromJSON));
-    }
-
-    /**
-     * Lists all service accounts.
-     * List service accounts
-     */
-    async apiV1OrganizationsOrganizationIDServiceaccountsGet(requestParameters: ApiV1OrganizationsOrganizationIDServiceaccountsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<ServiceAccountRead>> {
-        const response = await this.apiV1OrganizationsOrganizationIDServiceaccountsGetRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Creates a new service account and returns an access token,  The returned access token can only be read once.
-     * Create service account
-     */
-    async apiV1OrganizationsOrganizationIDServiceaccountsPostRaw(requestParameters: ApiV1OrganizationsOrganizationIDServiceaccountsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ServiceAccountCreate>> {
-        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
-            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV1OrganizationsOrganizationIDServiceaccountsPost.');
-        }
-
-        if (requestParameters.serviceAccountWrite === null || requestParameters.serviceAccountWrite === undefined) {
-            throw new runtime.RequiredError('serviceAccountWrite','Required parameter requestParameters.serviceAccountWrite was null or undefined when calling apiV1OrganizationsOrganizationIDServiceaccountsPost.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v1/organizations/{organizationID}/serviceaccounts`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))),
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: ServiceAccountWriteToJSON(requestParameters.serviceAccountWrite),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => ServiceAccountCreateFromJSON(jsonValue));
-    }
-
-    /**
-     * Creates a new service account and returns an access token,  The returned access token can only be read once.
-     * Create service account
-     */
-    async apiV1OrganizationsOrganizationIDServiceaccountsPost(requestParameters: ApiV1OrganizationsOrganizationIDServiceaccountsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ServiceAccountCreate> {
-        const response = await this.apiV1OrganizationsOrganizationIDServiceaccountsPostRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Removes a service account and revokes an access token.
-     * Delete service account
-     */
-    async apiV1OrganizationsOrganizationIDServiceaccountsServiceAccountIDDeleteRaw(requestParameters: ApiV1OrganizationsOrganizationIDServiceaccountsServiceAccountIDDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
-        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
-            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV1OrganizationsOrganizationIDServiceaccountsServiceAccountIDDelete.');
-        }
-
-        if (requestParameters.serviceAccountID === null || requestParameters.serviceAccountID === undefined) {
-            throw new runtime.RequiredError('serviceAccountID','Required parameter requestParameters.serviceAccountID was null or undefined when calling apiV1OrganizationsOrganizationIDServiceaccountsServiceAccountIDDelete.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v1/organizations/{organizationID}/serviceaccounts/{serviceAccountID}`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))).replace(`{${"serviceAccountID"}}`, encodeURIComponent(String(requestParameters.serviceAccountID))),
-            method: 'DELETE',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.VoidApiResponse(response);
-    }
-
-    /**
-     * Removes a service account and revokes an access token.
-     * Delete service account
-     */
-    async apiV1OrganizationsOrganizationIDServiceaccountsServiceAccountIDDelete(requestParameters: ApiV1OrganizationsOrganizationIDServiceaccountsServiceAccountIDDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.apiV1OrganizationsOrganizationIDServiceaccountsServiceAccountIDDeleteRaw(requestParameters, initOverrides);
-    }
-
-    /**
-     * Updates a service account.
-     * Update service account
-     */
-    async apiV1OrganizationsOrganizationIDServiceaccountsServiceAccountIDPutRaw(requestParameters: ApiV1OrganizationsOrganizationIDServiceaccountsServiceAccountIDPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ServiceAccountRead>> {
-        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
-            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV1OrganizationsOrganizationIDServiceaccountsServiceAccountIDPut.');
-        }
-
-        if (requestParameters.serviceAccountID === null || requestParameters.serviceAccountID === undefined) {
-            throw new runtime.RequiredError('serviceAccountID','Required parameter requestParameters.serviceAccountID was null or undefined when calling apiV1OrganizationsOrganizationIDServiceaccountsServiceAccountIDPut.');
-        }
-
-        if (requestParameters.serviceAccountWrite === null || requestParameters.serviceAccountWrite === undefined) {
-            throw new runtime.RequiredError('serviceAccountWrite','Required parameter requestParameters.serviceAccountWrite was null or undefined when calling apiV1OrganizationsOrganizationIDServiceaccountsServiceAccountIDPut.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v1/organizations/{organizationID}/serviceaccounts/{serviceAccountID}`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))).replace(`{${"serviceAccountID"}}`, encodeURIComponent(String(requestParameters.serviceAccountID))),
-            method: 'PUT',
-            headers: headerParameters,
-            query: queryParameters,
-            body: ServiceAccountWriteToJSON(requestParameters.serviceAccountWrite),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => ServiceAccountReadFromJSON(jsonValue));
-    }
-
-    /**
-     * Updates a service account.
-     * Update service account
-     */
-    async apiV1OrganizationsOrganizationIDServiceaccountsServiceAccountIDPut(requestParameters: ApiV1OrganizationsOrganizationIDServiceaccountsServiceAccountIDPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ServiceAccountRead> {
-        const response = await this.apiV1OrganizationsOrganizationIDServiceaccountsServiceAccountIDPutRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Rotates a service account\'s access token. The returned access token can only be read once.
-     * Rotate service account token
-     */
-    async apiV1OrganizationsOrganizationIDServiceaccountsServiceAccountIDRotatePostRaw(requestParameters: ApiV1OrganizationsOrganizationIDServiceaccountsServiceAccountIDRotatePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ServiceAccountCreate>> {
-        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
-            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV1OrganizationsOrganizationIDServiceaccountsServiceAccountIDRotatePost.');
-        }
-
-        if (requestParameters.serviceAccountID === null || requestParameters.serviceAccountID === undefined) {
-            throw new runtime.RequiredError('serviceAccountID','Required parameter requestParameters.serviceAccountID was null or undefined when calling apiV1OrganizationsOrganizationIDServiceaccountsServiceAccountIDRotatePost.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v1/organizations/{organizationID}/serviceaccounts/{serviceAccountID}/rotate`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))).replace(`{${"serviceAccountID"}}`, encodeURIComponent(String(requestParameters.serviceAccountID))),
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => ServiceAccountCreateFromJSON(jsonValue));
-    }
-
-    /**
-     * Rotates a service account\'s access token. The returned access token can only be read once.
-     * Rotate service account token
-     */
-    async apiV1OrganizationsOrganizationIDServiceaccountsServiceAccountIDRotatePost(requestParameters: ApiV1OrganizationsOrganizationIDServiceaccountsServiceAccountIDRotatePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ServiceAccountCreate> {
-        const response = await this.apiV1OrganizationsOrganizationIDServiceaccountsServiceAccountIDRotatePostRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Lists all users.
-     * List users
-     */
-    async apiV1OrganizationsOrganizationIDUsersGetRaw(requestParameters: ApiV1OrganizationsOrganizationIDUsersGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<UserRead>>> {
-        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
-            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV1OrganizationsOrganizationIDUsersGet.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v1/organizations/{organizationID}/users`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(UserReadFromJSON));
-    }
-
-    /**
-     * Lists all users.
-     * List users
-     */
-    async apiV1OrganizationsOrganizationIDUsersGet(requestParameters: ApiV1OrganizationsOrganizationIDUsersGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<UserRead>> {
-        const response = await this.apiV1OrganizationsOrganizationIDUsersGetRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Creates a new user and associates with a set of groups.
-     * Create user
-     */
-    async apiV1OrganizationsOrganizationIDUsersPostRaw(requestParameters: ApiV1OrganizationsOrganizationIDUsersPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UserRead>> {
-        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
-            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV1OrganizationsOrganizationIDUsersPost.');
-        }
-
-        if (requestParameters.userWrite === null || requestParameters.userWrite === undefined) {
-            throw new runtime.RequiredError('userWrite','Required parameter requestParameters.userWrite was null or undefined when calling apiV1OrganizationsOrganizationIDUsersPost.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v1/organizations/{organizationID}/users`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))),
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: UserWriteToJSON(requestParameters.userWrite),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => UserReadFromJSON(jsonValue));
-    }
-
-    /**
-     * Creates a new user and associates with a set of groups.
-     * Create user
-     */
-    async apiV1OrganizationsOrganizationIDUsersPost(requestParameters: ApiV1OrganizationsOrganizationIDUsersPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UserRead> {
-        const response = await this.apiV1OrganizationsOrganizationIDUsersPostRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Deletes a user and disassociates them with all groups they are a member of.
-     * Delete user
-     */
-    async apiV1OrganizationsOrganizationIDUsersUserIDDeleteRaw(requestParameters: ApiV1OrganizationsOrganizationIDUsersUserIDDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
-        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
-            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV1OrganizationsOrganizationIDUsersUserIDDelete.');
-        }
-
-        if (requestParameters.userID === null || requestParameters.userID === undefined) {
-            throw new runtime.RequiredError('userID','Required parameter requestParameters.userID was null or undefined when calling apiV1OrganizationsOrganizationIDUsersUserIDDelete.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v1/organizations/{organizationID}/users/{userID}`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))).replace(`{${"userID"}}`, encodeURIComponent(String(requestParameters.userID))),
-            method: 'DELETE',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.VoidApiResponse(response);
-    }
-
-    /**
-     * Deletes a user and disassociates them with all groups they are a member of.
-     * Delete user
-     */
-    async apiV1OrganizationsOrganizationIDUsersUserIDDelete(requestParameters: ApiV1OrganizationsOrganizationIDUsersUserIDDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.apiV1OrganizationsOrganizationIDUsersUserIDDeleteRaw(requestParameters, initOverrides);
-    }
-
-    /**
-     * Updates a user.
-     * Update user
-     */
-    async apiV1OrganizationsOrganizationIDUsersUserIDPutRaw(requestParameters: ApiV1OrganizationsOrganizationIDUsersUserIDPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UserRead>> {
-        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
-            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV1OrganizationsOrganizationIDUsersUserIDPut.');
-        }
-
-        if (requestParameters.userID === null || requestParameters.userID === undefined) {
-            throw new runtime.RequiredError('userID','Required parameter requestParameters.userID was null or undefined when calling apiV1OrganizationsOrganizationIDUsersUserIDPut.');
-        }
-
-        if (requestParameters.userWrite === null || requestParameters.userWrite === undefined) {
-            throw new runtime.RequiredError('userWrite','Required parameter requestParameters.userWrite was null or undefined when calling apiV1OrganizationsOrganizationIDUsersUserIDPut.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v1/organizations/{organizationID}/users/{userID}`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))).replace(`{${"userID"}}`, encodeURIComponent(String(requestParameters.userID))),
-            method: 'PUT',
-            headers: headerParameters,
-            query: queryParameters,
-            body: UserWriteToJSON(requestParameters.userWrite),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => UserReadFromJSON(jsonValue));
-    }
-
-    /**
-     * Updates a user.
-     * Update user
-     */
-    async apiV1OrganizationsOrganizationIDUsersUserIDPut(requestParameters: ApiV1OrganizationsOrganizationIDUsersUserIDPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UserRead> {
-        const response = await this.apiV1OrganizationsOrganizationIDUsersUserIDPutRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -2124,7 +990,7 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
-     * Provides authorization code to access token exchange as per the OAuth 2.0 specification with the \"authorization_code\" grant. If requested during authentication, an OpenID Connect identity token will also be returned.   This endpoint also supports the \"refresh_token\" grant for transparent re-authentication, and the \"client_credentials\" grant which is used by other services, in conjunction with X.509 client certificates, to authenticate and authorize their API access requirements.
+     * Issues tokens according to the OAuth 2.0 specification. Supports the \"authorization_code\" grant for code-to-token exchange (optionally returning an OpenID Connect identity token), the \"refresh_token\" grant for transparent re-authentication, the \"client_credentials\" grant used by services in conjunction with X.509 client certificates, and the RFC 8693 token exchange grant (\"urn:ietf:params:oauth:grant-type:token-exchange\") used to exchange a validated source token for a signed JWT carrying delegated authorization claims.
      */
     async oauth2V2TokenPostRaw(requestParameters: Oauth2V2TokenPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Token>> {
         if (requestParameters.tokenRequestOptions === null || requestParameters.tokenRequestOptions === undefined) {
@@ -2149,7 +1015,7 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
-     * Provides authorization code to access token exchange as per the OAuth 2.0 specification with the \"authorization_code\" grant. If requested during authentication, an OpenID Connect identity token will also be returned.   This endpoint also supports the \"refresh_token\" grant for transparent re-authentication, and the \"client_credentials\" grant which is used by other services, in conjunction with X.509 client certificates, to authenticate and authorize their API access requirements.
+     * Issues tokens according to the OAuth 2.0 specification. Supports the \"authorization_code\" grant for code-to-token exchange (optionally returning an OpenID Connect identity token), the \"refresh_token\" grant for transparent re-authentication, the \"client_credentials\" grant used by services in conjunction with X.509 client certificates, and the RFC 8693 token exchange grant (\"urn:ietf:params:oauth:grant-type:token-exchange\") used to exchange a validated source token for a signed JWT carrying delegated authorization claims.
      */
     async oauth2V2TokenPost(requestParameters: Oauth2V2TokenPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Token> {
         const response = await this.oauth2V2TokenPostRaw(requestParameters, initOverrides);

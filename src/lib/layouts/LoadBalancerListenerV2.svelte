@@ -9,6 +9,7 @@
 	import Select from '$lib/forms/Select.svelte';
 	import Switch from '$lib/forms/Switch.svelte';
 	import InputChips from '$lib/forms/InputChips.svelte';
+	import Icon from '$lib/primitives/Icon.svelte';
 
 	interface Props {
 		listener: Region.LoadBalancerListenerV2;
@@ -190,12 +191,12 @@
 			deactivate={() => (activeMemberIndex = null)}
 		>
 			{#snippet normal(member: Region.LoadBalancerMemberV2, index: number)}
-				<div class="flex gap-2 items-center">
-					<iconify-icon icon="mdi:ip-network-outline" class="text-2xl"></iconify-icon>
+				<div class="icon-cell">
+					<Icon name="dns" size={16} />
 					{member.address || `Member ${index + 1}`}
 				</div>
-				<div class="flex gap-2 items-center">
-					<iconify-icon icon="fluent:usb-port-24-regular" class="text-2xl"></iconify-icon>
+				<div class="icon-cell">
+					<Icon name="usb" size={16} />
 					{member.port}
 				</div>
 			{/snippet}
@@ -220,57 +221,75 @@
 		</ResourceList>
 	</div>
 {:else}
-	<div class="card preset-outlined-surface-500 shadow-lg p-4 flex flex-col gap-4">
-		<div class="grid grid-cols-[repeat(3,max-content)] gap-2 text-sm">
-			<ShellMetadataItem icon="mdi:label-outline" label="Name" value={listener.name} />
+	<div class="rcard">
+		<dl class="rcard__grid">
+			<ShellMetadataItem icon="tag" label="Name" value={listener.name} />
+			<ShellMetadataItem icon="link" label="Protocol" value={listener.protocol.toUpperCase()} />
+			<ShellMetadataItem icon="usb" label="Port" value={listener.port.toString()} />
 			<ShellMetadataItem
-				icon="mdi:transit-connection-variant"
-				label="Protocol"
-				value={listener.protocol.toUpperCase()}
-			/>
-			<ShellMetadataItem
-				icon="fluent:usb-port-24-regular"
-				label="Port"
-				value={listener.port.toString()}
-			/>
-			<ShellMetadataItem
-				icon="mdi:check-network-outline"
+				icon="checkNetwork"
 				label="Allowed CIDRs"
 				value={printList(listener.allowedCidrs)}
 			/>
 			<ShellMetadataItem
-				icon="mdi:timer-outline"
+				icon="clock"
 				label="Idle Timeout"
 				value={listener.idleTimeoutSeconds?.toString() || 'Default'}
 			/>
 			<ShellMetadataItem
-				icon="mdi:swap-horizontal"
+				icon="sliders"
 				label="Proxy Protocol v2"
 				value={listener.pool.proxyProtocolV2 ? 'Enabled' : 'Disabled'}
 			/>
 			<ShellMetadataItem
-				icon="mdi:heart-pulse"
+				icon="activity"
 				label="Health Check"
 				value={printHealthCheck(listener.pool.healthCheck)}
 			/>
-		</div>
+		</dl>
 
-		<div class="flex flex-col gap-2">
-			<div class="font-bold">Pool Members</div>
-
+		<div class="pool-members">
+			<div class="pool-members__title">Pool Members</div>
 			{#if listener.pool.members.length}
-				<div class="grid gap-2">
-					{#each listener.pool.members as member}
-						<div class="grid grid-cols-[max-content_1fr] gap-2 text-sm">
-							<iconify-icon icon="mdi:server-network-outline" class="text-primary-600-400 text-lg"
-							></iconify-icon>
-							<div>{member.address}:{member.port}</div>
-						</div>
-					{/each}
-				</div>
+				{#each listener.pool.members as member}
+					<div class="pool-members__row">
+						<Icon name="network" size={14} />
+						<span class="mono">{member.address}:{member.port}</span>
+					</div>
+				{/each}
 			{:else}
-				<div class="text-sm italic text-surface-700-300">No pool members configured.</div>
+				<p class="pool-members__empty">No pool members configured.</p>
 			{/if}
 		</div>
 	</div>
 {/if}
+
+<style>
+	.pool-members {
+		margin-top: 14px;
+		padding-top: 12px;
+		border-top: 1px solid var(--line-weak);
+	}
+
+	.pool-members__title {
+		font: 500 11px/1 var(--font-sans);
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--text-4);
+		margin-bottom: 8px;
+	}
+
+	.pool-members__row {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		font-size: 13px;
+		padding: 3px 0;
+	}
+
+	.pool-members__empty {
+		font-size: 12px;
+		color: var(--text-3);
+		font-style: italic;
+	}
+</style>

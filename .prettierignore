@@ -9,3 +9,4 @@ yarn.lock
 /my-custom-theme.ts
 README.md
 /.claude
+/src/styles/design.css

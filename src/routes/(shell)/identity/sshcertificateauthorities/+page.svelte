@@ -2,40 +2,28 @@
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
-	import { navigating } from '$app/state';
-
+	import { startAutoRefresh } from '$lib/loadutil';
 	let { data }: { data: PageData } = $props();
-
 	import * as Clients from '$lib/clients';
-
 	import type { ShellPageSettings } from '$lib/layouts/types.ts';
-	import ShellPageHeader from '$lib/layouts/ShellPageHeader.svelte';
+	import ListPage from '$lib/layouts/ListPage.svelte';
 	import ShellList from '$lib/layouts/ShellList.svelte';
 	import ShellListItem from '$lib/layouts/ShellListItem.svelte';
 	import ShellListItemHeader from '$lib/layouts/ShellListItemHeader.svelte';
 	import ShellListItemBadges from '$lib/layouts/ShellListItemBadges.svelte';
 	import ShellListItemMetadata from '$lib/layouts/ShellListItemMetadata.svelte';
 	import ShellMetadataItem from '$lib/layouts/ShellMetadataItem.svelte';
-	import SubtleButton from '$lib/forms/SubtleButton.svelte';
+	import Placeholder from '$lib/layouts/Placeholder.svelte';
+	import Button from '$lib/forms/Button.svelte';
 	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
-
 	const settings: ShellPageSettings = {
 		feature: 'Identity',
 		name: 'SSH Certificate CAs',
-		description: 'Manage SSH certificate authorities available to projects.',
-		icon: 'mdi:key-chain-variant'
+		description: 'Certificate authorities for SSH key signing.',
+		icon: 'key'
 	};
-
-	onMount(() => {
-		const interval = setInterval(
-			() => navigating.to || invalidate('layout:sshcertificateauthorities'),
-			5000
-		);
-
-		return () => clearInterval(interval);
-	});
-
-	function confirm(id: string): void {
+	onMount(() => startAutoRefresh('layout:sshcertificateauthorities'));
+	function deleteCA(id: string) {
 		Clients.region()
 			.apiV2SshcertificateauthoritiesSshCertificateAuthorityIDDelete({
 				sshCertificateAuthorityID: id
@@ -45,47 +33,39 @@
 	}
 </script>
 
-<ShellPageHeader {settings}>
-	{#snippet tools()}
-		<SubtleButton icon="mdi:add" label="Create" href="/identity/sshcertificateauthorities/create" />
+<ListPage {settings} resources={data.sshCertificateAuthorities || []}>
+	{#snippet tools()}<Button
+			icon="plus"
+			label="Create"
+			class="btn--primary"
+			href="/identity/sshcertificateauthorities/create"
+			disabled={!data.projects.length}
+		/>{/snippet}
+	{#snippet list(cas)}<ShellList
+			>{#each cas as resource}<ShellListItem id={resource.metadata.id}>
+					{#snippet main()}<ShellListItemHeader metadata={resource.metadata} />{/snippet}
+					{#snippet badges()}<ShellListItemBadges metadata={resource.metadata} />{/snippet}
+					{#snippet menu()}<ModalIcon
+							icon="trash"
+							label="Delete"
+							class="menu__item menu__item--danger"
+							title="Delete CA?"
+							confirm={() => deleteCA(resource.metadata.id)}
+							>Removing "{resource.metadata.name}" may prevent instance login.</ModalIcon
+						>{/snippet}
+					<ShellListItemMetadata metadata={resource.metadata} />
+					<ShellMetadataItem
+						icon="key"
+						label="Public Key"
+						value={resource.spec.publicKey.slice(0, 40) + '…'}
+					/>
+				</ShellListItem>{/each}</ShellList
+		>{/snippet}
+	{#snippet empty()}
+		{#if !data.projects.length}
+			<Placeholder>No projects exist yet — create a project before adding an SSH CA.</Placeholder>
+		{:else}
+			<Placeholder>No SSH certificate authorities yet — create one to get started.</Placeholder>
+		{/if}
 	{/snippet}
-</ShellPageHeader>
-
-<ShellList>
-	{#each data.sshCertificateAuthorities || [] as resource}
-		<ShellListItem>
-			{#snippet main()}
-				<ShellListItemHeader
-					metadata={resource.metadata}
-					projects={data.projects}
-					href="/identity/sshcertificateauthorities/view/{resource.metadata.id}"
-				/>
-			{/snippet}
-
-			{#snippet badges()}
-				<ShellListItemBadges metadata={resource.metadata} />
-			{/snippet}
-
-			<ShellListItemMetadata metadata={resource.metadata} />
-
-			<ShellListItemMetadata>
-				<ShellMetadataItem
-					icon="mdi:key-variant"
-					label="Public Key"
-					value={resource.spec.publicKey}
-				/>
-			</ShellListItemMetadata>
-
-			{#snippet trail()}
-				<ModalIcon
-					icon="mdi:trash-can-outline"
-					label="Delete"
-					title="Are you sure?"
-					confirm={() => confirm(resource.metadata.id)}
-				>
-					Removing SSH certificate authority "{resource.metadata.name}" may prevent instance login.
-				</ModalIcon>
-			{/snippet}
-		</ShellListItem>
-	{/each}
-</ShellList>
+</ListPage>

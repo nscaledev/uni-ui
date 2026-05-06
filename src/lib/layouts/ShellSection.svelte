@@ -8,12 +8,11 @@
 	let { title, tools, children }: Props = $props();
 </script>
 
-<div class="flex flex-col gap-6">
-	<div class="flex items-center justify-between">
-		<h3 class="h3">{title}</h3>
-
+<div class="form-section">
+	<header class="flex items-center justify-between">
+		<div class="form-section__title">{title}</div>
 		{@render tools?.()}
-	</div>
+	</header>
 
 	{@render children?.()}
 </div>

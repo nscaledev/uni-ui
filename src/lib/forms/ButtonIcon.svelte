@@ -1,23 +1,16 @@
 <script lang="ts">
+	import Icon from '$lib/primitives/Icon.svelte';
+
 	interface Props {
 		icon: string;
 		disabled?: boolean;
 		clicked: () => void;
-		[key: string]: any;
+		class?: string;
 	}
 
-	let { icon, disabled = $bindable(), href, clicked, ...props }: Props = $props();
+	let { icon, disabled = $bindable(false), clicked, class: cls = '' }: Props = $props();
 </script>
 
-{#snippet content()}
-	<iconify-icon {icon} class="text-2xl"></iconify-icon>
-{/snippet}
-
-<button
-	class="btn flex gap-2 items-center p-0 {props.class || ''}"
-	{disabled}
-	onclick={clicked}
-	onkeypress={clicked}
->
-	{@render content()}
+<button class="btn btn--icon {cls}" {disabled} onclick={clicked}>
+	<Icon name={icon} size={16} />
 </button>

@@ -8,7 +8,7 @@
 	import ShellSection from '$lib/layouts/ShellSection.svelte';
 	import TextInput from '$lib/forms/TextInput.svelte';
 	import Switch from '$lib/forms/Switch.svelte';
-	import SelectNew from '$lib/forms/SelectNew.svelte';
+	import RichSelect from '$lib/forms/RichSelect.svelte';
 	import RangeSlider from '$lib/forms/RangeSlider.svelte';
 	import Select from '$lib/forms/Select.svelte';
 	import InputChips from '$lib/forms/InputChips.svelte';
@@ -51,7 +51,7 @@
 	// If a flavorID is selected, by the workload pool, extract that flavor.
 	let flavor = $derived(flavors.find((x) => x.metadata.id == pool.machine.flavorId));
 
-	function osKey(distro: Compute.OsDistro, variant: string | undefined, version: string): string {
+	function osKey(distro: string, variant: string | undefined, version: string): string {
 		if (!variant) return distro + ':' + version;
 
 		return distro + ':' + variant + ':' + version;
@@ -206,7 +206,7 @@
 
 	<ShellSection title="Pool Topology">
 		{#if pool.machine.flavorId}
-			<SelectNew
+			<RichSelect
 				value={pool.machine.flavorId}
 				onValueChange={(e) => (pool.machine.flavorId = e.value)}
 				options={flavors.map((x) => x.metadata.id)}
@@ -217,7 +217,7 @@
 				{#snippet contents(id: string)}
 					<Flavor flavor={lookupFlavor(id)} />
 				{/snippet}
-			</SelectNew>
+			</RichSelect>
 
 			{#if persistentStorageAllowed}
 				<Switch
@@ -251,7 +251,7 @@
 		{/if}
 
 		{#if osVersions}
-			<SelectNew
+			<RichSelect
 				value={image}
 				onValueChange={(e) => (image = e.value)}
 				options={Object.keys(osVersions)}
@@ -261,7 +261,7 @@
 				{#snippet contents(id: string)}
 					<Image image={osVersions[id]} />
 				{/snippet}
-			</SelectNew>
+			</RichSelect>
 		{/if}
 
 		<RangeSlider

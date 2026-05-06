@@ -47,8 +47,6 @@ export * from './MachinePool';
 export * from './ModelError';
 export * from './OpenidProtectedResource';
 export * from './OrganizationScopedResourceReadMetadata';
-export * from './OsDistro';
-export * from './OsFamily';
 export * from './OsKernel';
 export * from './PoolV2';
 export * from './PoolV2Status';

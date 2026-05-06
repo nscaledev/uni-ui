@@ -1,41 +1,101 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import { getContext } from 'svelte';
+	import Icon from '$lib/primitives/Icon.svelte';
+
+	interface SelectContext {
+		isSelected: (id: string) => boolean;
+		toggle: (id: string) => void;
+	}
 
 	interface Props {
+		id?: string;
 		main: Snippet;
 		badges?: Snippet;
-		trail?: Snippet;
+		menu?: Snippet;
 		children?: Snippet;
 	}
 
-	let { main, badges, trail, children }: Props = $props();
+	let { id, main, badges, menu, children }: Props = $props();
+
+	const selectCtx = getContext<SelectContext | undefined>('bulkSelect');
+	const selected = $derived(id && selectCtx ? selectCtx.isSelected(id) : false);
+
+	let menuOpen = $state(false);
+	let menuWrapEl: HTMLDivElement;
+	let menuEl: HTMLDivElement | undefined;
+
+	function onwindowclick(e: MouseEvent) {
+		if (menuOpen && !menuWrapEl?.contains(e.target as Node) && !menuEl?.contains(e.target as Node))
+			menuOpen = false;
+	}
 </script>
 
-<article
-	class="flex flex-col gap-4 lg:gap-[unset] lg:col-span-full lg:grid lg:grid-cols-subgrid lg:auto-rows-min card shadow-md p-4 bg-surface-50-950 border border-surface-200-800"
->
-	<div class="contents lg:col-span-full lg:flex lg:pb-4 justify-between">
-		{#if badges}
-			{@render badges()}
+<svelte:window onclick={onwindowclick} />
+
+<article class="rcard" class:selected>
+	<div class="rcard__head">
+		{#if id && selectCtx}
+			<input
+				type="checkbox"
+				class="checkbox"
+				checked={selected}
+				onchange={() => id && selectCtx?.toggle(id)}
+				aria-label="Select item"
+			/>
 		{/if}
-		<div class="hidden lg:flex gap-4">
-			{@render trail?.()}
-		</div>
+		{@render badges?.()}
+		{#if menu}
+			<div class="card-menu-wrap" bind:this={menuWrapEl}>
+				<button
+					class="btn btn--ghost btn--icon btn--sm"
+					onclick={(e) => {
+						e.stopPropagation();
+						menuOpen = !menuOpen;
+					}}
+					aria-label="Actions"
+					aria-haspopup="menu"
+					aria-expanded={menuOpen}
+				>
+					<Icon name="more" size={14} />
+				</button>
+				{#if menuOpen}
+					<div bind:this={menuEl} class="menu card-menu" role="menu">
+						{@render menu()}
+					</div>
+				{/if}
+			</div>
+		{/if}
 	</div>
 
-	<div class="flex gap-4 lg:pr-4">
-		<div class="overflow-hidden text-ellipsis">
-			{@render main()}
-		</div>
-	</div>
+	{@render main()}
 
-	<div
-		class="grid grid-cols-[repeat(3,max-content)] gap-2 lg:col-span-6 lg:grid-cols-subgrid lg:grid-rows-2 lg:grid-flow-col lg:place-self-start"
-	>
-		{@render children?.()}
-	</div>
-
-	<div class="flex flex-col items-start gap-4 flex-wrap lg:hidden">
-		{@render trail?.()}
-	</div>
+	{#if children}
+		<dl class="rcard__grid">
+			{@render children()}
+		</dl>
+	{/if}
 </article>
+
+<style>
+	.card-menu-wrap {
+		margin-left: auto;
+		position: relative;
+		flex-shrink: 0;
+	}
+
+	.card-menu {
+		position: absolute;
+		right: 0;
+		top: calc(100% + 4px);
+		min-width: 160px;
+		z-index: 40;
+	}
+
+	.selected {
+		border-color: color-mix(in oklch, var(--accent) 40%, var(--line));
+		box-shadow:
+			var(--shadow-inset),
+			0 0 0 2px color-mix(in oklch, var(--accent) 20%, transparent);
+	}
+</style>

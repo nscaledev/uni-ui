@@ -2,123 +2,137 @@
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
-	import { navigating } from '$app/state';
-
+	import { startAutoRefresh } from '$lib/loadutil';
 	let { data }: { data: PageData } = $props();
-
 	import * as Clients from '$lib/clients';
 	import * as Identity from '$lib/openapi/identity';
+	import { resolveChip, fromUserState } from '$lib/layouts/effectiveStatus';
 	import * as Formatters from '$lib/formatters';
-
 	import type { ShellPageSettings } from '$lib/layouts/types.ts';
-	import ShellPageHeader from '$lib/layouts/ShellPageHeader.svelte';
+	import ListPage from '$lib/layouts/ListPage.svelte';
 	import ShellList from '$lib/layouts/ShellList.svelte';
 	import ShellListItem from '$lib/layouts/ShellListItem.svelte';
 	import ShellListItemHeader from '$lib/layouts/ShellListItemHeader.svelte';
 	import ShellListItemBadges from '$lib/layouts/ShellListItemBadges.svelte';
 	import ShellListItemMetadata from '$lib/layouts/ShellListItemMetadata.svelte';
 	import ShellMetadataItem from '$lib/layouts/ShellMetadataItem.svelte';
-	import Badge from '$lib/layouts/Badge.svelte';
-	import SubtleButton from '$lib/forms/SubtleButton.svelte';
+	import Placeholder from '$lib/layouts/Placeholder.svelte';
+	import Button from '$lib/forms/Button.svelte';
 	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
-
+	import RowMenu from '$lib/layouts/RowMenu.svelte';
 	const settings: ShellPageSettings = {
 		feature: 'Identity',
 		name: 'Users',
-		description: 'Known user accounts who are permitted access to the organization.',
-		icon: 'mdi:user-outline'
+		description: 'Known user accounts permitted access to the organization.',
+		icon: 'user'
 	};
+	onMount(() => startAutoRefresh('layout:users'));
+	function userLastActive(u: Identity.UserRead) {
+		return u.status.lastActive ? Formatters.ageFormatter(u.status.lastActive) : 'never';
+	}
+	async function bulkDeleteUsers(ids: Set<string>, clear: () => void) {
+		await Promise.allSettled(
+			[...ids].map((id) =>
+				Clients.identity().apiV1OrganizationsOrganizationIDUsersUserIDDelete({
+					organizationID: data.organizationID,
+					userID: id
+				})
+			)
+		);
+		clear();
+		invalidate('layout:users');
+	}
 
-	onMount(() => {
-		const interval = setInterval(() => navigating.to || invalidate('layout:users'), 5000);
-
-		return () => clearInterval(interval);
-	});
-
-	function confirm(id: string) {
-		const parameters = {
-			organizationID: data.organizationID,
-			userID: id
-		};
-
+	function deleteUser(id: string) {
 		Clients.identity()
-			.apiV1OrganizationsOrganizationIDUsersUserIDDelete(parameters)
+			.apiV1OrganizationsOrganizationIDUsersUserIDDelete({
+				organizationID: data.organizationID,
+				userID: id
+			})
 			.then(() => invalidate('layout:users'))
 			.catch((e: Error) => Clients.error(e));
 	}
-
-	function userLastActive(user: Identity.UserRead): string {
-		return user.status.lastActive ? Formatters.ageFormatter(user.status.lastActive) : 'never';
-	}
-
-	function stateIcon(user: Identity.UserRead): string {
-		switch (user.spec.state) {
-			case Identity.UserState.Active:
-				return 'mdi:tick';
-			case Identity.UserState.Pending:
-				return 'mdi:sleep';
-			case Identity.UserState.Suspended:
-				return 'mdi:error-outline';
-		}
-
-		return 'mdi:question-mark';
-	}
-
-	function stateColor(user: Identity.UserRead): string {
-		switch (user.spec.state) {
-			case Identity.UserState.Active:
-				return 'text-success-500';
-			case Identity.UserState.Pending:
-				return 'text-warning-500';
-			case Identity.UserState.Suspended:
-				return 'text-error-500';
-		}
-
-		return 'text-surface-700';
-	}
 </script>
 
-<ShellPageHeader {settings}>
-	{#snippet tools()}
-		<SubtleButton icon="mdi:add" label="Create" href="/identity/users/create" />
+<ListPage
+	{settings}
+	resources={data.users || []}
+	filterFn={(r, q) => r.spec.subject.toLowerCase().includes(q)}
+	tableHeaders={['Subject', 'Status', 'Last Active', 'Age', '']}
+>
+	{#snippet bulkbar({ ids, clear })}
+		<ModalIcon
+			icon="trash"
+			label="Delete ({ids.size})"
+			class="btn btn--sm btn--danger"
+			title="Delete {ids.size} user{ids.size === 1 ? '' : 's'}?"
+			confirm={() => bulkDeleteUsers(ids, clear)}
+		>
+			This will remove {ids.size} user{ids.size === 1 ? '' : 's'} from the organization.
+		</ModalIcon>
 	{/snippet}
-</ShellPageHeader>
 
-<ShellList>
-	{#each data.users || [] as resource}
-		<ShellListItem>
-			{#snippet main()}
-				<ShellListItemHeader
-					title={resource.spec.subject}
-					href="/identity/users/view/{resource.metadata.id}"
+	{#snippet tableRow(resource)}
+		{@const chip = resolveChip(
+			resource.metadata.provisioningStatus,
+			fromUserState(resource.spec.state)
+		)}
+		<td class="primary">
+			<div>{resource.spec.subject}</div>
+			<div class="sub">{resource.metadata.id}</div>
+		</td>
+		<td>
+			{#if chip}<span class="chip chip--{chip.chipClass}"
+					><span class="dot"></span>{chip.label}</span
+				>{/if}
+		</td>
+		<td>{userLastActive(resource)}</td>
+		<td><span class="mono">{Formatters.ageFormatter(resource.metadata.creationTime)}</span></td>
+		<RowMenu>
+			{#snippet menu()}
+				<ModalIcon
+					icon="trash"
+					label="Delete"
+					class="menu__item menu__item--danger"
+					title="Delete user?"
+					confirm={() => deleteUser(resource.metadata.id)}
 				/>
 			{/snippet}
+		</RowMenu>
+	{/snippet}
 
-			{#snippet badges()}
-				<ShellListItemBadges>
-					{#snippet extra()}
-						<Badge icon={stateIcon(resource)} iconcolor={stateColor(resource)}
-							>{resource.spec.state}</Badge
-						>
+	{#snippet tools()}<Button
+			icon="plus"
+			label="Create"
+			class="btn--primary"
+			href="/identity/users/create"
+			disabled={!data.groups.length}
+		/>{/snippet}
+	{#snippet list(users)}<ShellList
+			>{#each users as resource}<ShellListItem id={resource.metadata.id}>
+					{#snippet main()}<ShellListItemHeader title={resource.spec.subject} />{/snippet}
+					{#snippet badges()}
+						<ShellListItemBadges
+							metadata={resource.metadata}
+							operationalStatus={fromUserState(resource.spec.state)}
+						/>
 					{/snippet}
-				</ShellListItemBadges>
-			{/snippet}
-
-			<ShellListItemMetadata metadata={resource.metadata}></ShellListItemMetadata>
-			<ShellListItemMetadata>
-				<ShellMetadataItem icon="mdi:run" label="Last Active" value={userLastActive(resource)} />
-			</ShellListItemMetadata>
-
-			{#snippet trail()}
-				<ModalIcon
-					icon="mdi:trash-can-outline"
-					label="Delete"
-					title="Are you sure?"
-					confirm={() => confirm(resource.metadata.id)}
-				>
-					Removing user "{resource.spec.subject}" will remove their access to this organization.
-				</ModalIcon>
-			{/snippet}
-		</ShellListItem>
-	{/each}
-</ShellList>
+					{#snippet menu()}<ModalIcon
+							icon="trash"
+							label="Delete"
+							class="menu__item menu__item--danger"
+							title="Delete user?"
+							confirm={() => deleteUser(resource.metadata.id)}
+						/>{/snippet}
+					<ShellListItemMetadata metadata={resource.metadata} />
+					<ShellMetadataItem icon="bolt" label="Last Active" value={userLastActive(resource)} />
+				</ShellListItem>{/each}</ShellList
+		>{/snippet}
+	{#snippet empty()}
+		{#if !data.groups.length}
+			<Placeholder>No groups exist yet — create a group before adding a user.</Placeholder>
+		{:else}
+			<Placeholder>No users yet — create one to get started.</Placeholder>
+		{/if}
+	{/snippet}
+</ListPage>

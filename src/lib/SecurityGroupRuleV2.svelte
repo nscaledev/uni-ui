@@ -89,24 +89,32 @@
 	{/each}
 </Select>
 
-<Select label="Network Protocol" hint="OSI layer 3/4 protocol" bind:value={rule.protocol}>
+<Select
+	label="Network Protocol"
+	hint="Protocol to match. Use 'any' for all traffic; TCP/UDP enable port filtering."
+	bind:value={rule.protocol}
+>
 	{#each Object.values(Region.NetworkProtocol) as protocol}
 		<option value={protocol}>{protocol}</option>
 	{/each}
 </Select>
 
 {#if isLayer4(rule.protocol)}
-	<TextInput label="Port" hint="The start of the port range." bind:value={port} />
+	<TextInput
+		label="Port"
+		hint="Port to match, or start of range. Leave empty to match all ports."
+		bind:value={port}
+	/>
 
 	<TextInput
 		label="Port Range End"
-		hint="The end of the port range, including this port number."
+		hint="End of range (inclusive). Leave empty for a single port."
 		bind:value={portMax}
 	/>
 {/if}
 
 <TextInput
-	label="Address Range"
-	hint="Address range to allow access to the selected port.."
+	label="CIDR"
+	hint="Source CIDR to match. Leave empty to match all addresses (0.0.0.0/0)."
 	bind:value={rule.prefix}
 />
