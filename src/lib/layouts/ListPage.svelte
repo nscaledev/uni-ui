@@ -1,6 +1,6 @@
 <script
 	lang="ts"
-	generics="T extends { metadata: { id: string; provisioningStatus: string; creationTime: Date; name: string } }"
+	generics="T extends { metadata: { id: string; provisioningStatus: string; creationTime: Date; name: string; deletionTime?: Date } }"
 >
 	import type { Snippet } from 'svelte';
 	import { setContext } from 'svelte';
@@ -292,6 +292,15 @@
 		<div class="stat__label">Recent (7d)</div>
 		<div class="stat__value">{stats.recent}</div>
 		<div class="stat__sub">in the last 7 days</div>
+	</div>
+	<div class="stat">
+		<div class="stat__label">Stuck deprovisioning</div>
+		<div class="stat__value" class:danger={stats.stuckDeprovisioning > 0}>
+			{stats.stuckDeprovisioning}
+		</div>
+		{#if stats.stuckDeprovisioning > 0}
+			<div class="stat__sub down">● over 1 hour</div>
+		{/if}
 	</div>
 </div>
 

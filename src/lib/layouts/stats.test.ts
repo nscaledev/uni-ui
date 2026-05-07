@@ -2,12 +2,14 @@ import { describe, it, expect } from 'vitest';
 import { computeStats } from './stats';
 
 const DAY = 24 * 60 * 60 * 1000;
+const HOUR = 60 * 60 * 1000;
 
-function makeResource(provisioningStatus: string, daysAgo: number) {
+function makeResource(provisioningStatus: string, daysAgo: number, deletionTime?: Date) {
 	return {
 		metadata: {
 			provisioningStatus,
-			creationTime: new Date(Date.now() - daysAgo * DAY)
+			creationTime: new Date(Date.now() - daysAgo * DAY),
+			deletionTime
 		}
 	};
 }
@@ -18,7 +20,8 @@ describe('computeStats', () => {
 			total: 0,
 			provisioned: 0,
 			needsAttention: 0,
-			recent: 0
+			recent: 0,
+			stuckDeprovisioning: 0
 		});
 	});
 
@@ -73,5 +76,40 @@ describe('computeStats', () => {
 			makeResource('deprovisioning', 3)
 		];
 		expect(computeStats(resources).needsAttention).toBe(0);
+	});
+
+	describe('stuckDeprovisioning', () => {
+		it('does not count deprovisioning without a deletionTime', () => {
+			const resources = [makeResource('deprovisioning', 1)];
+			expect(computeStats(resources).stuckDeprovisioning).toBe(0);
+		});
+
+		it('does not count deprovisioning with deletionTime under 1 hour ago', () => {
+			const resources = [
+				makeResource('deprovisioning', 1, new Date(Date.now() - 30 * 60 * 1000)) // 30 min ago
+			];
+			expect(computeStats(resources).stuckDeprovisioning).toBe(0);
+		});
+
+		it('does not count deprovisioning with deletionTime exactly at 1 hour', () => {
+			const resources = [makeResource('deprovisioning', 1, new Date(Date.now() - HOUR))];
+			expect(computeStats(resources).stuckDeprovisioning).toBe(0);
+		});
+
+		it('counts deprovisioning with deletionTime over 1 hour ago', () => {
+			const resources = [
+				makeResource('deprovisioning', 1, new Date(Date.now() - 2 * HOUR)),
+				makeResource('deprovisioning', 7, new Date(Date.now() - 7 * DAY))
+			];
+			expect(computeStats(resources).stuckDeprovisioning).toBe(2);
+		});
+
+		it('does not count non-deprovisioning resources with old deletionTime', () => {
+			const resources = [
+				makeResource('error', 1, new Date(Date.now() - 2 * HOUR)),
+				makeResource('provisioned', 1, new Date(Date.now() - 7 * DAY))
+			];
+			expect(computeStats(resources).stuckDeprovisioning).toBe(0);
+		});
 	});
 });
