@@ -20,8 +20,9 @@ describe('computeStats', () => {
 			total: 0,
 			provisioned: 0,
 			needsAttention: 0,
-			recent: 0,
-			stuckDeprovisioning: 0
+			errorCount: 0,
+			stuckDeprovisioning: 0,
+			recent: 0
 		});
 	});
 
@@ -45,17 +46,6 @@ describe('computeStats', () => {
 		expect(computeStats(resources).provisioned).toBe(2);
 	});
 
-	it('counts only error status as needsAttention', () => {
-		const resources = [
-			makeResource('provisioned', 1),
-			makeResource('error', 2),
-			makeResource('pending', 3),
-			makeResource('provisioning', 4),
-			makeResource('unknown', 5)
-		];
-		expect(computeStats(resources).needsAttention).toBe(1);
-	});
-
 	it('counts resources created within 7 days as recent', () => {
 		const resources = [
 			makeResource('provisioned', 1), // 1 day ago — recent
@@ -69,13 +59,26 @@ describe('computeStats', () => {
 		expect(stats.recent).toBeLessThanOrEqual(3);
 	});
 
-	it('provisioning/pending/deprovisioning do not count as needsAttention', () => {
-		const resources = [
-			makeResource('provisioning', 1),
-			makeResource('pending', 2),
-			makeResource('deprovisioning', 3)
-		];
-		expect(computeStats(resources).needsAttention).toBe(0);
+	describe('errorCount', () => {
+		it('counts only error status', () => {
+			const resources = [
+				makeResource('provisioned', 1),
+				makeResource('error', 2),
+				makeResource('pending', 3),
+				makeResource('provisioning', 4),
+				makeResource('unknown', 5)
+			];
+			expect(computeStats(resources).errorCount).toBe(1);
+		});
+
+		it('provisioning/pending/deprovisioning do not count as errors', () => {
+			const resources = [
+				makeResource('provisioning', 1),
+				makeResource('pending', 2),
+				makeResource('deprovisioning', 3)
+			];
+			expect(computeStats(resources).errorCount).toBe(0);
+		});
 	});
 
 	describe('stuckDeprovisioning', () => {
@@ -85,9 +88,7 @@ describe('computeStats', () => {
 		});
 
 		it('does not count deprovisioning with deletionTime under 1 hour ago', () => {
-			const resources = [
-				makeResource('deprovisioning', 1, new Date(Date.now() - 30 * 60 * 1000)) // 30 min ago
-			];
+			const resources = [makeResource('deprovisioning', 1, new Date(Date.now() - 30 * 60 * 1000))];
 			expect(computeStats(resources).stuckDeprovisioning).toBe(0);
 		});
 
@@ -110,6 +111,28 @@ describe('computeStats', () => {
 				makeResource('provisioned', 1, new Date(Date.now() - 7 * DAY))
 			];
 			expect(computeStats(resources).stuckDeprovisioning).toBe(0);
+		});
+	});
+
+	describe('needsAttention', () => {
+		it('equals errorCount + stuckDeprovisioning', () => {
+			const resources = [
+				makeResource('error', 1),
+				makeResource('error', 2),
+				makeResource('deprovisioning', 3, new Date(Date.now() - 2 * HOUR)),
+				makeResource('provisioned', 4)
+			];
+			const stats = computeStats(resources);
+			expect(stats.needsAttention).toBe(stats.errorCount + stats.stuckDeprovisioning);
+			expect(stats.needsAttention).toBe(3);
+		});
+
+		it('is zero when no errors or stuck deprovisioning', () => {
+			const resources = [
+				makeResource('provisioned', 1),
+				makeResource('deprovisioning', 2) // no deletionTime — not stuck
+			];
+			expect(computeStats(resources).needsAttention).toBe(0);
 		});
 	});
 });
