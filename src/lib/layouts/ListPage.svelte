@@ -285,22 +285,20 @@
 		<div class="stat__label">Needs attention</div>
 		<div class="stat__value" class:danger={stats.needsAttention > 0}>{stats.needsAttention}</div>
 		{#if stats.needsAttention > 0}
-			<div class="stat__sub down">● error</div>
+			<div class="stat__sub down">
+				● {[
+					stats.errorCount > 0 ? `${stats.errorCount} error` : '',
+					stats.stuckDeprovisioning > 0 ? `${stats.stuckDeprovisioning} stuck deprovisioning` : ''
+				]
+					.filter(Boolean)
+					.join(' · ')}
+			</div>
 		{/if}
 	</div>
 	<div class="stat">
 		<div class="stat__label">Recent (7d)</div>
 		<div class="stat__value">{stats.recent}</div>
 		<div class="stat__sub">in the last 7 days</div>
-	</div>
-	<div class="stat">
-		<div class="stat__label">Stuck deprovisioning</div>
-		<div class="stat__value" class:danger={stats.stuckDeprovisioning > 0}>
-			{stats.stuckDeprovisioning}
-		</div>
-		{#if stats.stuckDeprovisioning > 0}
-			<div class="stat__sub down">● over 1 hour</div>
-		{/if}
 	</div>
 </div>
 
