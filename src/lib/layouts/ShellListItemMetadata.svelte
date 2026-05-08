@@ -16,16 +16,12 @@
 
 {#if metadata}
 	<ShellMetadataItem
-		icon="mdi:clock-time-five-outline"
+		icon="clock"
 		label="Age"
 		value={Formatters.ageFormatter(metadata.creationTime)}
 	/>
 
-	<ShellMetadataItem
-		icon="mdi:user-outline"
-		label="Owner"
-		value={metadata.createdBy || 'unknown'}
-	/>
+	<ShellMetadataItem icon="user" label="Owner" value={metadata.createdBy || 'unknown'} />
 {/if}
 
 {@render children?.()}

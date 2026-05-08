@@ -2,119 +2,214 @@
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
-	import { navigating } from '$app/state';
-
+	import { startAutoRefresh } from '$lib/loadutil';
 	let { data }: { data: PageData } = $props();
-
 	import * as Clients from '$lib/clients';
 	import * as Region from '$lib/openapi/region';
 	import * as RegionUtil from '$lib/regionutil';
-
+	import { resolveChip } from '$lib/layouts/effectiveStatus';
+	import { ageFormatter } from '$lib/formatters';
 	import type { ShellPageSettings } from '$lib/layouts/types.ts';
-	import ShellPageHeader from '$lib/layouts/ShellPageHeader.svelte';
+	import ListPage from '$lib/layouts/ListPage.svelte';
 	import ShellList from '$lib/layouts/ShellList.svelte';
 	import ShellListItem from '$lib/layouts/ShellListItem.svelte';
 	import ShellListItemHeader from '$lib/layouts/ShellListItemHeader.svelte';
 	import ShellListItemBadges from '$lib/layouts/ShellListItemBadges.svelte';
 	import ShellListItemMetadata from '$lib/layouts/ShellListItemMetadata.svelte';
-	import Badge from '$lib/layouts/Badge.svelte';
-	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
+	import ShellMetadataItem from '$lib/layouts/ShellMetadataItem.svelte';
+	import Placeholder from '$lib/layouts/Placeholder.svelte';
 	import PopupButton from '$lib/forms/PopupButton.svelte';
-
+	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
+	import RowMenu from '$lib/layouts/RowMenu.svelte';
+	import Icon from '$lib/primitives/Icon.svelte';
 	const settings: ShellPageSettings = {
-		feature: 'Regions',
+		feature: 'Network',
 		name: 'Security Groups',
-		description: 'Manage your network security groups',
-		icon: 'mdi:security-network'
+		description: 'Manage network security groups.',
+		icon: 'security'
 	};
-
-	onMount(() => {
-		const interval = setInterval(() => navigating.to || invalidate('layout:securitygroups'), 5000);
-
-		return () => clearInterval(interval);
-	});
-
+	onMount(() => startAutoRefresh('layout:securitygroups'));
+	// eslint-disable-next-line svelte/valid-compile
 	let createNetworkID = $state(data.networks[0]?.metadata.id);
+
+	const createURL = $derived(
+		`/network/securitygroups/create?networkID=${data.networks.length === 1 ? data.networks[0].metadata.id : createNetworkID}`
+	);
+	const skipPopup = $derived(data.networks.length === 1);
+	const PROJECT_PALETTE = [
+		'oklch(0.65 0.18 220)',
+		'oklch(0.65 0.18 290)',
+		'oklch(0.68 0.16 30)',
+		'oklch(0.65 0.18 340)',
+		'oklch(0.65 0.16 170)',
+		'oklch(0.68 0.16 80)'
+	];
 
 	function lookupNetwork(id: string): Region.NetworkV2Read {
 		return data.networks.find((x) => x.metadata.id == id) as Region.NetworkV2Read;
 	}
 
-	function confirm(resource: Region.SecurityGroupV2Read) {
-		const parameters: Region.ApiV2SecuritygroupsSecurityGroupIDDeleteRequest = {
-			securityGroupID: resource.metadata.id
+	function securityGroupProject(resource: Region.SecurityGroupV2Read) {
+		const idx = data.projects.findIndex((p) => p.metadata.id === resource.metadata.projectId);
+		if (idx < 0) return null;
+		return {
+			name: data.projects[idx].metadata.name,
+			color: PROJECT_PALETTE[idx % PROJECT_PALETTE.length]
 		};
-
+	}
+	function deleteGroup(resource: Region.SecurityGroupV2Read) {
 		Clients.region()
-			.apiV2SecuritygroupsSecurityGroupIDDelete(parameters)
+			.apiV2SecuritygroupsSecurityGroupIDDelete({ securityGroupID: resource.metadata.id })
 			.then(() => invalidate('layout:securitygroups'))
 			.catch((e: Error) => Clients.error(e));
 	}
+
+	async function bulkDeleteSecurityGroups(ids: Set<string>, clear: () => void) {
+		await Promise.allSettled(
+			[...ids].map((id) =>
+				Clients.region().apiV2SecuritygroupsSecurityGroupIDDelete({ securityGroupID: id })
+			)
+		);
+		clear();
+		invalidate('layout:securitygroups');
+	}
 </script>
 
-<ShellPageHeader {settings}>
+<ListPage
+	{settings}
+	resources={data.securityGroups}
+	projects={data.projectID ? [] : data.projects}
+	regions={data.regions}
+	tableHeaders={['Name', 'Status', 'Project', 'Region', 'Network', 'Owner', 'Age', '']}
+>
+	{#snippet bulkbar({ ids, clear })}
+		<ModalIcon
+			icon="trash"
+			label="Delete ({ids.size})"
+			class="btn btn--sm btn--danger"
+			title="Delete {ids.size} security group{ids.size === 1 ? '' : 's'}?"
+			confirm={() => bulkDeleteSecurityGroups(ids, clear)}
+		>
+			This will permanently remove {ids.size} security group{ids.size === 1 ? '' : 's'}.
+		</ModalIcon>
+	{/snippet}
+
+	{#snippet tableRow(resource)}
+		{@const chip = resolveChip(resource.metadata.provisioningStatus, null)}
+		{@const proj = securityGroupProject(resource)}
+		<td class="primary">
+			<a href="/network/securitygroups/edit/{resource.metadata.id}">{resource.metadata.name}</a>
+			<div class="sub">{resource.metadata.id}</div>
+		</td>
+		<td>
+			{#if chip}<span class="chip chip--{chip.chipClass}"
+					><span class="dot"></span>{chip.label}</span
+				>{/if}
+		</td>
+		<td>
+			{#if proj}<span class="chip chip--name" title={proj.name}
+					><span class="dot" style="background:{proj.color}"></span><span class="chip-label"
+						>{proj.name}</span
+					></span
+				>{/if}
+		</td>
+		<td>
+			<span class="mono region-cell">
+				{RegionUtil.flag(data.regions, resource.status.regionId)}
+				{RegionUtil.name(data.regions, resource.status.regionId)}
+			</span>
+		</td>
+		<td>{lookupNetwork(resource.status.networkId)?.metadata.name ?? '—'}</td>
+		<td>{resource.metadata.createdBy}</td>
+		<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
+		<RowMenu>
+			{#snippet menu()}
+				<ModalIcon
+					icon="trash"
+					label="Delete"
+					class="menu__item menu__item--danger"
+					title="Delete security group?"
+					confirm={() => deleteGroup(resource)}
+				>
+					Removing "{resource.metadata.name}" will affect any instances using it.
+				</ModalIcon>
+			{/snippet}
+		</RowMenu>
+	{/snippet}
+
 	{#snippet tools()}
-		{#if data.projects.length}
-			<PopupButton icon="mdi:add" class="self-end" label="Create">
-				{#snippet contents()}
-					<div class="flex flex-col gap-4">
-						<div class="font-bold">Network</div>
-
-						<div class="input-group grid grid-cols-[auto_1fr]">
-							<iconify-icon icon="mdi:network-outline" class="ig-cell"></iconify-icon>
-
-							<select class="ig-select" bind:value={createNetworkID}>
-								{#each data.networks as p}
-									<option value={p.metadata.id}>{p.metadata.name}</option>
+		{#if !data.projects.length || !data.networks.length}
+			<button class="btn btn--primary" disabled><Icon name="plus" size={16} /> Create</button>
+		{:else if skipPopup}
+			<a href={createURL} class="btn btn--primary"><Icon name="plus" size={16} /> Create</a>
+		{:else}
+			<PopupButton icon="plus" label="Create">
+				{#snippet contents(close)}
+					<div class="create-popup">
+						<div class="menu__title" style="padding-inline: 0">Network</div>
+						<div class="picker">
+							<Icon name="network" size={14} />
+							<select bind:value={createNetworkID}>
+								{#each data.networks as n}
+									<option value={n.metadata.id}>{n.metadata.name}</option>
 								{/each}
 							</select>
 						</div>
-
-						<a
-							href="/network/securitygroups/create?networkID={createNetworkID}"
-							class="btn preset-filled-primary-500">Create</a
-						>
+						<div class="create-popup__footer">
+							<button onclick={close} class="btn btn--ghost btn--sm">Cancel</button>
+							<a href={createURL} class="btn btn--primary btn--sm">Continue</a>
+						</div>
 					</div>
 				{/snippet}
 			</PopupButton>
 		{/if}
 	{/snippet}
-</ShellPageHeader>
-
-<ShellList>
-	{#each data.securityGroups as resource}
-		<ShellListItem>
-			{#snippet main()}
-				<ShellListItemHeader
-					metadata={resource.metadata}
-					projects={data.projects}
-					href="/network/securitygroups/edit/{resource.metadata.id}"
-				/>
-			{/snippet}
-
-			{#snippet badges()}
-				<ShellListItemBadges metadata={resource.metadata}>
-					{#snippet extra()}
-						<Badge icon={RegionUtil.icon(data.regions, resource.status.regionId)}>
+	{#snippet list(groups)}<ShellList
+			>{#each groups as resource}<ShellListItem id={resource.metadata.id}>
+					{#snippet main()}
+						<span class="mono region-cell">
+							{RegionUtil.flag(data.regions, resource.status.regionId)}
 							{RegionUtil.name(data.regions, resource.status.regionId)}
-						</Badge>
-						<Badge icon="mdi:network-outline">
-							{lookupNetwork(resource.status.networkId).metadata.name}
-						</Badge>
+						</span>
+						<ShellListItemHeader
+							metadata={resource.metadata}
+							href="/network/securitygroups/edit/{resource.metadata.id}"
+						/>
 					{/snippet}
-				</ShellListItemBadges>
-			{/snippet}
-
-			{#snippet trail()}
-				<ModalIcon
-					icon="mdi:trash-can-outline"
-					label="Delete"
-					title="Are you sure?"
-					confirm={() => confirm(resource)}
-				></ModalIcon>
-			{/snippet}
-
-			<ShellListItemMetadata metadata={resource.metadata} />
-		</ShellListItem>
-	{/each}
-</ShellList>
+					{#snippet badges()}
+						<ShellListItemBadges metadata={resource.metadata} projects={data.projects} />
+					{/snippet}
+					{#snippet menu()}
+						<ModalIcon
+							icon="trash"
+							label="Delete"
+							class="menu__item menu__item--danger"
+							title="Delete security group?"
+							confirm={() => deleteGroup(resource)}
+						>
+							Removing "{resource.metadata.name}" will affect any instances using it.
+						</ModalIcon>
+					{/snippet}
+					<ShellListItemMetadata metadata={resource.metadata}>
+						<ShellMetadataItem
+							icon="network"
+							label="Network"
+							value={lookupNetwork(resource.status.networkId).metadata.name}
+						/>
+					</ShellListItemMetadata>
+				</ShellListItem>{/each}</ShellList
+		>{/snippet}
+	{#snippet empty()}
+		{#if !data.projects.length}
+			<Placeholder
+				>You are not a member of any projects — ask an administrator to add you.</Placeholder
+			>
+		{:else if !data.networks.length}
+			<Placeholder
+				>No networks exist yet — create a network before adding a security group.</Placeholder
+			>
+		{:else}
+			<Placeholder>No security groups yet — create one to get started.</Placeholder>
+		{/if}
+	{/snippet}
+</ListPage>

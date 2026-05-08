@@ -38,6 +38,15 @@ export interface StorageClassV2Spec {
      * @memberof StorageClassV2Spec
      */
     protocols: Array<StorageClassProtocolType>;
+    /**
+     * Defines the number of IP addresses that are assigned to the storage.
+     * More IP addresses, better performance. If the value specified overflows
+     * the available address range reserved on the network it will be capped
+     * at the maximum allowed value.
+     * @type {number}
+     * @memberof StorageClassV2Spec
+     */
+    parallelism: number;
 }
 
 /**
@@ -47,6 +56,7 @@ export function instanceOfStorageClassV2Spec(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "regionId" in value;
     isInstance = isInstance && "protocols" in value;
+    isInstance = isInstance && "parallelism" in value;
 
     return isInstance;
 }
@@ -63,6 +73,7 @@ export function StorageClassV2SpecFromJSONTyped(json: any, ignoreDiscriminator: 
         
         'regionId': json['regionId'],
         'protocols': ((json['protocols'] as Array<any>).map(StorageClassProtocolTypeFromJSON)),
+        'parallelism': json['parallelism'],
     };
 }
 
@@ -77,6 +88,7 @@ export function StorageClassV2SpecToJSON(value?: StorageClassV2Spec | null): any
         
         'regionId': value.regionId,
         'protocols': ((value.protocols as Array<any>).map(StorageClassProtocolTypeToJSON)),
+        'parallelism': value.parallelism,
     };
 }
 

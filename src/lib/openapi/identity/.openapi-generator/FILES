@@ -1,4 +1,11 @@
 apis/DefaultApi.ts
+apis/GroupsApi.ts
+apis/OrganizationsApi.ts
+apis/ProjectsApi.ts
+apis/QuotasApi.ts
+apis/RolesApi.ts
+apis/ServiceAccountsApi.ts
+apis/UsersApi.ts
 apis/index.ts
 index.ts
 models/Acl.ts
@@ -9,8 +16,10 @@ models/AclProject.ts
 models/AllocationRead.ts
 models/AllocationSpec.ts
 models/AllocationWrite.ts
+models/AuthClaims.ts
 models/AuthMethod.ts
 models/AuthorizationRequestOptions.ts
+models/BearerMethod.ts
 models/Claim.ts
 models/CodeChallengeMethod.ts
 models/GrantType.ts
@@ -27,6 +36,7 @@ models/Oauth2ProviderType.ts
 models/Oauth2ProviderWrite.ts
 models/OnboardRequestOptions.ts
 models/OpenidConfiguration.ts
+models/OpenidProtectedResource.ts
 models/OrganizationRead.ts
 models/OrganizationScopedResourceReadMetadata.ts
 models/OrganizationSpec.ts

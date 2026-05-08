@@ -38,15 +38,15 @@
 	</div>
 
 	<div class="grid grid-cols-[repeat(3,max-content)] gap-2 text-sm">
-		<ShellMetadataItem icon="mdi:identifier" label="ID" value={metadata.id} />
+		<ShellMetadataItem icon="id" label="ID" value={metadata.id} />
 		<ShellMetadataItem
-			icon="mdi:clock-time-five-outline"
+			icon="clock"
 			label="Age"
 			value={Formatters.ageFormatter(metadata.creationTime)}
 		/>
 
 		{#if metadata.createdBy}
-			<ShellMetadataItem icon="mdi:user-outline" label="Owner" value={metadata.createdBy} />
+			<ShellMetadataItem icon="user" label="Owner" value={metadata.createdBy} />
 		{/if}
 
 		{@render extraMetadata?.()}

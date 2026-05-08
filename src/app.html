@@ -1,10 +1,17 @@
 <!doctype html>
-<html lang="en" data-theme="unikorn">
+<html lang="en" data-theme="unikorn" data-appearance="light" data-surface="solid">
 	<head>
 		<meta charset="utf-8" />
 		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
 		<meta name="viewport" content="width=device-width" />
-
+		<script>
+			(function () {
+				var a = localStorage.getItem('uk:appearance') || 'light';
+				var s = localStorage.getItem('uk:surface') || 'solid';
+				document.documentElement.setAttribute('data-appearance', a);
+				document.documentElement.setAttribute('data-surface', s);
+			})();
+		</script>
 		%sveltekit.head%
 	</head>
 	<body>

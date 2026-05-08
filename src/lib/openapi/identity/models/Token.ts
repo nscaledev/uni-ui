@@ -20,17 +20,29 @@ import { exists, mapValues } from '../runtime';
  */
 export interface Token {
     /**
-     * How the access token is to be presented to the resource server.
+     * How the issued token is to be presented to the resource server. Typically
+     * "Bearer". For the RFC 8693 token-exchange grant this is "Bearer" when the
+     * issued JWT is presented in the Authorization header of downstream requests.
      * @type {string}
      * @memberof Token
      */
     tokenType: string;
     /**
-     * The opaque access token.
+     * The issued token. For the token-exchange grant this carries the signed
+     * JWT returned by the exchange (RFC 8693 section 2.2.1 defines
+     * "access_token" as the response envelope for any issued security token).
      * @type {string}
      * @memberof Token
      */
     accessToken: string;
+    /**
+     * An identifier for the representation of the issued security token.
+     * Required for the token-exchange grant; omitted for other grant types
+     * (RFC 8693 section 2.2.1).
+     * @type {string}
+     * @memberof Token
+     */
+    issuedTokenType?: string;
     /**
      * The opaque refresh token.
      * @type {string}
@@ -75,6 +87,7 @@ export function TokenFromJSONTyped(json: any, ignoreDiscriminator: boolean): Tok
         
         'tokenType': json['token_type'],
         'accessToken': json['access_token'],
+        'issuedTokenType': !exists(json, 'issued_token_type') ? undefined : json['issued_token_type'],
         'refreshToken': !exists(json, 'refresh_token') ? undefined : json['refresh_token'],
         'idToken': !exists(json, 'id_token') ? undefined : json['id_token'],
         'expiresIn': json['expires_in'],
@@ -92,6 +105,7 @@ export function TokenToJSON(value?: Token | null): any {
         
         'token_type': value.tokenType,
         'access_token': value.accessToken,
+        'issued_token_type': value.issuedTokenType,
         'refresh_token': value.refreshToken,
         'id_token': value.idToken,
         'expires_in': value.expiresIn,

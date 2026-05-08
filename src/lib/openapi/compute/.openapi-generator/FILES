@@ -1,8 +1,13 @@
 apis/DefaultApi.ts
+apis/FlavorsApi.ts
+apis/ImagesApi.ts
+apis/InstancesApi.ts
+apis/RegionsApi.ts
 apis/index.ts
 index.ts
 models/AllowedAddressPair.ts
 models/Architecture.ts
+models/BearerMethod.ts
 models/ClusterV2Create.ts
 models/ClusterV2CreateSpec.ts
 models/ClusterV2Read.ts
@@ -45,9 +50,8 @@ models/InstanceStatus.ts
 models/InstanceUpdate.ts
 models/MachinePool.ts
 models/ModelError.ts
+models/OpenidProtectedResource.ts
 models/OrganizationScopedResourceReadMetadata.ts
-models/OsDistro.ts
-models/OsFamily.ts
 models/OsKernel.ts
 models/PoolV2.ts
 models/PoolV2Status.ts

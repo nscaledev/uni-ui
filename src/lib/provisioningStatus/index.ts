@@ -6,6 +6,8 @@ export function statusColor(s: Identity.ResourceProvisioningStatus): string {
 			return 'text-success-500';
 		case Identity.ResourceProvisioningStatus.Error:
 			return 'text-error-500';
+		case Identity.ResourceProvisioningStatus.Pending:
+			return 'text-warning-500';
 		case Identity.ResourceProvisioningStatus.Unknown:
 			return 'text-warning-500';
 	}
@@ -18,6 +20,8 @@ export function statusIcon(s: Identity.ResourceProvisioningStatus): string {
 			return 'mdi:tick-circle-outline';
 		case Identity.ResourceProvisioningStatus.Error:
 			return 'mdi:error-outline';
+		case Identity.ResourceProvisioningStatus.Pending:
+			return 'mdi:question-mark';
 		case Identity.ResourceProvisioningStatus.Unknown:
 			return 'mdi:question-mark';
 	}

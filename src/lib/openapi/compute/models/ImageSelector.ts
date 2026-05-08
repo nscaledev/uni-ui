@@ -13,13 +13,6 @@
  */
 
 import { exists, mapValues } from '../runtime';
-import type { OsDistro } from './OsDistro';
-import {
-    OsDistroFromJSON,
-    OsDistroFromJSONTyped,
-    OsDistroToJSON,
-} from './OsDistro';
-
 /**
  * A server image selector.
  * @export
@@ -27,11 +20,11 @@ import {
  */
 export interface ImageSelector {
     /**
-     * 
-     * @type {OsDistro}
+     * A distribution name.
+     * @type {string}
      * @memberof ImageSelector
      */
-    distro: OsDistro;
+    distro: string;
     /**
      * The operating system variant.
      * @type {string}
@@ -67,7 +60,7 @@ export function ImageSelectorFromJSONTyped(json: any, ignoreDiscriminator: boole
     }
     return {
         
-        'distro': OsDistroFromJSON(json['distro']),
+        'distro': json['distro'],
         'variant': !exists(json, 'variant') ? undefined : json['variant'],
         'version': json['version'],
     };
@@ -82,7 +75,7 @@ export function ImageSelectorToJSON(value?: ImageSelector | null): any {
     }
     return {
         
-        'distro': OsDistroToJSON(value.distro),
+        'distro': value.distro,
         'variant': value.variant,
         'version': value.version,
     };

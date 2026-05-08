@@ -9,19 +9,62 @@
 	let { error = 'unknown', message = 'unknown' }: Props = $props();
 </script>
 
-<div class="grid grid-cols-3 grid-rows-3 w-full h-screen">
-	<div class="col-start-2 row-start-2 flex flex-col gap-8 items-center">
-		<div class="h-16 w-auto">
-			<Logo class="h-16 w-auto" />
-		</div>
-
-		<div class="h2">Oops, we encountered an error!</div>
-
-		<div class="grid grid-cols-2 gap-2">
-			<div class="font-bold">Status</div>
-			{error}
-			<div class="font-bold">Message</div>
-			{message}
-		</div>
+<div class="error-page">
+	<div class="error-card">
+		<Logo class="error-logo" />
+		<p class="error-heading">Oops, we encountered an error!</p>
+		<dl class="error-details">
+			<dt>Status</dt>
+			<dd>{error}</dd>
+			<dt>Message</dt>
+			<dd>{message}</dd>
+		</dl>
 	</div>
 </div>
+
+<style>
+	.error-page {
+		display: grid;
+		place-items: center;
+		width: 100%;
+		min-height: 100vh;
+	}
+
+	.error-card {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 24px;
+	}
+
+	:global(.error-logo) {
+		height: 48px;
+		width: auto;
+		display: block;
+	}
+
+	.error-heading {
+		font-size: 16px;
+		font-weight: 600;
+		color: var(--text-1);
+		margin: 0;
+	}
+
+	.error-details {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		gap: 6px 16px;
+		font-size: 13px;
+		margin: 0;
+	}
+
+	.error-details dt {
+		color: var(--text-3);
+		font-weight: 500;
+	}
+
+	.error-details dd {
+		margin: 0;
+		color: var(--text-1);
+	}
+</style>

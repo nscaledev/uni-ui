@@ -22,19 +22,13 @@ import type {
   IdentityRead,
   IdentityWrite,
   Image,
-  ImageCreate,
   ModelError,
   NetworkRead,
-  NetworkV2Create,
-  NetworkV2Read,
-  NetworkV2Update,
   NetworkWrite,
+  OpenidProtectedResource,
   RegionDetailRead,
   RegionRead,
   SecurityGroupRead,
-  SecurityGroupV2Create,
-  SecurityGroupV2Read,
-  SecurityGroupV2Update,
   SecurityGroupWrite,
   ServerRead,
   ServerV2Create,
@@ -43,10 +37,6 @@ import type {
   ServerWrite,
   SnapshotCreate,
   SshKey,
-  StorageClassV2Read,
-  StorageV2Create,
-  StorageV2Read,
-  StorageV2Update,
 } from '../models/index';
 import {
     ConsoleOutputFromJSON,
@@ -63,32 +53,20 @@ import {
     IdentityWriteToJSON,
     ImageFromJSON,
     ImageToJSON,
-    ImageCreateFromJSON,
-    ImageCreateToJSON,
     ModelErrorFromJSON,
     ModelErrorToJSON,
     NetworkReadFromJSON,
     NetworkReadToJSON,
-    NetworkV2CreateFromJSON,
-    NetworkV2CreateToJSON,
-    NetworkV2ReadFromJSON,
-    NetworkV2ReadToJSON,
-    NetworkV2UpdateFromJSON,
-    NetworkV2UpdateToJSON,
     NetworkWriteFromJSON,
     NetworkWriteToJSON,
+    OpenidProtectedResourceFromJSON,
+    OpenidProtectedResourceToJSON,
     RegionDetailReadFromJSON,
     RegionDetailReadToJSON,
     RegionReadFromJSON,
     RegionReadToJSON,
     SecurityGroupReadFromJSON,
     SecurityGroupReadToJSON,
-    SecurityGroupV2CreateFromJSON,
-    SecurityGroupV2CreateToJSON,
-    SecurityGroupV2ReadFromJSON,
-    SecurityGroupV2ReadToJSON,
-    SecurityGroupV2UpdateFromJSON,
-    SecurityGroupV2UpdateToJSON,
     SecurityGroupWriteFromJSON,
     SecurityGroupWriteToJSON,
     ServerReadFromJSON,
@@ -105,14 +83,6 @@ import {
     SnapshotCreateToJSON,
     SshKeyFromJSON,
     SshKeyToJSON,
-    StorageClassV2ReadFromJSON,
-    StorageClassV2ReadToJSON,
-    StorageV2CreateFromJSON,
-    StorageV2CreateToJSON,
-    StorageV2ReadFromJSON,
-    StorageV2ReadToJSON,
-    StorageV2UpdateFromJSON,
-    StorageV2UpdateToJSON,
 } from '../models/index';
 
 export interface ApiV1OrganizationsOrganizationIDIdentitiesGetRequest {
@@ -287,18 +257,6 @@ export interface ApiV1OrganizationsOrganizationIDRegionsRegionIDImagesGetRequest
     regionID: string;
 }
 
-export interface ApiV1OrganizationsOrganizationIDRegionsRegionIDImagesImageIDDeleteRequest {
-    organizationID: string;
-    regionID: string;
-    imageID: string;
-}
-
-export interface ApiV1OrganizationsOrganizationIDRegionsRegionIDImagesPostRequest {
-    organizationID: string;
-    regionID: string;
-    imageCreate?: ImageCreate;
-}
-
 export interface ApiV1OrganizationsOrganizationIDSecuritygroupsGetRequest {
     organizationID: string;
     tag?: Array<string>;
@@ -309,81 +267,14 @@ export interface ApiV1OrganizationsOrganizationIDServersGetRequest {
     tag?: Array<string>;
 }
 
-export interface ApiV2FilestorageFilestorageIDDeleteRequest {
-    filestorageID: string;
-}
-
-export interface ApiV2FilestorageFilestorageIDGetRequest {
-    filestorageID: string;
-}
-
-export interface ApiV2FilestorageFilestorageIDPutRequest {
-    filestorageID: string;
-    storageV2Update?: StorageV2Update;
-}
-
-export interface ApiV2FilestorageGetRequest {
-    tag?: Array<string>;
-    organizationID?: Array<string>;
-    projectID?: Array<string>;
-    regionID?: Array<string>;
-}
-
-export interface ApiV2FilestoragePostRequest {
-    storageV2Create?: StorageV2Create;
-}
-
-export interface ApiV2FilestorageclassesGetRequest {
-    regionID?: Array<string>;
-}
-
-export interface ApiV2NetworksGetRequest {
-    tag?: Array<string>;
-    organizationID?: Array<string>;
-    projectID?: Array<string>;
-    regionID?: Array<string>;
-}
-
-export interface ApiV2NetworksNetworkIDDeleteRequest {
+export interface ApiV2NetworksNetworkIDReferencesReferenceDeleteRequest {
     networkID: string;
+    reference: string;
 }
 
-export interface ApiV2NetworksNetworkIDGetRequest {
+export interface ApiV2NetworksNetworkIDReferencesReferencePutRequest {
     networkID: string;
-}
-
-export interface ApiV2NetworksNetworkIDPutRequest {
-    networkID: string;
-    networkV2Update?: NetworkV2Update;
-}
-
-export interface ApiV2NetworksPostRequest {
-    networkV2Create?: NetworkV2Create;
-}
-
-export interface ApiV2SecuritygroupsGetRequest {
-    tag?: Array<string>;
-    organizationID?: Array<string>;
-    projectID?: Array<string>;
-    regionID?: Array<string>;
-    networkID?: Array<string>;
-}
-
-export interface ApiV2SecuritygroupsPostRequest {
-    securityGroupV2Create?: SecurityGroupV2Create;
-}
-
-export interface ApiV2SecuritygroupsSecurityGroupIDDeleteRequest {
-    securityGroupID: string;
-}
-
-export interface ApiV2SecuritygroupsSecurityGroupIDGetRequest {
-    securityGroupID: string;
-}
-
-export interface ApiV2SecuritygroupsSecurityGroupIDPutRequest {
-    securityGroupID: string;
-    securityGroupV2Update?: SecurityGroupV2Update;
+    reference: string;
 }
 
 export interface ApiV2ServersGetRequest {
@@ -1642,92 +1533,6 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
-     * Delete a compute image.
-     */
-    async apiV1OrganizationsOrganizationIDRegionsRegionIDImagesImageIDDeleteRaw(requestParameters: ApiV1OrganizationsOrganizationIDRegionsRegionIDImagesImageIDDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
-        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
-            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV1OrganizationsOrganizationIDRegionsRegionIDImagesImageIDDelete.');
-        }
-
-        if (requestParameters.regionID === null || requestParameters.regionID === undefined) {
-            throw new runtime.RequiredError('regionID','Required parameter requestParameters.regionID was null or undefined when calling apiV1OrganizationsOrganizationIDRegionsRegionIDImagesImageIDDelete.');
-        }
-
-        if (requestParameters.imageID === null || requestParameters.imageID === undefined) {
-            throw new runtime.RequiredError('imageID','Required parameter requestParameters.imageID was null or undefined when calling apiV1OrganizationsOrganizationIDRegionsRegionIDImagesImageIDDelete.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v1/organizations/{organizationID}/regions/{regionID}/images/{imageID}`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))).replace(`{${"regionID"}}`, encodeURIComponent(String(requestParameters.regionID))).replace(`{${"imageID"}}`, encodeURIComponent(String(requestParameters.imageID))),
-            method: 'DELETE',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.VoidApiResponse(response);
-    }
-
-    /**
-     * Delete a compute image.
-     */
-    async apiV1OrganizationsOrganizationIDRegionsRegionIDImagesImageIDDelete(requestParameters: ApiV1OrganizationsOrganizationIDRegionsRegionIDImagesImageIDDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.apiV1OrganizationsOrganizationIDRegionsRegionIDImagesImageIDDeleteRaw(requestParameters, initOverrides);
-    }
-
-    /**
-     * Create a compute image from a public URL.  Only raw images are supported, other container formats such as qcow2 must be first converted to a raw image.
-     * Create a compute image from a disk image URL.
-     */
-    async apiV1OrganizationsOrganizationIDRegionsRegionIDImagesPostRaw(requestParameters: ApiV1OrganizationsOrganizationIDRegionsRegionIDImagesPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Image>> {
-        if (requestParameters.organizationID === null || requestParameters.organizationID === undefined) {
-            throw new runtime.RequiredError('organizationID','Required parameter requestParameters.organizationID was null or undefined when calling apiV1OrganizationsOrganizationIDRegionsRegionIDImagesPost.');
-        }
-
-        if (requestParameters.regionID === null || requestParameters.regionID === undefined) {
-            throw new runtime.RequiredError('regionID','Required parameter requestParameters.regionID was null or undefined when calling apiV1OrganizationsOrganizationIDRegionsRegionIDImagesPost.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v1/organizations/{organizationID}/regions/{regionID}/images`.replace(`{${"organizationID"}}`, encodeURIComponent(String(requestParameters.organizationID))).replace(`{${"regionID"}}`, encodeURIComponent(String(requestParameters.regionID))),
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: ImageCreateToJSON(requestParameters.imageCreate),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => ImageFromJSON(jsonValue));
-    }
-
-    /**
-     * Create a compute image from a public URL.  Only raw images are supported, other container formats such as qcow2 must be first converted to a raw image.
-     * Create a compute image from a disk image URL.
-     */
-    async apiV1OrganizationsOrganizationIDRegionsRegionIDImagesPost(requestParameters: ApiV1OrganizationsOrganizationIDRegionsRegionIDImagesPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Image> {
-        const response = await this.apiV1OrganizationsOrganizationIDRegionsRegionIDImagesPostRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
      * List security groups.
      */
     async apiV1OrganizationsOrganizationIDSecuritygroupsGetRaw(requestParameters: ApiV1OrganizationsOrganizationIDSecuritygroupsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SecurityGroupRead>>> {
@@ -1806,12 +1611,15 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
-     * Delete a storage.
-     * Delete file storage
+     * Idempotent interface for removing external references from a resource. 
      */
-    async apiV2FilestorageFilestorageIDDeleteRaw(requestParameters: ApiV2FilestorageFilestorageIDDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
-        if (requestParameters.filestorageID === null || requestParameters.filestorageID === undefined) {
-            throw new runtime.RequiredError('filestorageID','Required parameter requestParameters.filestorageID was null or undefined when calling apiV2FilestorageFilestorageIDDelete.');
+    async apiV2NetworksNetworkIDReferencesReferenceDeleteRaw(requestParameters: ApiV2NetworksNetworkIDReferencesReferenceDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters.networkID === null || requestParameters.networkID === undefined) {
+            throw new runtime.RequiredError('networkID','Required parameter requestParameters.networkID was null or undefined when calling apiV2NetworksNetworkIDReferencesReferenceDelete.');
+        }
+
+        if (requestParameters.reference === null || requestParameters.reference === undefined) {
+            throw new runtime.RequiredError('reference','Required parameter requestParameters.reference was null or undefined when calling apiV2NetworksNetworkIDReferencesReferenceDelete.');
         }
 
         const queryParameters: any = {};
@@ -1824,7 +1632,7 @@ export class DefaultApi extends runtime.BaseAPI {
         }
 
         const response = await this.request({
-            path: `/api/v2/filestorage/{filestorageID}`.replace(`{${"filestorageID"}}`, encodeURIComponent(String(requestParameters.filestorageID))),
+            path: `/api/v2/networks/{networkID}/references/{reference}`.replace(`{${"networkID"}}`, encodeURIComponent(String(requestParameters.networkID))).replace(`{${"reference"}}`, encodeURIComponent(String(requestParameters.reference))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -1834,268 +1642,22 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
-     * Delete a storage.
-     * Delete file storage
+     * Idempotent interface for removing external references from a resource. 
      */
-    async apiV2FilestorageFilestorageIDDelete(requestParameters: ApiV2FilestorageFilestorageIDDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.apiV2FilestorageFilestorageIDDeleteRaw(requestParameters, initOverrides);
+    async apiV2NetworksNetworkIDReferencesReferenceDelete(requestParameters: ApiV2NetworksNetworkIDReferencesReferenceDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.apiV2NetworksNetworkIDReferencesReferenceDeleteRaw(requestParameters, initOverrides);
     }
 
     /**
-     * Get all storage information this ID.
-     * Get file storage
+     * Idempotent interface for adding external references to a resource. 
      */
-    async apiV2FilestorageFilestorageIDGetRaw(requestParameters: ApiV2FilestorageFilestorageIDGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StorageV2Read>> {
-        if (requestParameters.filestorageID === null || requestParameters.filestorageID === undefined) {
-            throw new runtime.RequiredError('filestorageID','Required parameter requestParameters.filestorageID was null or undefined when calling apiV2FilestorageFilestorageIDGet.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v2/filestorage/{filestorageID}`.replace(`{${"filestorageID"}}`, encodeURIComponent(String(requestParameters.filestorageID))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => StorageV2ReadFromJSON(jsonValue));
-    }
-
-    /**
-     * Get all storage information this ID.
-     * Get file storage
-     */
-    async apiV2FilestorageFilestorageIDGet(requestParameters: ApiV2FilestorageFilestorageIDGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<StorageV2Read> {
-        const response = await this.apiV2FilestorageFilestorageIDGetRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Update this storage.
-     * Update file storage
-     */
-    async apiV2FilestorageFilestorageIDPutRaw(requestParameters: ApiV2FilestorageFilestorageIDPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StorageV2Read>> {
-        if (requestParameters.filestorageID === null || requestParameters.filestorageID === undefined) {
-            throw new runtime.RequiredError('filestorageID','Required parameter requestParameters.filestorageID was null or undefined when calling apiV2FilestorageFilestorageIDPut.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v2/filestorage/{filestorageID}`.replace(`{${"filestorageID"}}`, encodeURIComponent(String(requestParameters.filestorageID))),
-            method: 'PUT',
-            headers: headerParameters,
-            query: queryParameters,
-            body: StorageV2UpdateToJSON(requestParameters.storageV2Update),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => StorageV2ReadFromJSON(jsonValue));
-    }
-
-    /**
-     * Update this storage.
-     * Update file storage
-     */
-    async apiV2FilestorageFilestorageIDPut(requestParameters: ApiV2FilestorageFilestorageIDPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<StorageV2Read> {
-        const response = await this.apiV2FilestorageFilestorageIDPutRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * List storage for project.
-     * List file storage
-     */
-    async apiV2FilestorageGetRaw(requestParameters: ApiV2FilestorageGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<StorageV2Read>>> {
-        const queryParameters: any = {};
-
-        if (requestParameters.tag) {
-            queryParameters['tag'] = requestParameters.tag.join(runtime.COLLECTION_FORMATS["csv"]);
-        }
-
-        if (requestParameters.organizationID) {
-            queryParameters['organizationID'] = requestParameters.organizationID;
-        }
-
-        if (requestParameters.projectID) {
-            queryParameters['projectID'] = requestParameters.projectID;
-        }
-
-        if (requestParameters.regionID) {
-            queryParameters['regionID'] = requestParameters.regionID;
-        }
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v2/filestorage`,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(StorageV2ReadFromJSON));
-    }
-
-    /**
-     * List storage for project.
-     * List file storage
-     */
-    async apiV2FilestorageGet(requestParameters: ApiV2FilestorageGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<StorageV2Read>> {
-        const response = await this.apiV2FilestorageGetRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Create a new storage.
-     * Create file storage
-     */
-    async apiV2FilestoragePostRaw(requestParameters: ApiV2FilestoragePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<StorageV2Read>> {
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v2/filestorage`,
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: StorageV2CreateToJSON(requestParameters.storageV2Create),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => StorageV2ReadFromJSON(jsonValue));
-    }
-
-    /**
-     * Create a new storage.
-     * Create file storage
-     */
-    async apiV2FilestoragePost(requestParameters: ApiV2FilestoragePostRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<StorageV2Read> {
-        const response = await this.apiV2FilestoragePostRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * List storage classes.
-     * List file storage classes
-     */
-    async apiV2FilestorageclassesGetRaw(requestParameters: ApiV2FilestorageclassesGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<StorageClassV2Read>>> {
-        const queryParameters: any = {};
-
-        if (requestParameters.regionID) {
-            queryParameters['regionID'] = requestParameters.regionID;
-        }
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v2/filestorageclasses`,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(StorageClassV2ReadFromJSON));
-    }
-
-    /**
-     * List storage classes.
-     * List file storage classes
-     */
-    async apiV2FilestorageclassesGet(requestParameters: ApiV2FilestorageclassesGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<StorageClassV2Read>> {
-        const response = await this.apiV2FilestorageclassesGetRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * List networks.
-     * List networks
-     */
-    async apiV2NetworksGetRaw(requestParameters: ApiV2NetworksGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<NetworkV2Read>>> {
-        const queryParameters: any = {};
-
-        if (requestParameters.tag) {
-            queryParameters['tag'] = requestParameters.tag.join(runtime.COLLECTION_FORMATS["csv"]);
-        }
-
-        if (requestParameters.organizationID) {
-            queryParameters['organizationID'] = requestParameters.organizationID;
-        }
-
-        if (requestParameters.projectID) {
-            queryParameters['projectID'] = requestParameters.projectID;
-        }
-
-        if (requestParameters.regionID) {
-            queryParameters['regionID'] = requestParameters.regionID;
-        }
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v2/networks`,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(NetworkV2ReadFromJSON));
-    }
-
-    /**
-     * List networks.
-     * List networks
-     */
-    async apiV2NetworksGet(requestParameters: ApiV2NetworksGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<NetworkV2Read>> {
-        const response = await this.apiV2NetworksGetRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Delete a network.
-     * Delete network
-     */
-    async apiV2NetworksNetworkIDDeleteRaw(requestParameters: ApiV2NetworksNetworkIDDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async apiV2NetworksNetworkIDReferencesReferencePutRaw(requestParameters: ApiV2NetworksNetworkIDReferencesReferencePutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         if (requestParameters.networkID === null || requestParameters.networkID === undefined) {
-            throw new runtime.RequiredError('networkID','Required parameter requestParameters.networkID was null or undefined when calling apiV2NetworksNetworkIDDelete.');
+            throw new runtime.RequiredError('networkID','Required parameter requestParameters.networkID was null or undefined when calling apiV2NetworksNetworkIDReferencesReferencePut.');
+        }
+
+        if (requestParameters.reference === null || requestParameters.reference === undefined) {
+            throw new runtime.RequiredError('reference','Required parameter requestParameters.reference was null or undefined when calling apiV2NetworksNetworkIDReferencesReferencePut.');
         }
 
         const queryParameters: any = {};
@@ -2108,8 +1670,8 @@ export class DefaultApi extends runtime.BaseAPI {
         }
 
         const response = await this.request({
-            path: `/api/v2/networks/{networkID}`.replace(`{${"networkID"}}`, encodeURIComponent(String(requestParameters.networkID))),
-            method: 'DELETE',
+            path: `/api/v2/networks/{networkID}/references/{reference}`.replace(`{${"networkID"}}`, encodeURIComponent(String(requestParameters.networkID))).replace(`{${"reference"}}`, encodeURIComponent(String(requestParameters.reference))),
+            method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
         }, initOverrides);
@@ -2118,326 +1680,10 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
-     * Delete a network.
-     * Delete network
+     * Idempotent interface for adding external references to a resource. 
      */
-    async apiV2NetworksNetworkIDDelete(requestParameters: ApiV2NetworksNetworkIDDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.apiV2NetworksNetworkIDDeleteRaw(requestParameters, initOverrides);
-    }
-
-    /**
-     * Get a network.
-     * Get network
-     */
-    async apiV2NetworksNetworkIDGetRaw(requestParameters: ApiV2NetworksNetworkIDGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<NetworkV2Read>> {
-        if (requestParameters.networkID === null || requestParameters.networkID === undefined) {
-            throw new runtime.RequiredError('networkID','Required parameter requestParameters.networkID was null or undefined when calling apiV2NetworksNetworkIDGet.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v2/networks/{networkID}`.replace(`{${"networkID"}}`, encodeURIComponent(String(requestParameters.networkID))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => NetworkV2ReadFromJSON(jsonValue));
-    }
-
-    /**
-     * Get a network.
-     * Get network
-     */
-    async apiV2NetworksNetworkIDGet(requestParameters: ApiV2NetworksNetworkIDGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<NetworkV2Read> {
-        const response = await this.apiV2NetworksNetworkIDGetRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Update a network.
-     * Update network
-     */
-    async apiV2NetworksNetworkIDPutRaw(requestParameters: ApiV2NetworksNetworkIDPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<NetworkV2Read>> {
-        if (requestParameters.networkID === null || requestParameters.networkID === undefined) {
-            throw new runtime.RequiredError('networkID','Required parameter requestParameters.networkID was null or undefined when calling apiV2NetworksNetworkIDPut.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v2/networks/{networkID}`.replace(`{${"networkID"}}`, encodeURIComponent(String(requestParameters.networkID))),
-            method: 'PUT',
-            headers: headerParameters,
-            query: queryParameters,
-            body: NetworkV2UpdateToJSON(requestParameters.networkV2Update),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => NetworkV2ReadFromJSON(jsonValue));
-    }
-
-    /**
-     * Update a network.
-     * Update network
-     */
-    async apiV2NetworksNetworkIDPut(requestParameters: ApiV2NetworksNetworkIDPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<NetworkV2Read> {
-        const response = await this.apiV2NetworksNetworkIDPutRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Create a new network.
-     * Create network
-     */
-    async apiV2NetworksPostRaw(requestParameters: ApiV2NetworksPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<NetworkV2Read>> {
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v2/networks`,
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: NetworkV2CreateToJSON(requestParameters.networkV2Create),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => NetworkV2ReadFromJSON(jsonValue));
-    }
-
-    /**
-     * Create a new network.
-     * Create network
-     */
-    async apiV2NetworksPost(requestParameters: ApiV2NetworksPostRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<NetworkV2Read> {
-        const response = await this.apiV2NetworksPostRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * List security groups.
-     * List security groups
-     */
-    async apiV2SecuritygroupsGetRaw(requestParameters: ApiV2SecuritygroupsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SecurityGroupV2Read>>> {
-        const queryParameters: any = {};
-
-        if (requestParameters.tag) {
-            queryParameters['tag'] = requestParameters.tag.join(runtime.COLLECTION_FORMATS["csv"]);
-        }
-
-        if (requestParameters.organizationID) {
-            queryParameters['organizationID'] = requestParameters.organizationID;
-        }
-
-        if (requestParameters.projectID) {
-            queryParameters['projectID'] = requestParameters.projectID;
-        }
-
-        if (requestParameters.regionID) {
-            queryParameters['regionID'] = requestParameters.regionID;
-        }
-
-        if (requestParameters.networkID) {
-            queryParameters['networkID'] = requestParameters.networkID;
-        }
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v2/securitygroups`,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SecurityGroupV2ReadFromJSON));
-    }
-
-    /**
-     * List security groups.
-     * List security groups
-     */
-    async apiV2SecuritygroupsGet(requestParameters: ApiV2SecuritygroupsGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<SecurityGroupV2Read>> {
-        const response = await this.apiV2SecuritygroupsGetRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Create a new security group.
-     * Create security group
-     */
-    async apiV2SecuritygroupsPostRaw(requestParameters: ApiV2SecuritygroupsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SecurityGroupV2Read>> {
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v2/securitygroups`,
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: SecurityGroupV2CreateToJSON(requestParameters.securityGroupV2Create),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => SecurityGroupV2ReadFromJSON(jsonValue));
-    }
-
-    /**
-     * Create a new security group.
-     * Create security group
-     */
-    async apiV2SecuritygroupsPost(requestParameters: ApiV2SecuritygroupsPostRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SecurityGroupV2Read> {
-        const response = await this.apiV2SecuritygroupsPostRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Delete a security groups.
-     * Delete security group
-     */
-    async apiV2SecuritygroupsSecurityGroupIDDeleteRaw(requestParameters: ApiV2SecuritygroupsSecurityGroupIDDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
-        if (requestParameters.securityGroupID === null || requestParameters.securityGroupID === undefined) {
-            throw new runtime.RequiredError('securityGroupID','Required parameter requestParameters.securityGroupID was null or undefined when calling apiV2SecuritygroupsSecurityGroupIDDelete.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v2/securitygroups/{securityGroupID}`.replace(`{${"securityGroupID"}}`, encodeURIComponent(String(requestParameters.securityGroupID))),
-            method: 'DELETE',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.VoidApiResponse(response);
-    }
-
-    /**
-     * Delete a security groups.
-     * Delete security group
-     */
-    async apiV2SecuritygroupsSecurityGroupIDDelete(requestParameters: ApiV2SecuritygroupsSecurityGroupIDDeleteRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.apiV2SecuritygroupsSecurityGroupIDDeleteRaw(requestParameters, initOverrides);
-    }
-
-    /**
-     * Get a security group.
-     * Get security group
-     */
-    async apiV2SecuritygroupsSecurityGroupIDGetRaw(requestParameters: ApiV2SecuritygroupsSecurityGroupIDGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SecurityGroupV2Read>> {
-        if (requestParameters.securityGroupID === null || requestParameters.securityGroupID === undefined) {
-            throw new runtime.RequiredError('securityGroupID','Required parameter requestParameters.securityGroupID was null or undefined when calling apiV2SecuritygroupsSecurityGroupIDGet.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v2/securitygroups/{securityGroupID}`.replace(`{${"securityGroupID"}}`, encodeURIComponent(String(requestParameters.securityGroupID))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => SecurityGroupV2ReadFromJSON(jsonValue));
-    }
-
-    /**
-     * Get a security group.
-     * Get security group
-     */
-    async apiV2SecuritygroupsSecurityGroupIDGet(requestParameters: ApiV2SecuritygroupsSecurityGroupIDGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SecurityGroupV2Read> {
-        const response = await this.apiV2SecuritygroupsSecurityGroupIDGetRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Update a security group.
-     * Update security group
-     */
-    async apiV2SecuritygroupsSecurityGroupIDPutRaw(requestParameters: ApiV2SecuritygroupsSecurityGroupIDPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SecurityGroupV2Read>> {
-        if (requestParameters.securityGroupID === null || requestParameters.securityGroupID === undefined) {
-            throw new runtime.RequiredError('securityGroupID','Required parameter requestParameters.securityGroupID was null or undefined when calling apiV2SecuritygroupsSecurityGroupIDPut.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        if (this.configuration && this.configuration.accessToken) {
-            // oauth required
-            headerParameters["Authorization"] = await this.configuration.accessToken("oauth2Authentication", []);
-        }
-
-        const response = await this.request({
-            path: `/api/v2/securitygroups/{securityGroupID}`.replace(`{${"securityGroupID"}}`, encodeURIComponent(String(requestParameters.securityGroupID))),
-            method: 'PUT',
-            headers: headerParameters,
-            query: queryParameters,
-            body: SecurityGroupV2UpdateToJSON(requestParameters.securityGroupV2Update),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => SecurityGroupV2ReadFromJSON(jsonValue));
-    }
-
-    /**
-     * Update a security group.
-     * Update security group
-     */
-    async apiV2SecuritygroupsSecurityGroupIDPut(requestParameters: ApiV2SecuritygroupsSecurityGroupIDPutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SecurityGroupV2Read> {
-        const response = await this.apiV2SecuritygroupsSecurityGroupIDPutRaw(requestParameters, initOverrides);
-        return await response.value();
+    async apiV2NetworksNetworkIDReferencesReferencePut(requestParameters: ApiV2NetworksNetworkIDReferencesReferencePutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.apiV2NetworksNetworkIDReferencesReferencePutRaw(requestParameters, initOverrides);
     }
 
     /**
@@ -2913,6 +2159,32 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async apiV2ServersServerIDStopPost(requestParameters: ApiV2ServersServerIDStopPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.apiV2ServersServerIDStopPostRaw(requestParameters, initOverrides);
+    }
+
+    /**
+     * Reads the OIDC discovery page identifying authorization servers.
+     */
+    async wellKnownOpenidProtectedResourceGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<OpenidProtectedResource>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/.well-known/openid-protected-resource`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => OpenidProtectedResourceFromJSON(jsonValue));
+    }
+
+    /**
+     * Reads the OIDC discovery page identifying authorization servers.
+     */
+    async wellKnownOpenidProtectedResourceGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<OpenidProtectedResource> {
+        const response = await this.wellKnownOpenidProtectedResourceGetRaw(initOverrides);
+        return await response.value();
     }
 
 }

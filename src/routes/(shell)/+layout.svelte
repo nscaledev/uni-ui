@@ -10,8 +10,6 @@
 
 	let { data, children }: Props = $props();
 
-	import { AppBar, Avatar, Modal, Popover, Toaster } from '@skeletonlabs/skeleton-svelte';
-
 	/* Required for OpenTelemetry */
 	import { Resource } from '@opentelemetry/resources';
 	import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
@@ -22,148 +20,68 @@
 			[SemanticResourceAttributes.SERVICE_NAME]: 'unikorn-ui'
 		})
 	});
-
 	provider.register();
 
-	import { logout } from '$lib/credentials';
-	import { toaster } from '$lib/toaster';
-	import Logo from '$lib/logos/Logo.svelte';
+	import Toast from '$lib/primitives/Toast.svelte';
+	import Spinner from '$lib/primitives/Spinner.svelte';
+	import Brand from '$lib/shell/Brand.svelte';
 	import SideBar from '$lib/shell/SideBar.svelte';
+	import Header from '$lib/shell/Header.svelte';
+	import Tweaks from '$lib/shell/Tweaks.svelte';
 
-	/* Loading spinner */
 	let loading = $state(false);
-
 	beforeNavigate(() => (loading = true));
 	afterNavigate(() => (loading = false));
-
-	/* Side menu */
-	let drawerOpen = $state(false);
-
-	/* User preferences dropdown */
-	let preferencesOpen = $state(false);
-
-	/* Profile data */
-	let email = $derived(data.profile.email);
-
-	let name = $derived.by(() => {
-		if (data.profile.given_name && data.profile.family_name) {
-			return data.profile.given_name + ' ' + data.profile.family_name;
-		} else if (data.profile.name) {
-			return data.profile.name;
-		}
-
-		return '?';
-	});
-
-	let picture = $derived(data.profile.picture);
 </script>
 
 {#if loading}
-	<div
-		class="bg-transparent absolute h-screen w-screen z-10 backdrop-blur flex items-center justify-center"
-		in:fade={{ duration: 1000 }}
-		out:fade={{ duration: 200 }}
-	>
-		<iconify-icon icon="svg-spinners:bars-scale-fade" class="text-primary-600-400 text-5xl">
-		</iconify-icon>
+	<div class="loading-overlay" in:fade={{ duration: 1000 }} out:fade={{ duration: 200 }}>
+		<Spinner />
 	</div>
 {/if}
 
-<Toaster {toaster}></Toaster>
+<Toast />
 
-<div class="w-screen h-screen flex flex-col">
-	<AppBar background="bg-surface-50-950" border="border-b border-surface-200-800">
-		{#snippet lead()}
-			<div class="flex items-center gap-4">
-				<!-- Hamburger menu (mobile only) -->
-				<Modal
-					open={drawerOpen}
-					onOpenChange={(e) => (drawerOpen = e.open)}
-					contentBase="bg-surface-50-950 shadow-xl w-[320px] h-screen"
-					triggerBase="flex items-center"
-					positionerJustify="justify-start"
-					positionerAlign=""
-					positionerPadding=""
-					transitionsPositionerIn={{ x: -320, duration: 200 }}
-					transitionsPositionerOut={{ x: -320, duration: 200 }}
-				>
-					{#snippet trigger()}
-						<iconify-icon icon="material-symbols:menu" class="text-3xl lg:!hidden align-center"
-						></iconify-icon>
-					{/snippet}
-					{#snippet content()}
-						<SideBar
-							organizations={data.organizations}
-							organizationID={data.organizationID}
-							acl={data.acl}
-							onClicked={() => (drawerOpen = false)}
-						/>
-					{/snippet}
-				</Modal>
+<div class="shell">
+	<Brand />
 
-				<!-- Logo, crop to just the icon in responsive mode -->
-				<a href="/">
-					<div class="w-8 w-auto overflow-hidden">
-						<Logo class="h-8 w-auto" />
-					</div>
-				</a>
-			</div>
-		{/snippet}
+	<Header
+		profile={data.profile}
+		organizations={data.organizations}
+		organizationID={data.organizationID}
+		projects={data.projects}
+		projectID={data.projectID}
+	/>
 
-		{#snippet trail()}
-			<!-- User drop down -->
-			<Popover open={preferencesOpen} onOpenChange={(e) => (preferencesOpen = e.open)}>
-				{#snippet trigger()}
-					<Avatar
-						{name}
-						src={picture}
-						size="!w-10 !h-10"
-						font="text-md"
-						background="preset-filled-primary-500"
-						shadow="shadow-lg"
-					/>
-				{/snippet}
+	<SideBar organizations={data.organizations} organizationID={data.organizationID} acl={data.acl} />
 
-				{#snippet content()}
-					<div class="card bg-surface-50-950 shadow-lg p-4 flex flex-col gap-4">
-						<section class="flex gap-2 items-center">
-							<iconify-icon icon="mdi:perm-identity" class="text-2xl text-primary-600-400"
-							></iconify-icon>
-							{email}
-						</section>
-
-						<hr class="!border-t-1 border-surface-200-800" />
-
-						<button
-							class="btn hover:preset-tonal-primary justify-start"
-							onclick={logout}
-							onkeypress={logout}
-						>
-							<div class="flex gap-2 items-center">
-								<iconify-icon icon="material-symbols:logout" class="text-2xl text-primary-600-400"
-								></iconify-icon>
-								Logout
-							</div>
-						</button>
-					</div>
-				{/snippet}
-			</Popover>
-		{/snippet}
-	</AppBar>
-
-	<div class="w-full h-full flex overflow-hidden bg-surface-100-900/10">
-		<div class="hidden lg:block lg:w-[320px] overflow-y-auto min-h-full">
-			<SideBar
-				organizations={data.organizations}
-				organizationID={data.organizationID}
-				acl={data.acl}
-			/>
-		</div>
-
-		<div class="flex-1 overflow-y-auto flex flex-col shadow-inner">
-			<main class="p-4 lg:px-16 lg:py-8 w-full mx-auto flex flex-col gap-8">
-				{@render children?.()}
-			</main>
-		</div>
-	</div>
+	<main class="main">
+		{@render children?.()}
+	</main>
 </div>
+
+<Tweaks />
+
+<style>
+	.shell {
+		display: grid;
+		grid-template-columns: 240px 1fr;
+		grid-template-rows: 52px 1fr;
+		grid-template-areas: 'brand header' 'sidebar main';
+		width: 100vw;
+		height: 100vh;
+		overflow: hidden;
+		background: var(--bg-0);
+	}
+
+	.loading-overlay {
+		position: fixed;
+		inset: 0;
+		z-index: 500;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		backdrop-filter: blur(4px);
+		background: rgba(0, 0, 0, 0.2);
+	}
+</style>

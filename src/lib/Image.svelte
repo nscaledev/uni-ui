@@ -1,9 +1,8 @@
 <script lang="ts">
-	import * as Region from '$lib/openapi/region';
 	import * as Compute from '$lib/openapi/compute';
 
 	interface Props {
-		image?: Region.Image;
+		image?: Compute.Image;
 		selector?: Compute.ImageSelector;
 	}
 
@@ -12,49 +11,27 @@
 	let distro = $derived(image?.spec.os.distro || selector?.distro);
 	let variant = $derived(image?.spec.os.variant || selector?.variant);
 	let version = $derived(image?.spec.os.version || selector?.version);
-	let family = $derived(image?.spec.os.family);
-	let kernel = $derived(image?.spec.os.kernel);
-
-	function getIcon(): string {
-		if (!distro) return 'mdi:question-mark';
-
-		switch (distro) {
-			case Region.OsDistro.Rocky:
-				return 'logos:rocky-linux';
-			case Region.OsDistro.Ubuntu:
-				return 'logos:ubuntu';
-		}
-
-		switch (family) {
-			case Region.OsFamily.Redhat:
-				return 'logos:redhat';
-			case Region.OsFamily.Debian:
-				return 'logos:debian';
-		}
-
-		switch (kernel) {
-			case Region.OsKernel.Linux:
-				return 'logos:linux';
-		}
-
-		return 'mdi:question-mark';
-	}
 
 	function toTitleCase(word: string): string {
 		return word.charAt(0).toUpperCase() + word.slice(1);
 	}
+
+	let label = $derived.by(() => {
+		if (!distro || !version) return null;
+		const parts = [toTitleCase(distro)];
+		if (variant) parts.push(toTitleCase(variant));
+		parts.push(version);
+		return parts.join(' ');
+	});
 </script>
 
-{#if distro && version}
-	<div class="flex items-center gap-2">
-		<iconify-icon class="pr-1 text-2xl" icon={getIcon()}></iconify-icon>
-
-		{toTitleCase(distro)}
-
-		{#if variant}
-			{toTitleCase(variant)}
-		{/if}
-
-		{version}
-	</div>
+{#if label}
+	<span class="image-label">{label}</span>
 {/if}
+
+<style>
+	.image-label {
+		font-size: 12px;
+		color: var(--text-1);
+	}
+</style>

@@ -13,18 +13,6 @@
  */
 
 import { exists, mapValues } from '../runtime';
-import type { OsDistro } from './OsDistro';
-import {
-    OsDistroFromJSON,
-    OsDistroFromJSONTyped,
-    OsDistroToJSON,
-} from './OsDistro';
-import type { OsFamily } from './OsFamily';
-import {
-    OsFamilyFromJSON,
-    OsFamilyFromJSONTyped,
-    OsFamilyToJSON,
-} from './OsFamily';
 import type { OsKernel } from './OsKernel';
 import {
     OsKernelFromJSON,
@@ -45,17 +33,17 @@ export interface ImageOS {
      */
     kernel: OsKernel;
     /**
-     * 
-     * @type {OsFamily}
+     * A family of operating systems.  This typically defines the package format.
+     * @type {string}
      * @memberof ImageOS
      */
-    family: OsFamily;
+    family: string;
     /**
-     * 
-     * @type {OsDistro}
+     * A distribution name.
+     * @type {string}
      * @memberof ImageOS
      */
-    distro: OsDistro;
+    distro: string;
     /**
      * A free form variant e.g. desktop/server.
      * @type {string}
@@ -100,8 +88,8 @@ export function ImageOSFromJSONTyped(json: any, ignoreDiscriminator: boolean): I
     return {
         
         'kernel': OsKernelFromJSON(json['kernel']),
-        'family': OsFamilyFromJSON(json['family']),
-        'distro': OsDistroFromJSON(json['distro']),
+        'family': json['family'],
+        'distro': json['distro'],
         'variant': !exists(json, 'variant') ? undefined : json['variant'],
         'codename': !exists(json, 'codename') ? undefined : json['codename'],
         'version': json['version'],
@@ -118,8 +106,8 @@ export function ImageOSToJSON(value?: ImageOS | null): any {
     return {
         
         'kernel': OsKernelToJSON(value.kernel),
-        'family': OsFamilyToJSON(value.family),
-        'distro': OsDistroToJSON(value.distro),
+        'family': value.family,
+        'distro': value.distro,
         'variant': value.variant,
         'codename': value.codename,
         'version': value.version,

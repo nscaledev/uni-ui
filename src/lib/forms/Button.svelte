@@ -1,36 +1,36 @@
 <script lang="ts">
+	import Icon from '$lib/primitives/Icon.svelte';
+
 	interface Props {
 		icon: string;
-		label: string;
+		label?: string;
 		disabled?: boolean;
 		href?: string;
 		clicked?: () => void;
-		[key: string]: any;
+		class?: string;
 	}
 
-	let { icon, label, disabled = $bindable(), href, clicked, ...props }: Props = $props();
+	let {
+		icon,
+		label,
+		disabled = $bindable(false),
+		href,
+		clicked,
+		class: cls = ''
+	}: Props = $props();
 </script>
 
 {#snippet content()}
-	<iconify-icon {icon} class="text-2xl"></iconify-icon>
-	{#if label}
-		<div>{label}</div>
-	{/if}
+	<Icon name={icon} size={16} />
+	{#if label}<span>{label}</span>{/if}
 {/snippet}
 
-{#if href}
-	<a {href}>
-		<div class="btn flex gap-2 items-center {props.class || ''}">
-			{@render content()}
-		</div>
+{#if href && !disabled}
+	<a {href} class="btn {cls}">
+		{@render content()}
 	</a>
-{:else if clicked}
-	<button
-		class="btn flex gap-2 items-center {props.class || ''}"
-		{disabled}
-		onclick={clicked}
-		onkeypress={clicked}
-	>
+{:else}
+	<button class="btn {cls}" {disabled} onclick={clicked}>
 		{@render content()}
 	</button>
 {/if}

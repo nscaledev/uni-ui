@@ -1,4 +1,6 @@
 <script lang="ts">
+	import Icon from '$lib/primitives/Icon.svelte';
+
 	interface Props {
 		icon: string;
 		children?: import('svelte').Snippet;
@@ -8,6 +10,6 @@
 </script>
 
 <li>
-	<iconify-icon {icon}></iconify-icon>
+	<Icon name={icon} size={20} />
 	{@render children?.()}
 </li>

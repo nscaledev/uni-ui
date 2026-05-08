@@ -1,6 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export * from './Architecture';
+export * from './BearerMethod';
 export * from './ClusterManagerRead';
 export * from './ClusterManagerWrite';
 export * from './Flavor';
@@ -19,6 +20,8 @@ export * from './KubernetesClusterAutoUpgrade';
 export * from './KubernetesClusterAutoUpgradeDaysOfWeek';
 export * from './KubernetesClusterAutoUpgradeWindow';
 export * from './KubernetesClusterAutoscaling';
+export * from './KubernetesClusterControlPlane';
+export * from './KubernetesClusterFeatures';
 export * from './KubernetesClusterNetwork';
 export * from './KubernetesClusterRead';
 export * from './KubernetesClusterSpec';
@@ -26,9 +29,8 @@ export * from './KubernetesClusterWorkloadPool';
 export * from './KubernetesClusterWrite';
 export * from './MachinePool';
 export * from './ModelError';
+export * from './OpenidProtectedResource';
 export * from './OrganizationScopedResourceReadMetadata';
-export * from './OsDistro';
-export * from './OsFamily';
 export * from './OsKernel';
 export * from './ProjectScopedResourceReadMetadata';
 export * from './RegionFeatures';

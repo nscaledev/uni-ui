@@ -19,6 +19,7 @@
  */
 export const ResourceProvisioningStatus = {
     Unknown: 'unknown',
+    Pending: 'pending',
     Provisioning: 'provisioning',
     Provisioned: 'provisioned',
     Deprovisioning: 'deprovisioning',

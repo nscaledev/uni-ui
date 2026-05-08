@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { ShellPageSettings } from '$lib/layouts/types.ts';
+	import PageHeader from '$lib/layouts/PageHeader.svelte';
 
 	interface Props {
 		settings: ShellPageSettings;
@@ -10,20 +11,13 @@
 	let { settings, tools, children }: Props = $props();
 </script>
 
-<div class="flex flex-col gap-4 lg:flex-row lg:jusify-between">
-	<div class="flex gap-4 grow">
-		<div class="flex flex-col gap-4">
-			<div class="flex gap-4 items-center">
-				{#if settings.icon}
-					<iconify-icon icon={settings.icon} class="text-6xl text-primary-600-400"></iconify-icon>
-				{/if}
-				<h1 class="text-3xl lg:text-5xl">{settings.name}</h1>
-			</div>
-			<p class="text-surface-700-300">{settings.description}</p>
-		</div>
-	</div>
-
-	<div class="self-start lg:self-end flex gap-4">
+<PageHeader
+	breadcrumb={[{ label: settings.feature }, { label: settings.name }]}
+	title={settings.name}
+	description={settings.description}
+>
+	{#snippet actions()}
 		{@render tools?.()}
-	</div>
-</div>
+		{@render children?.()}
+	{/snippet}
+</PageHeader>

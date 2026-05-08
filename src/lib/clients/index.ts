@@ -142,6 +142,21 @@ async function accessToken(fetchImpl?: typeof fetch): Promise<string> {
 	return tokens.token_type + ' ' + tokens.access_token;
 }
 
+function aggregate<T extends object>(apis: object[]): T {
+	return new Proxy({} as unknown as T, {
+		get(_, prop) {
+			for (const api of apis) {
+				if (prop in api) {
+					const value = (api as Record<string | symbol, unknown>)[prop];
+					return typeof value === 'function'
+						? (value as (...args: unknown[]) => unknown).bind(api)
+						: value;
+				}
+			}
+		}
+	});
+}
+
 // client gets a new initialized client with auth and any additional middlewares.
 export function kubernetes(fetchImpl?: typeof fetch): Kubernetes.DefaultApi {
 	const config = new Kubernetes.Configuration({
@@ -154,7 +169,13 @@ export function kubernetes(fetchImpl?: typeof fetch): Kubernetes.DefaultApi {
 	return new Kubernetes.DefaultApi(config);
 }
 
-export function compute(fetchImpl?: typeof fetch): Compute.DefaultApi {
+export function compute(
+	fetchImpl?: typeof fetch
+): Compute.DefaultApi &
+	Compute.FlavorsApi &
+	Compute.ImagesApi &
+	Compute.InstancesApi &
+	Compute.RegionsApi {
 	const config = new Compute.Configuration({
 		basePath: env.PUBLIC_COMPUTE_HOST,
 		accessToken: async () => accessToken(fetchImpl),
@@ -162,10 +183,25 @@ export function compute(fetchImpl?: typeof fetch): Compute.DefaultApi {
 		fetchApi: fetchImpl
 	});
 
-	return new Compute.DefaultApi(config);
+	return aggregate([
+		new Compute.DefaultApi(config),
+		new Compute.FlavorsApi(config),
+		new Compute.ImagesApi(config),
+		new Compute.InstancesApi(config),
+		new Compute.RegionsApi(config)
+	]);
 }
 
-export function identity(fetchImpl?: typeof fetch): Identity.DefaultApi {
+export function identity(
+	fetchImpl?: typeof fetch
+): Identity.DefaultApi &
+	Identity.GroupsApi &
+	Identity.OrganizationsApi &
+	Identity.ProjectsApi &
+	Identity.QuotasApi &
+	Identity.RolesApi &
+	Identity.ServiceAccountsApi &
+	Identity.UsersApi {
 	const config = new Identity.Configuration({
 		basePath: env.PUBLIC_IDENTITY_HOST,
 		accessToken: async () => accessToken(fetchImpl),
@@ -173,10 +209,28 @@ export function identity(fetchImpl?: typeof fetch): Identity.DefaultApi {
 		fetchApi: fetchImpl
 	});
 
-	return new Identity.DefaultApi(config);
+	return aggregate([
+		new Identity.DefaultApi(config),
+		new Identity.GroupsApi(config),
+		new Identity.OrganizationsApi(config),
+		new Identity.ProjectsApi(config),
+		new Identity.QuotasApi(config),
+		new Identity.RolesApi(config),
+		new Identity.ServiceAccountsApi(config),
+		new Identity.UsersApi(config)
+	]);
 }
 
-export function region(fetchImpl?: typeof fetch): Region.DefaultApi {
+export function region(
+	fetchImpl?: typeof fetch
+): Region.DefaultApi &
+	Region.FileStorageApi &
+	Region.FileStorageClassesApi &
+	Region.ImagesApi &
+	Region.LoadBalancersApi &
+	Region.NetworksApi &
+	Region.SSHCertificateAuthoritiesApi &
+	Region.SecurityGroupsApi {
 	const config = new Region.Configuration({
 		basePath: env.PUBLIC_REGION_HOST,
 		accessToken: async () => accessToken(fetchImpl),
@@ -184,7 +238,16 @@ export function region(fetchImpl?: typeof fetch): Region.DefaultApi {
 		fetchApi: fetchImpl
 	});
 
-	return new Region.DefaultApi(config);
+	return aggregate([
+		new Region.DefaultApi(config),
+		new Region.FileStorageApi(config),
+		new Region.FileStorageClassesApi(config),
+		new Region.ImagesApi(config),
+		new Region.LoadBalancersApi(config),
+		new Region.NetworksApi(config),
+		new Region.SSHCertificateAuthoritiesApi(config),
+		new Region.SecurityGroupsApi(config)
+	]);
 }
 
 // error is a generic fallback when an exception occurs, everything else should
