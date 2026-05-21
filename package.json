@@ -24,7 +24,7 @@
 	"devDependencies": {
 		"@playwright/test": "^1.56.1",
 		"@sveltejs/adapter-auto": "^3.0.0",
-		"@sveltejs/kit": "^2.57.1",
+		"@sveltejs/kit": "^2.60.1",
 		"@sveltejs/vite-plugin-svelte": "^4.0.0",
 		"@types/crypto-js": "^4.2.2",
 		"@types/eslint": "^8.56.0",
