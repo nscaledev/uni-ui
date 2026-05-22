@@ -164,7 +164,6 @@
 			title="Workload Pool Configuration"
 			columns={3}
 			items={resource.spec.workloadPools}
-			initialItem={0}
 			bind:active={workloadPoolActive}
 			valid={workloadPoolValidFull}
 			add={workloadPoolAdd}
