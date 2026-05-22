@@ -217,7 +217,10 @@
 							{RegionUtil.flag(data.regions, resource.spec.regionId)}
 							{RegionUtil.name(data.regions, resource.spec.regionId)}
 						</span>
-						<ShellListItemHeader metadata={resource.metadata} />
+						<ShellListItemHeader
+							metadata={resource.metadata}
+							href="/kubernetes/clusters/edit/{resource.metadata.id}"
+						/>
 					{/snippet}
 					{#snippet badges()}
 						<ShellListItemBadges
