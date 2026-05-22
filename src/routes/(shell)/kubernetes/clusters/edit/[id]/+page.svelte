@@ -222,34 +222,25 @@
 				/>
 				{#if resource.spec.autoUpgrade?.daysOfWeek}
 					<div class="time-windows">
-						<TimeWindow
-							title="Sunday"
-							onChange={(c, s, e) => autoUpgradeDayChange('sunday', c, s, e)}
-						/>
-						<TimeWindow
-							title="Monday"
-							onChange={(c, s, e) => autoUpgradeDayChange('monday', c, s, e)}
-						/>
-						<TimeWindow
-							title="Tuesday"
-							onChange={(c, s, e) => autoUpgradeDayChange('tuesday', c, s, e)}
-						/>
-						<TimeWindow
-							title="Wednesday"
-							onChange={(c, s, e) => autoUpgradeDayChange('wednesday', c, s, e)}
-						/>
-						<TimeWindow
-							title="Thursday"
-							onChange={(c, s, e) => autoUpgradeDayChange('thursday', c, s, e)}
-						/>
-						<TimeWindow
-							title="Friday"
-							onChange={(c, s, e) => autoUpgradeDayChange('friday', c, s, e)}
-						/>
-						<TimeWindow
-							title="Saturday"
-							onChange={(c, s, e) => autoUpgradeDayChange('saturday', c, s, e)}
-						/>
+						{#each ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as day (day)}
+							{@const existing =
+								data.cluster.spec.autoUpgrade?.daysOfWeek?.[
+									day as keyof Kubernetes.KubernetesClusterAutoUpgradeDaysOfWeek
+								]}
+							<TimeWindow
+								title={day.charAt(0).toUpperCase() + day.slice(1)}
+								checked={!!existing}
+								start={existing?.start}
+								end={existing?.end}
+								onChange={(c, s, e) =>
+									autoUpgradeDayChange(
+										day as keyof Kubernetes.KubernetesClusterAutoUpgradeDaysOfWeek,
+										c,
+										s,
+										e
+									)}
+							/>
+						{/each}
 					</div>
 				{/if}
 			{/if}
