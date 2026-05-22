@@ -38,7 +38,7 @@
 
 	let {
 		title,
-		titleClass = 'h2',
+		titleClass = 'form-section__title',
 		description,
 		columns,
 		items,
@@ -96,58 +96,53 @@
 	let style = $derived('grid-template-columns:' + ' max-content'.repeat(columns) + ' 1fr;');
 </script>
 
-<div class="rl-header">
-	<div class={titleClass}>{title}</div>
-	<Button icon="plus" label="Add" clicked={itemAdd} disabled={active} />
-</div>
+<div class="form-section">
+	<header class="rl-header">
+		<div class={titleClass}>{title}</div>
+		<Button icon="plus" label="Add" clicked={itemAdd} disabled={active} />
+	</header>
 
-{@render description?.()}
+	{@render description?.()}
 
-<div class="rl-list" {style}>
-	{#each items as item, index}
-		{#if activeItem == index}
-			<div class="rl-item rl-item--expanded col-span-full">
-				{@render expanded(item, index)}
+	<div class="rl-list" {style}>
+		{#each items as item, index}
+			{#if activeItem == index}
+				<div class="rl-item rl-item--expanded col-span-full">
+					{@render expanded(item, index)}
 
-				<div class="rl-item__actions">
-					<Button
-						icon="trash"
-						label="Delete"
-						class="btn--danger"
-						clicked={() => itemRemove(index)}
-					/>
-					<Button
-						icon="check"
-						label="Update"
-						class="btn--primary"
-						clicked={() => itemDeactivate(index)}
-						disabled={!valid}
-					/>
+					<div class="rl-item__actions">
+						<Button
+							icon="trash"
+							label="Delete"
+							class="btn--danger"
+							clicked={() => itemRemove(index)}
+						/>
+						<Button
+							icon="check"
+							label="Update"
+							class="btn--primary"
+							clicked={() => itemDeactivate(index)}
+							disabled={!valid}
+						/>
+					</div>
 				</div>
-			</div>
-		{:else}
-			<div class="rl-item col-span-full">
-				<div class="rl-item__content">
-					{@render normal(item, index)}
-				</div>
+			{:else}
+				<div class="rl-item col-span-full">
+					<div class="rl-item__content">
+						{@render normal(item, index)}
+					</div>
 
-				<div class="rl-item__controls">
-					<ButtonIcon icon="edit" clicked={() => itemActivate(index)} disabled={active} />
-					<ButtonIcon icon="trash" clicked={() => itemRemove(index)} disabled={active} />
+					<div class="rl-item__controls">
+						<ButtonIcon icon="edit" clicked={() => itemActivate(index)} disabled={active} />
+						<ButtonIcon icon="trash" clicked={() => itemRemove(index)} disabled={active} />
+					</div>
 				</div>
-			</div>
-		{/if}
-	{/each}
+			{/if}
+		{/each}
+	</div>
 </div>
 
 <style>
-	.rl-header {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		margin-bottom: 8px;
-	}
-
 	.rl-list {
 		display: flex;
 		flex-direction: column;
@@ -159,7 +154,7 @@
 		align-items: center;
 		gap: 12px;
 		padding: 12px 14px;
-		background: var(--bg-2);
+		background: var(--bg-1);
 		border: 1px solid var(--line);
 		border-radius: var(--r-md);
 		box-shadow: var(--shadow-inset);
