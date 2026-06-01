@@ -27,7 +27,7 @@
 		open = !open;
 	}
 
-	function onwindowpointerdown(e: PointerEvent) {
+	function onwindowclick(e: MouseEvent) {
 		if (open && !buttonEl?.contains(e.target as Node) && !menuEl?.contains(e.target as Node))
 			open = false;
 	}
@@ -37,7 +37,7 @@
 	}
 </script>
 
-<svelte:window onpointerdown={onwindowpointerdown} onscroll={onwindowscroll} />
+<svelte:window onclick={onwindowclick} onscroll={onwindowscroll} />
 
 <td class="col-actions">
 	<button

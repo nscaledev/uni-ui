@@ -21,18 +21,19 @@ export const load: LayoutLoad = async ({ fetch, depends }) => {
 	const token = getSessionData<InternalToken>('token');
 	const profile = getSessionData<OIDC.IDToken>('profile');
 
-	if (!token) {
+	if (!token || !profile) {
+		window.sessionStorage.removeItem('token');
+		window.sessionStorage.removeItem('profile');
 		window.sessionStorage.setItem('oidc_location', window.location.pathname);
 		redirect(307, '/oauth2/login');
 	}
 
-	if (!profile) {
-		error(500, 'OIDC ID token not set');
-	}
-
 	const organizations = await Clients.identity(fetch).apiV1OrganizationsGet();
 	if (organizations.length == 0) {
-		error(500, 'User is not a member of any organizations');
+		error(
+			403,
+			'You are not a member of any organizations. Contact your administrator to be added.'
+		);
 	}
 
 	let organizationID = window.localStorage.getItem('organization_id');

@@ -16,11 +16,13 @@
 		data.serviceAccounts.map((x) => ({ label: x.metadata.name, value: x.metadata.id }))
 	);
 	function submit() {
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const { subjects: _, ...spec } = resource.spec;
 		Clients.identity()
 			.apiV1OrganizationsOrganizationIDGroupsGroupidPut({
 				organizationID: data.organizationID,
 				groupid: data.group.metadata.id,
-				groupWrite: resource
+				groupWrite: { metadata: resource.metadata, spec }
 			})
 			.then(() => window.location.assign('/identity/groups'))
 			.catch((e: Error) => Clients.error(e));
