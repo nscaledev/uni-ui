@@ -65,6 +65,7 @@ tls:
   private: false
 
 ingress:
+  enabled: true
   # Sets the ingress class to use.
   class: ~
   # Cert Manager certificate issuer to use.  If not specified it will generate a self signed one.
