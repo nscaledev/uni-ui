@@ -59,6 +59,19 @@ describe('resolveChip', () => {
 		const op = { label: 'running', chipClass: 'ok' as const };
 		expect(resolveChip('error' as never, op)).toEqual({ label: 'error', chipClass: 'err' });
 	});
+
+	it('returns error chip when provisioned but healthStatus is error', () => {
+		const op = { label: 'pending', chipClass: 'info' as const };
+		expect(resolveChip('provisioned' as never, op, 'error' as never)).toEqual({
+			label: 'error',
+			chipClass: 'err'
+		});
+	});
+
+	it('returns operational status when provisioned and healthStatus is not error', () => {
+		const op = { label: 'running', chipClass: 'ok' as const };
+		expect(resolveChip('provisioned' as never, op, 'healthy' as never)).toEqual(op);
+	});
 });
 
 describe('fromPowerState', () => {

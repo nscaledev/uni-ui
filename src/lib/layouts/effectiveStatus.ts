@@ -13,14 +13,16 @@ export interface OperationalStatus {
  * Resolve the single effective status chip for a resource card.
  *
  * Priority:
- *   unknown / undefined  → null (suppress chip)
- *   error                → error chip
- *   provisioning states  → provisioning lifecycle chip
- *   provisioned          → operationalStatus if provided, else "provisioned"
+ *   unknown / undefined          → null (suppress chip)
+ *   error provisioningStatus     → error chip
+ *   provisioning states          → provisioning lifecycle chip
+ *   provisioned + error health   → error chip (e.g. Nova scheduling failure)
+ *   provisioned                  → operationalStatus if provided, else "provisioned"
  */
 export function resolveChip(
 	provisioningStatus: Identity.ResourceProvisioningStatus | undefined,
-	operationalStatus: OperationalStatus | null | undefined
+	operationalStatus: OperationalStatus | null | undefined,
+	healthStatus?: Identity.ResourceHealthStatus
 ): { label: string; chipClass: ChipClass } | null {
 	switch (provisioningStatus) {
 		case Identity.ResourceProvisioningStatus.Unknown:
@@ -35,6 +37,8 @@ export function resolveChip(
 		case Identity.ResourceProvisioningStatus.Deprovisioning:
 			return { label: 'deprovisioning', chipClass: 'warn' };
 		case Identity.ResourceProvisioningStatus.Provisioned:
+			if (healthStatus === Identity.ResourceHealthStatus.Error)
+				return { label: 'error', chipClass: 'err' };
 			return operationalStatus ?? { label: 'provisioned', chipClass: 'ok' };
 		default:
 			return { label: provisioningStatus, chipClass: 'muted' };
