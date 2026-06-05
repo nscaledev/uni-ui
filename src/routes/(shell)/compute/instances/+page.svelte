@@ -140,7 +140,8 @@
 	{#snippet tableRow(resource)}
 		{@const chip = resolveChip(
 			resource.metadata.provisioningStatus,
-			fromPowerState(resource.status.powerState)
+			fromPowerState(resource.status.powerState),
+			resource.metadata.healthStatus
 		)}
 		{@const proj = instanceProject(resource)}
 		<td class="primary">
