@@ -58,6 +58,10 @@ export function fromPowerState(
 			return { label: 'stopping', chipClass: 'warn' };
 		case Compute.InstanceLifecyclePhase.Pending:
 			return { label: 'pending', chipClass: 'info' };
+		case Compute.InstanceLifecyclePhase.Queued:
+			return { label: 'queued', chipClass: 'info' };
+		case Compute.InstanceLifecyclePhase.Building:
+			return { label: 'building', chipClass: 'info' };
 		default:
 			return null;
 	}
