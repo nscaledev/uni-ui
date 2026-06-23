@@ -19,6 +19,8 @@
  */
 export const InstanceLifecyclePhase = {
     Pending: 'Pending',
+    Queued: 'Queued',
+    Building: 'Building',
     Running: 'Running',
     Stopping: 'Stopping',
     Stopped: 'Stopped'
