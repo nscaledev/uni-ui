@@ -11,16 +11,17 @@
 	let { data, children }: Props = $props();
 
 	/* Required for OpenTelemetry */
-	import { Resource } from '@opentelemetry/resources';
+	import { trace } from '@opentelemetry/api';
+	import { resourceFromAttributes } from '@opentelemetry/resources';
 	import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
 	import { BasicTracerProvider } from '@opentelemetry/sdk-trace-base';
 
 	const provider = new BasicTracerProvider({
-		resource: new Resource({
+		resource: resourceFromAttributes({
 			[SemanticResourceAttributes.SERVICE_NAME]: 'unikorn-ui'
 		})
 	});
-	provider.register();
+	trace.setGlobalTracerProvider(provider);
 
 	import Toast from '$lib/primitives/Toast.svelte';
 	import Spinner from '$lib/primitives/Spinner.svelte';
