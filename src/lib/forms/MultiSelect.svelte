@@ -72,17 +72,19 @@
 				/>
 			</div>
 
-			<Combobox.Content class="menu ms-menu" sideOffset={4}>
-				{#if available.length}
-					{#each available as option}
-						<Combobox.Item value={option.value} label={option.label} class="menu__item">
-							{option.label}
-						</Combobox.Item>
-					{/each}
-				{:else}
-					<div class="ms-empty">No options</div>
-				{/if}
-			</Combobox.Content>
+			<Combobox.Portal>
+				<Combobox.Content class="menu ms-menu" sideOffset={4} align="start">
+					{#if available.length}
+						{#each available as option}
+							<Combobox.Item value={option.value} label={option.label} class="menu__item">
+								{option.label}
+							</Combobox.Item>
+						{/each}
+					{:else}
+						<div class="ms-empty">No options</div>
+					{/if}
+				</Combobox.Content>
+			</Combobox.Portal>
 		</Combobox.Root>
 	</div>
 </div>
@@ -177,10 +179,10 @@
 
 	/* Dropdown */
 	:global(.ms-menu) {
-		width: var(--bits-combobox-content-available-width, 100%);
+		width: var(--bits-floating-anchor-width);
 		max-height: 240px;
 		overflow-y: auto;
-		z-index: 50;
+		z-index: 200;
 	}
 
 	.ms-empty {
