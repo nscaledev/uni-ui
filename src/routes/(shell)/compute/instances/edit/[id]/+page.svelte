@@ -176,7 +176,7 @@
 				bind:value={resource.spec.sshCertificateAuthorityId}
 			>
 				<option value="">None</option>
-				{#each data.sshCertificateAuthorities as ca}<option value={ca.metadata.id}
+				{#each data.sshCertificateAuthorities as ca (ca.metadata.id)}<option value={ca.metadata.id}
 						>{ca.metadata.name}</option
 					>{/each}
 			</Select>

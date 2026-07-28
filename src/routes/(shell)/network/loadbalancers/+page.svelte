@@ -2,6 +2,7 @@
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { startAutoRefresh } from '$lib/loadutil';
 
 	let { data }: { data: PageData } = $props();
@@ -35,10 +36,8 @@
 
 	onMount(() => startAutoRefresh('layout:loadbalancers'));
 
-	// eslint-disable-next-line svelte/valid-compile
 	let createNetworkID = $state(data.networks[0]?.metadata.id);
 
-	const createURL = $derived(`/network/loadbalancers/create?networkID=${createNetworkID}`);
 	const skipPopup = $derived(data.networks.length === 1);
 
 	function lookupNetworkName(id: string): string {
@@ -100,7 +99,10 @@
 		{#if !data.networks.length}
 			<button class="btn btn--primary" disabled><Icon name="plus" size={16} /> Create</button>
 		{:else if skipPopup}
-			<a href={createURL} class="btn btn--primary"><Icon name="plus" size={16} /> Create</a>
+			<a
+				href={resolve(`/network/loadbalancers/create?networkID=${createNetworkID}`)}
+				class="btn btn--primary"><Icon name="plus" size={16} /> Create</a
+			>
 		{:else}
 			<PopupButton icon="plus" label="Create">
 				{#snippet contents(close)}
@@ -109,14 +111,17 @@
 						<div class="picker">
 							<Icon name="network" size={14} />
 							<select bind:value={createNetworkID}>
-								{#each data.networks as network}
+								{#each data.networks as network (network.metadata.id)}
 									<option value={network.metadata.id}>{network.metadata.name}</option>
 								{/each}
 							</select>
 						</div>
 						<div class="create-popup__footer">
 							<button onclick={close} class="btn btn--ghost btn--sm">Cancel</button>
-							<a href={createURL} class="btn btn--primary btn--sm">Continue</a>
+							<a
+								href={resolve(`/network/loadbalancers/create?networkID=${createNetworkID}`)}
+								class="btn btn--primary btn--sm">Continue</a
+							>
 						</div>
 					</div>
 				{/snippet}
@@ -126,7 +131,9 @@
 
 	{#snippet tableRow(resource)}
 		<td class="primary">
-			<a href="/network/loadbalancers/view/{resource.metadata.id}">{resource.metadata.name}</a>
+			<a href={resolve(`/network/loadbalancers/view/${resource.metadata.id}`)}
+				>{resource.metadata.name}</a
+			>
 			<div class="sub">{resource.metadata.id}</div>
 		</td>
 		<td>
@@ -148,10 +155,10 @@
 		<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
 		<RowMenu>
 			{#snippet menu()}
-				<a href="/network/loadbalancers/view/{resource.metadata.id}" class="menu__item">
+				<a href={resolve(`/network/loadbalancers/view/${resource.metadata.id}`)} class="menu__item">
 					<Icon name="eye" size={14} /> View
 				</a>
-				<a href="/network/loadbalancers/edit/{resource.metadata.id}" class="menu__item">
+				<a href={resolve(`/network/loadbalancers/edit/${resource.metadata.id}`)} class="menu__item">
 					<Icon name="edit" size={14} /> Edit
 				</a>
 				<ModalIcon
@@ -169,7 +176,7 @@
 
 	{#snippet list(loadBalancers)}
 		<ShellList>
-			{#each loadBalancers as resource}
+			{#each loadBalancers as resource (resource.metadata.id)}
 				<ShellListItem id={resource.metadata.id}>
 					{#snippet main()}
 						<span class="mono region-cell">
@@ -187,10 +194,16 @@
 					{/snippet}
 
 					{#snippet menu()}
-						<a href="/network/loadbalancers/view/{resource.metadata.id}" class="menu__item">
+						<a
+							href={resolve(`/network/loadbalancers/view/${resource.metadata.id}`)}
+							class="menu__item"
+						>
 							<Icon name="eye" size={14} /> View
 						</a>
-						<a href="/network/loadbalancers/edit/{resource.metadata.id}" class="menu__item">
+						<a
+							href={resolve(`/network/loadbalancers/edit/${resource.metadata.id}`)}
+							class="menu__item"
+						>
 							<Icon name="edit" size={14} /> Edit
 						</a>
 						<ModalIcon

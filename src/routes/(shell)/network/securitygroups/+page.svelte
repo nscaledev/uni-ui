@@ -2,6 +2,7 @@
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { startAutoRefresh } from '$lib/loadutil';
 	let { data }: { data: PageData } = $props();
 	import * as Clients from '$lib/clients';
@@ -29,11 +30,10 @@
 		icon: 'security'
 	};
 	onMount(() => startAutoRefresh('layout:securitygroups'));
-	// eslint-disable-next-line svelte/valid-compile
 	let createNetworkID = $state(data.networks[0]?.metadata.id);
 
-	const createURL = $derived(
-		`/network/securitygroups/create?networkID=${data.networks.length === 1 ? data.networks[0].metadata.id : createNetworkID}`
+	const createQuery = $derived(
+		`networkID=${data.networks.length === 1 ? data.networks[0].metadata.id : createNetworkID}`
 	);
 	const skipPopup = $derived(data.networks.length === 1);
 	const PROJECT_PALETTE = [
@@ -98,7 +98,9 @@
 		{@const chip = resolveChip(resource.metadata.provisioningStatus, null)}
 		{@const proj = securityGroupProject(resource)}
 		<td class="primary">
-			<a href="/network/securitygroups/edit/{resource.metadata.id}">{resource.metadata.name}</a>
+			<a href={resolve(`/network/securitygroups/edit/${resource.metadata.id}`)}
+				>{resource.metadata.name}</a
+			>
 			<div class="sub">{resource.metadata.id}</div>
 		</td>
 		<td>
@@ -141,7 +143,9 @@
 		{#if !data.projects.length || !data.networks.length}
 			<button class="btn btn--primary" disabled><Icon name="plus" size={16} /> Create</button>
 		{:else if skipPopup}
-			<a href={createURL} class="btn btn--primary"><Icon name="plus" size={16} /> Create</a>
+			<a href={resolve(`/network/securitygroups/create?${createQuery}`)} class="btn btn--primary"
+				><Icon name="plus" size={16} /> Create</a
+			>
 		{:else}
 			<PopupButton icon="plus" label="Create">
 				{#snippet contents(close)}
@@ -150,14 +154,17 @@
 						<div class="picker">
 							<Icon name="network" size={14} />
 							<select bind:value={createNetworkID}>
-								{#each data.networks as n}
+								{#each data.networks as n (n.metadata.id)}
 									<option value={n.metadata.id}>{n.metadata.name}</option>
 								{/each}
 							</select>
 						</div>
 						<div class="create-popup__footer">
 							<button onclick={close} class="btn btn--ghost btn--sm">Cancel</button>
-							<a href={createURL} class="btn btn--primary btn--sm">Continue</a>
+							<a
+								href={resolve(`/network/securitygroups/create?${createQuery}`)}
+								class="btn btn--primary btn--sm">Continue</a
+							>
 						</div>
 					</div>
 				{/snippet}
@@ -165,7 +172,7 @@
 		{/if}
 	{/snippet}
 	{#snippet list(groups)}<ShellList
-			>{#each groups as resource}<ShellListItem id={resource.metadata.id}>
+			>{#each groups as resource (resource.metadata.id)}<ShellListItem id={resource.metadata.id}>
 					{#snippet main()}
 						<span class="mono region-cell">
 							{RegionUtil.flag(data.regions, resource.status.regionId)}

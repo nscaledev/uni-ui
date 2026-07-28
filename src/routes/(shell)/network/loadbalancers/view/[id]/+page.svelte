@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
+	import { resolve } from '$app/paths';
 	import { startAutoRefresh } from '$lib/loadutil';
 
 	let { data }: { data: PageData } = $props();
@@ -50,7 +51,10 @@
 	description={data.loadBalancer.metadata.description || 'Load balancer details.'}
 >
 	{#snippet actions()}
-		<a href="/network/loadbalancers/edit/{data.loadBalancer.metadata.id}" class="btn btn--ghost">
+		<a
+			href={resolve(`/network/loadbalancers/edit/${data.loadBalancer.metadata.id}`)}
+			class="btn btn--ghost"
+		>
 			<Icon name="edit" size={14} /> Edit
 		</a>
 		<ModalIcon
@@ -109,7 +113,7 @@
 
 	<div class="listeners">
 		<div class="listeners__title">Listeners</div>
-		{#each data.loadBalancer.spec.listeners as listener}
+		{#each data.loadBalancer.spec.listeners as listener (listener.name)}
 			<LoadBalancerListenerV2 {listener} editable={false} />
 		{/each}
 	</div>

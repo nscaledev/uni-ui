@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import { resolve } from '$app/paths';
 	let { data }: { data: PageData } = $props();
 	import * as Clients from '$lib/clients';
 	import * as Identity from '$lib/openapi/identity';
@@ -31,7 +32,7 @@
 
 {#if serviceAccount}
 	<nav class="breadcrumb" aria-label="Breadcrumb">
-		<a href="/identity/serviceaccounts">Service Accounts</a>
+		<a href={resolve('/identity/serviceaccounts')}>Service Accounts</a>
 		<span class="sep">/</span>
 		<span>Token</span>
 	</nav>

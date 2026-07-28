@@ -10,7 +10,6 @@
 	import SecurityGroupRuleV2 from '$lib/SecurityGroupRuleV2.svelte';
 	import Icon from '$lib/primitives/Icon.svelte';
 	let names: Array<string> = [];
-	// eslint-disable-next-line svelte/valid-compile
 	const networkId = data.network.metadata.id;
 	let resource: Region.SecurityGroupV2Create = $state({
 		metadata: { name: '' },

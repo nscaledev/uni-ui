@@ -157,7 +157,7 @@
 				hint="Kubernetes provides backward compatibility guarantees — choosing the newest is usually right."
 				bind:value={resource.spec.version}
 			>
-				{#each versions as version}<option value={version}>{version}</option>{/each}
+				{#each versions as version (version)}<option value={version}>{version}</option>{/each}
 			</Select>
 		</ShellSection>
 		<ResourceList

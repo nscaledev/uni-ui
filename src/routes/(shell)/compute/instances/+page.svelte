@@ -2,6 +2,7 @@
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { startAutoRefresh } from '$lib/loadutil';
 	import { browser } from '$app/environment';
 	let { data }: { data: PageData } = $props();
@@ -32,14 +33,13 @@
 		icon: 'server'
 	};
 	onMount(() => startAutoRefresh('layout:instances'));
-	// eslint-disable-next-line svelte/valid-compile
 	let createNetworkID = $state(data.networks[0]?.metadata.id);
 
 	const createNetwork = $derived(
 		data.networks.length === 1 ? data.networks[0] : lookupNetwork(createNetworkID ?? '')
 	);
-	const createURL = $derived(
-		`/compute/instances/create?projectID=${createNetwork?.metadata.projectId}&regionID=${createNetwork?.status?.regionId}&networkID=${createNetwork?.metadata.id}`
+	const createQuery = $derived(
+		`projectID=${createNetwork?.metadata.projectId}&regionID=${createNetwork?.status?.regionId}&networkID=${createNetwork?.metadata.id}`
 	);
 	const skipPopup = $derived(data.networks.length === 1);
 	function lookupNetwork(id: string): Region.NetworkV2Read {
@@ -145,7 +145,9 @@
 		)}
 		{@const proj = instanceProject(resource)}
 		<td class="primary">
-			<a href="/compute/instances/edit/{resource.metadata.id}">{resource.metadata.name}</a>
+			<a href={resolve(`/compute/instances/edit/${resource.metadata.id}`)}
+				>{resource.metadata.name}</a
+			>
 			<div class="sub">{resource.metadata.id}</div>
 		</td>
 		<td>
@@ -243,7 +245,9 @@
 		{#if !data.projects.length || !data.networks.length}
 			<button class="btn btn--primary" disabled><Icon name="plus" size={16} /> Create</button>
 		{:else if skipPopup}
-			<a href={createURL} class="btn btn--primary"><Icon name="plus" size={16} /> Create</a>
+			<a href={resolve(`/compute/instances/create?${createQuery}`)} class="btn btn--primary"
+				><Icon name="plus" size={16} /> Create</a
+			>
 		{:else}
 			<PopupButton icon="plus" label="Create">
 				{#snippet contents(close)}
@@ -252,14 +256,17 @@
 						<div class="picker">
 							<Icon name="network" size={14} />
 							<select bind:value={createNetworkID}>
-								{#each data.networks as n}
+								{#each data.networks as n (n.metadata.id)}
 									<option value={n.metadata.id}>{n.metadata.name}</option>
 								{/each}
 							</select>
 						</div>
 						<div class="create-popup__footer">
 							<button onclick={close} class="btn btn--ghost btn--sm">Cancel</button>
-							<a href={createURL} class="btn btn--primary btn--sm">Continue</a>
+							<a
+								href={resolve(`/compute/instances/create?${createQuery}`)}
+								class="btn btn--primary btn--sm">Continue</a
+							>
 						</div>
 					</div>
 				{/snippet}
@@ -267,7 +274,7 @@
 		{/if}
 	{/snippet}
 	{#snippet list(instances)}<ShellList
-			>{#each instances as resource}<ShellListItem id={resource.metadata.id}>
+			>{#each instances as resource (resource.metadata.id)}<ShellListItem id={resource.metadata.id}>
 					{#snippet main()}
 						<span class="mono region-cell">
 							{RegionUtil.flag(data.regions, resource.status.regionId)}

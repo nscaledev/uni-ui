@@ -109,7 +109,7 @@
 			disabled={!data.groups.length}
 		/>{/snippet}
 	{#snippet list(users)}<ShellList
-			>{#each users as resource}<ShellListItem id={resource.metadata.id}>
+			>{#each users as resource (resource.metadata.id)}<ShellListItem id={resource.metadata.id}>
 					{#snippet main()}<ShellListItemHeader title={resource.spec.subject} />{/snippet}
 					{#snippet badges()}
 						<ShellListItemBadges

@@ -10,7 +10,6 @@
 	import Select from '$lib/forms/Select.svelte';
 	import TextInput from '$lib/forms/TextInput.svelte';
 	let names = $derived(data.sshCertificateAuthorities.map((x) => x.metadata.name));
-	// eslint-disable-next-line svelte/valid-compile
 	const initialProjectID = data.projects[0]?.metadata.id || '';
 	let resource: {
 		metadata: Region.ResourceWriteMetadata;
@@ -58,7 +57,7 @@
 				bind:value={resource.spec.projectId}
 				disabled={data.projects.length == 0}
 			>
-				{#each data.projects as project}
+				{#each data.projects as project (project.metadata.id)}
 					<option value={project.metadata.id}>{project.metadata.name}</option>
 				{/each}
 			</Select>

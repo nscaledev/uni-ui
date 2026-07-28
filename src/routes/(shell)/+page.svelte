@@ -38,7 +38,7 @@
 
 <div class="section-title">Resource Utilization</div>
 <div class="util-grid">
-	{#each data.quotas.quotas as quota}
+	{#each data.quotas.quotas as quota (quota.kind)}
 		<div class="util-card">
 			<div class="util-card__head">
 				<div class="util-card__icon">

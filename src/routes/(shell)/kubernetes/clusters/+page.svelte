@@ -2,6 +2,7 @@
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { startAutoRefresh } from '$lib/loadutil';
 	let { data }: { data: PageData } = $props();
 	import * as Clients from '$lib/clients';
@@ -28,13 +29,11 @@
 		icon: 'k8s'
 	};
 	onMount(() => startAutoRefresh('layout:clusters'));
-	// eslint-disable-next-line svelte/valid-compile
 	let createProjectID = $state(data.projects[0]?.metadata.id);
-	// eslint-disable-next-line svelte/valid-compile
 	let createRegionID = $state(data.regions[0]?.metadata.id);
 
-	const createURL = $derived(
-		`/kubernetes/clusters/create?projectID=${data.projectID ?? createProjectID}&regionID=${data.regions.length === 1 ? data.regions[0].metadata.id : createRegionID}`
+	const createQuery = $derived(
+		`projectID=${data.projectID ?? createProjectID}&regionID=${data.regions.length === 1 ? data.regions[0].metadata.id : createRegionID}`
 	);
 	const skipPopup = $derived(!!data.projectID && data.regions.length === 1);
 	const PROJECT_PALETTE = [
@@ -174,7 +173,9 @@
 		{#if !data.projects.length}
 			<button class="btn btn--primary" disabled><Icon name="plus" size={16} /> Create</button>
 		{:else if skipPopup}
-			<a href={createURL} class="btn btn--primary"><Icon name="plus" size={16} /> Create</a>
+			<a href={resolve(`/kubernetes/clusters/create?${createQuery}`)} class="btn btn--primary"
+				><Icon name="plus" size={16} /> Create</a
+			>
 		{:else}
 			<PopupButton icon="plus" label="Create">
 				{#snippet contents(close)}
@@ -184,7 +185,7 @@
 							<div class="picker">
 								<Icon name="folder" size={14} />
 								<select bind:value={createProjectID}>
-									{#each data.projects as p}
+									{#each data.projects as p (p.metadata.id)}
 										<option value={p.metadata.id}>{p.metadata.name}</option>
 									{/each}
 								</select>
@@ -195,7 +196,7 @@
 							<div class="picker">
 								<Icon name="globe" size={14} />
 								<select bind:value={createRegionID}>
-									{#each data.regions as r}
+									{#each data.regions as r (r.metadata.id)}
 										<option value={r.metadata.id}>{r.metadata.name}</option>
 									{/each}
 								</select>
@@ -203,7 +204,10 @@
 						{/if}
 						<div class="create-popup__footer">
 							<button onclick={close} class="btn btn--ghost btn--sm">Cancel</button>
-							<a href={createURL} class="btn btn--primary btn--sm">Continue</a>
+							<a
+								href={resolve(`/kubernetes/clusters/create?${createQuery}`)}
+								class="btn btn--primary btn--sm">Continue</a
+							>
 						</div>
 					</div>
 				{/snippet}
@@ -211,7 +215,7 @@
 		{/if}
 	{/snippet}
 	{#snippet list(clusters)}<ShellList
-			>{#each clusters as resource}<ShellListItem id={resource.metadata.id}>
+			>{#each clusters as resource (resource.metadata.id)}<ShellListItem id={resource.metadata.id}>
 					{#snippet main()}
 						<span class="mono region-cell">
 							{RegionUtil.flag(data.regions, resource.spec.regionId)}

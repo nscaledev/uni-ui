@@ -138,7 +138,7 @@
 			disabled={!data.groups.length}
 		/>{/snippet}
 	{#snippet list(accounts)}<ShellList
-			>{#each accounts as resource}<ShellListItem id={resource.metadata.id}>
+			>{#each accounts as resource (resource.metadata.id)}<ShellListItem id={resource.metadata.id}>
 					{#snippet main()}<ShellListItemHeader metadata={resource.metadata} />{/snippet}
 					{#snippet badges()}<ShellListItemBadges metadata={resource.metadata} />{/snippet}
 					{#snippet menu()}

@@ -2,6 +2,7 @@
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { startAutoRefresh } from '$lib/loadutil';
 	let { data }: { data: PageData } = $props();
 	import * as Clients from '$lib/clients';
@@ -43,14 +44,14 @@
 			disabled={!data.groups.length}
 		/>{/snippet}
 	{#snippet list(projects)}<ShellList
-			>{#each projects as resource}<ShellListItem id={resource.metadata.id}>
+			>{#each projects as resource (resource.metadata.id)}<ShellListItem id={resource.metadata.id}>
 					{#snippet main()}<ShellListItemHeader
 							metadata={resource.metadata}
 							href="/identity/projects/view/{resource.metadata.id}"
 						/>{/snippet}
 					{#snippet badges()}<ShellListItemBadges metadata={resource.metadata} />{/snippet}
 					{#snippet menu()}
-						<a href="/identity/projects/view/{resource.metadata.id}" class="menu__item">
+						<a href={resolve(`/identity/projects/view/${resource.metadata.id}`)} class="menu__item">
 							<Icon name="edit" size={14} /> Edit
 						</a>
 						<ModalIcon

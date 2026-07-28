@@ -6,7 +6,6 @@
 	import ShellMetadataSection from '$lib/layouts/ShellMetadataSection.svelte';
 	import ShellSection from '$lib/layouts/ShellSection.svelte';
 	import MultiSelect from '$lib/forms/MultiSelect.svelte';
-	// eslint-disable-next-line svelte/valid-compile
 	let resource = $state(structuredClone(data.group));
 	let metadataValid = $state(false);
 	let valid = $derived(metadataValid);

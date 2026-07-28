@@ -2,6 +2,7 @@
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { startAutoRefresh } from '$lib/loadutil';
 
 	let { data }: { data: PageData } = $props();
@@ -75,7 +76,8 @@
 		{@const chip = resolveChip(resource.metadata.provisioningStatus, null)}
 		{@const members = (resource.spec.userIDs?.length ?? 0) + resource.spec.serviceAccountIDs.length}
 		<td class="primary">
-			<a href="/identity/groups/view/{resource.metadata.id}">{resource.metadata.name}</a>
+			<a href={resolve(`/identity/groups/view/${resource.metadata.id}`)}>{resource.metadata.name}</a
+			>
 			<div class="sub">{resource.metadata.id}</div>
 		</td>
 		<td>
@@ -107,7 +109,7 @@
 
 	{#snippet list(groups)}
 		<ShellList>
-			{#each groups as resource}
+			{#each groups as resource (resource.metadata.id)}
 				<ShellListItem id={resource.metadata.id}>
 					{#snippet main()}
 						<ShellListItemHeader
