@@ -2,6 +2,7 @@
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { startAutoRefresh } from '$lib/loadutil';
 
 	let { data }: { data: PageData } = $props();
@@ -35,13 +36,11 @@
 
 	onMount(() => startAutoRefresh('layout:networks'));
 
-	// eslint-disable-next-line svelte/valid-compile
 	let createProjectID = $state(data.projects[0]?.metadata.id);
-	// eslint-disable-next-line svelte/valid-compile
 	let createRegionID = $state(data.regions[0]?.metadata.id);
 
-	const createURL = $derived(
-		`/network/networks/create?projectID=${data.projectID ?? createProjectID}&regionID=${data.regions.length === 1 ? data.regions[0].metadata.id : createRegionID}`
+	const createQuery = $derived(
+		`projectID=${data.projectID ?? createProjectID}&regionID=${data.regions.length === 1 ? data.regions[0].metadata.id : createRegionID}`
 	);
 	const skipPopup = $derived(!!data.projectID && data.regions.length === 1);
 
@@ -117,7 +116,9 @@
 		{#if !data.projects.length}
 			<button class="btn btn--primary" disabled><Icon name="plus" size={16} /> Create</button>
 		{:else if skipPopup}
-			<a href={createURL} class="btn btn--primary"><Icon name="plus" size={16} /> Create</a>
+			<a href={resolve(`/network/networks/create?${createQuery}`)} class="btn btn--primary"
+				><Icon name="plus" size={16} /> Create</a
+			>
 		{:else}
 			<PopupButton icon="plus" label="Create">
 				{#snippet contents(close)}
@@ -127,7 +128,7 @@
 							<div class="picker">
 								<Icon name="folder" size={14} />
 								<select bind:value={createProjectID}>
-									{#each data.projects as p}
+									{#each data.projects as p (p.metadata.id)}
 										<option value={p.metadata.id}>{p.metadata.name}</option>
 									{/each}
 								</select>
@@ -138,7 +139,7 @@
 							<div class="picker">
 								<Icon name="globe" size={14} />
 								<select bind:value={createRegionID}>
-									{#each data.regions as r}
+									{#each data.regions as r (r.metadata.id)}
 										<option value={r.metadata.id}>{r.metadata.name}</option>
 									{/each}
 								</select>
@@ -146,7 +147,10 @@
 						{/if}
 						<div class="create-popup__footer">
 							<button onclick={close} class="btn btn--ghost btn--sm">Cancel</button>
-							<a href={createURL} class="btn btn--primary btn--sm">Continue</a>
+							<a
+								href={resolve(`/network/networks/create?${createQuery}`)}
+								class="btn btn--primary btn--sm">Continue</a
+							>
 						</div>
 					</div>
 				{/snippet}
@@ -157,7 +161,9 @@
 	{#snippet tableRow(resource)}
 		{@const proj = networkProject(resource)}
 		<td class="primary">
-			<a href="/network/networks/edit/{resource.metadata.id}">{resource.metadata.name}</a>
+			<a href={resolve(`/network/networks/edit/${resource.metadata.id}`)}
+				>{resource.metadata.name}</a
+			>
 			<div class="sub">{resource.metadata.id}</div>
 		</td>
 		<td>
@@ -185,7 +191,7 @@
 		<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
 		<RowMenu>
 			{#snippet menu()}
-				<a href="/network/networks/edit/{resource.metadata.id}" class="menu__item">
+				<a href={resolve(`/network/networks/edit/${resource.metadata.id}`)} class="menu__item">
 					<Icon name="edit" size={14} /> Edit
 				</a>
 				<ModalIcon
@@ -201,7 +207,7 @@
 
 	{#snippet list(networks)}
 		<ShellList>
-			{#each networks as resource}
+			{#each networks as resource (resource.metadata.id)}
 				<ShellListItem id={resource.metadata.id}>
 					{#snippet main()}
 						<span class="mono region-cell">
@@ -219,7 +225,7 @@
 					{/snippet}
 
 					{#snippet menu()}
-						<a href="/network/networks/edit/{resource.metadata.id}" class="menu__item">
+						<a href={resolve(`/network/networks/edit/${resource.metadata.id}`)} class="menu__item">
 							<Icon name="edit" size={14} /> Edit
 						</a>
 						<ModalIcon

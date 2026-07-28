@@ -17,11 +17,8 @@
 	import InputChips from '$lib/forms/InputChips.svelte';
 	import Icon from '$lib/primitives/Icon.svelte';
 
-	// eslint-disable-next-line svelte/valid-compile
 	const organizationID = data.organizationID;
-	// eslint-disable-next-line svelte/valid-compile
 	const projectID = data.projectID;
-	// eslint-disable-next-line svelte/valid-compile
 	const regionID = data.regionID;
 
 	let resource: Region.NetworkV2Create = $state({

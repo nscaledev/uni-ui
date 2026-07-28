@@ -6,7 +6,6 @@
 	import FormPage from '$lib/layouts/FormPage.svelte';
 	import ShellSection from '$lib/layouts/ShellSection.svelte';
 	import TextInput from '$lib/forms/TextInput.svelte';
-	// eslint-disable-next-line svelte/valid-compile
 	let organization = $state(structuredClone(data.organization));
 	let valid = $state(false);
 	function submit() {

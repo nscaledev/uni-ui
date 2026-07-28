@@ -27,7 +27,6 @@
 			name: uniqueNamesGenerator({ dictionaries: [adjectives, animals], separator: '-', length: 2 })
 		},
 		spec: {
-			// eslint-disable-next-line svelte/valid-compile
 			regionId: data.regionID,
 			version: versions[0],
 			autoUpgrade: { enabled: true },
@@ -138,7 +137,7 @@
 				hint="Kubernetes provides backward compatibility guarantees — choosing the newest is usually right."
 				bind:value={resource.spec.version}
 			>
-				{#each versions as version}<option value={version}>{version}</option>{/each}
+				{#each versions as version (version)}<option value={version}>{version}</option>{/each}
 			</Select>
 		</ShellSection>
 		<ResourceList

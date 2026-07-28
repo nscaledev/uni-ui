@@ -16,11 +16,8 @@
 	import Textarea from '$lib/forms/Textarea.svelte';
 	import Flavor from '$lib/Flavor.svelte';
 	import Image from '$lib/Image.svelte';
-	// eslint-disable-next-line svelte/valid-compile
 	const organizationID = data.organizationID;
-	// eslint-disable-next-line svelte/valid-compile
 	const projectID = data.projectID;
-	// eslint-disable-next-line svelte/valid-compile
 	const networkID = data.networkID;
 	let instances = $derived(data.instances.filter((x) => x.status.networkId == networkID));
 	let names = $derived(instances.map((x) => x.metadata.name));
@@ -167,7 +164,7 @@
 				bind:value={resource.spec.sshCertificateAuthorityId}
 			>
 				<option value="">None</option>
-				{#each data.sshCertificateAuthorities as ca}<option value={ca.metadata.id}
+				{#each data.sshCertificateAuthorities as ca (ca.metadata.id)}<option value={ca.metadata.id}
 						>{ca.metadata.name}</option
 					>{/each}
 			</Select>

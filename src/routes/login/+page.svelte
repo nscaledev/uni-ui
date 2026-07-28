@@ -53,7 +53,7 @@
 			<section class="auth-section">
 				<p class="auth-section__label">Choose a provider</p>
 				<div class="auth-providers">
-					{#each providers as provider}
+					{#each providers as provider (provider.type)}
 						{#if data.providers.includes(provider.type)}
 							<button class="btn auth-provider-btn" onclick={() => login(provider.type)}>
 								<ProviderIcon type={provider.type} />

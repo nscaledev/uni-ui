@@ -5,7 +5,6 @@
 	import FormPage from '$lib/layouts/FormPage.svelte';
 	import ShellSection from '$lib/layouts/ShellSection.svelte';
 	import NumberInput from '$lib/forms/NumberInput.svelte';
-	// eslint-disable-next-line svelte/valid-compile
 	let quotas = $state(structuredClone(data.quotas));
 	function submit() {
 		Clients.identity()
@@ -27,7 +26,7 @@
 >
 	{#snippet form()}
 		<ShellSection title="Resource Limits">
-			{#each quotas.quotas as quota}
+			{#each quotas.quotas as quota (quota.kind)}
 				<NumberInput
 					label={quota.displayName}
 					hint={quota.description}
