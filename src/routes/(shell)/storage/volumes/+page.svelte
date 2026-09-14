@@ -7,6 +7,7 @@
 	import * as Clients from '$lib/clients';
 	import * as Region from '$lib/openapi/region';
 	import * as RegionUtil from '$lib/regionutil';
+	import * as ProjectUtil from '$lib/projectutil';
 	import { ageFormatter } from '$lib/formatters';
 	import { resolveChip } from '$lib/layouts/effectiveStatus';
 	import type { ShellPageSettings } from '$lib/layouts/types';
@@ -38,26 +39,6 @@
 			)
 		)
 	);
-	const PROJECT_PALETTE = [
-		'oklch(0.65 0.18 220)',
-		'oklch(0.65 0.18 290)',
-		'oklch(0.68 0.16 30)',
-		'oklch(0.65 0.18 340)',
-		'oklch(0.65 0.16 170)',
-		'oklch(0.68 0.16 80)'
-	];
-
-	function volumeProject(resource: Region.VolumeV2Read) {
-		const index = data.projects.findIndex(
-			(project) => project.metadata.id === resource.metadata.projectId
-		);
-		if (index < 0) return null;
-		return {
-			name: data.projects[index].metadata.name,
-			color: PROJECT_PALETTE[index % PROJECT_PALETTE.length]
-		};
-	}
-
 	function networkName(id: string): string {
 		return data.networks.find((network) => network.metadata.id === id)?.metadata.name ?? id;
 	}
@@ -124,17 +105,19 @@
 	{/snippet}
 
 	{#snippet tableRow(resource)}
-		{@const project = volumeProject(resource)}
+		{@const project = ProjectUtil.lookup(data.projects, resource.metadata.projectId)}
 		{@const status = resolveChip(resource.metadata.provisioningStatus, null)}
 		<td class="primary"
 			><span>{resource.metadata.name}</span>
 			<div class="sub">{resource.metadata.id}</div></td
 		>
-		<td
-			><span class="chip chip--{status?.chipClass ?? 'muted'}"
-				><span class="dot"></span>{status?.label ?? resource.metadata.provisioningStatus}</span
-			></td
-		>
+		<td>
+			{#if status}
+				<span class="chip chip--{status.chipClass}">
+					<span class="dot"></span>{status.label}
+				</span>
+			{/if}
+		</td>
 		<td>
 			{#if project}
 				<span class="chip chip--name" title={project.name}>
@@ -202,7 +185,7 @@
 							value={networkName(resource.spec.networkId)}
 						/>
 						<ShellMetadataItem
-							icon="layers"
+							icon="cards"
 							label="Volume class"
 							value={volumeClassName(resource.spec.volumeClassId)}
 						/>

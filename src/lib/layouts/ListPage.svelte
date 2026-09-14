@@ -12,6 +12,7 @@
 	import FilterChip from '$lib/forms/FilterChip.svelte';
 	import Icon from '$lib/primitives/Icon.svelte';
 	import * as Identity from '$lib/openapi/identity';
+	import * as ProjectUtil from '$lib/projectutil';
 	import { countryFlag } from '$lib/regionutil';
 	import { view } from '$lib/stores/theme';
 	import { omniQuery, omniFilters } from '$lib/stores/search';
@@ -113,20 +114,11 @@
 		color
 	}));
 
-	const PROJECT_PALETTE = [
-		'oklch(0.65 0.18 220)',
-		'oklch(0.65 0.18 290)',
-		'oklch(0.68 0.16 30)',
-		'oklch(0.65 0.18 340)',
-		'oklch(0.65 0.16 170)',
-		'oklch(0.68 0.16 80)'
-	];
-
 	const projectOptions = $derived(
 		(projects ?? []).map((p, i) => ({
 			id: p.metadata.id,
 			label: p.metadata.name,
-			color: PROJECT_PALETTE[i % PROJECT_PALETTE.length]
+			color: ProjectUtil.color(i)
 		}))
 	);
 
