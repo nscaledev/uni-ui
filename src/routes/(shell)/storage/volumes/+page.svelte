@@ -167,7 +167,13 @@
 						<ShellListItemHeader metadata={resource.metadata} />
 					{/snippet}
 					{#snippet badges()}
-						<ShellListItemBadges metadata={resource.metadata} projects={data.projects} />
+						<ShellListItemBadges metadata={resource.metadata} projects={data.projects}>
+							{#snippet extra()}
+								<span class="chip chip--{resource.status.attachedAt ? 'ok' : 'muted'}">
+									<span class="dot"></span>{resource.status.attachedAt ? 'Attached' : 'Detached'}
+								</span>
+							{/snippet}
+						</ShellListItemBadges>
 					{/snippet}
 					{#snippet menu()}<ModalIcon
 							icon="trash"
