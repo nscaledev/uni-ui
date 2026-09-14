@@ -119,12 +119,17 @@
 			{
 				base: '/storage',
 				title: 'Storage',
-				icon: 'server',
+				icon: 'layers',
 				items: [
 					{
 						label: 'Volumes',
 						href: 'volumes',
-						rbac: [{ endpoint: 'region:volumes:v2', operations: [Identity.AclOperation.Read] }]
+						rbac: [
+							{ endpoint: 'region:volumes:v2', operations: [Identity.AclOperation.Read] },
+							{ endpoint: 'region:volumeclasses:v2', operations: [Identity.AclOperation.Read] },
+							{ endpoint: 'region:networks:v2', operations: [Identity.AclOperation.Read] },
+							{ endpoint: 'region:regions', operations: [Identity.AclOperation.Read] }
+						]
 					}
 				]
 			},
