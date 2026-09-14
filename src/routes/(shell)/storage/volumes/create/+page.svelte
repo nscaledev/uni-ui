@@ -17,6 +17,7 @@
 		data.volumeClasses.filter((item) => item.spec.regionId === network?.status.regionId)
 	);
 	let volumeClassID = $state('');
+	const volumeClass = $derived(volumeClasses.find((item) => item.metadata.id === volumeClassID));
 	let resource: Region.VolumeV2Create = $state({
 		metadata: {
 			name: uniqueNamesGenerator({ dictionaries: [adjectives, animals], separator: '-', length: 2 })
@@ -27,7 +28,11 @@
 		metadataValid &&
 			!!resource.spec.networkId &&
 			!!resource.spec.volumeClassId &&
-			resource.spec.sizeGiB > 0
+			!!volumeClass &&
+			Number.isInteger(resource.spec.sizeGiB) &&
+			resource.spec.sizeGiB >= (volumeClass.spec.minimumSizeGiB ?? 1) &&
+			(volumeClass.spec.maximumSizeGiB === undefined ||
+				resource.spec.sizeGiB <= volumeClass.spec.maximumSizeGiB)
 	);
 
 	$effect(() => {
@@ -69,9 +74,8 @@
 			<NumberInput
 				label="Size (GiB)"
 				hint="The requested volume capacity in gibibytes."
-				min={volumeClasses.find((item) => item.metadata.id === volumeClassID)?.spec
-					.minimumSizeGiB ?? 1}
-				max={volumeClasses.find((item) => item.metadata.id === volumeClassID)?.spec.maximumSizeGiB}
+				min={volumeClass?.spec.minimumSizeGiB ?? 1}
+				max={volumeClass?.spec.maximumSizeGiB}
 				bind:value={resource.spec.sizeGiB}
 			/>
 		</ShellSection>
