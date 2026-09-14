@@ -12,15 +12,21 @@
 
 	let { data }: { data: PageData } = $props();
 	let metadataValid = $state(false);
-	let constrainedVolumeClassID = $state('');
 	let resource: Region.VolumeV2Create = $state({
 		metadata: {
 			name: uniqueNamesGenerator({ dictionaries: [adjectives, animals], separator: '-', length: 2 })
 		},
 		spec: { networkId: '', volumeClassId: '', sizeGiB: 10 }
 	});
+	const compatibleNetworks = $derived(
+		data.networks.filter((network) =>
+			data.volumeClasses.some(
+				(volumeClass) => volumeClass.spec.regionId === network.status.regionId
+			)
+		)
+	);
 	const network = $derived(
-		data.networks.find((item) => item.metadata.id === resource.spec.networkId)
+		compatibleNetworks.find((item) => item.metadata.id === resource.spec.networkId)
 	);
 	const volumeClasses = $derived(
 		data.volumeClasses.filter((item) => item.spec.regionId === network?.status.regionId)
@@ -64,26 +70,24 @@
 			(maximumSizeGiB === undefined || resource.spec.sizeGiB <= maximumSizeGiB)
 	);
 
-	$effect(() => {
-		if (!data.networks.some((item) => item.metadata.id === resource.spec.networkId)) {
-			resource.spec.networkId = data.networks[0]?.metadata.id ?? '';
-		}
+	function selectVolumeClass(id: string): void {
+		resource.spec.volumeClassId = id;
+		const selectedVolumeClass = volumeClasses.find((item) => item.metadata.id === id);
+		if (!selectedVolumeClass) return;
 
-		const selectedVolumeClass = volumeClass ?? volumeClasses[0];
-		if (!selectedVolumeClass) {
-			resource.spec.volumeClassId = '';
-			constrainedVolumeClassID = '';
-			return;
-		}
-
-		resource.spec.volumeClassId = selectedVolumeClass.metadata.id;
-		if (constrainedVolumeClassID === selectedVolumeClass.metadata.id) return;
-		constrainedVolumeClassID = selectedVolumeClass.metadata.id;
 		const minimum = selectedVolumeClass.spec.minimumSizeGiB ?? 1;
 		const maximum = selectedVolumeClass.spec.maximumSizeGiB ?? Infinity;
 		const size = Number.isFinite(resource.spec.sizeGiB) ? resource.spec.sizeGiB : minimum;
-		const clampedSize = Math.min(Math.max(size, minimum), maximum);
-		if (resource.spec.sizeGiB !== clampedSize) resource.spec.sizeGiB = clampedSize;
+		resource.spec.sizeGiB = Math.min(Math.max(size, minimum), maximum);
+	}
+
+	$effect(() => {
+		if (!compatibleNetworks.some((item) => item.metadata.id === resource.spec.networkId)) {
+			resource.spec.networkId = compatibleNetworks[0]?.metadata.id ?? '';
+		}
+
+		const volumeClassID = (volumeClass ?? volumeClasses[0])?.metadata.id ?? '';
+		if (resource.spec.volumeClassId !== volumeClassID) selectVolumeClass(volumeClassID);
 	});
 
 	function submit() {
@@ -106,11 +110,16 @@
 		<ShellMetadataSection metadata={resource.metadata} names={[]} bind:valid={metadataValid} />
 		<ShellSection title="Configuration">
 			<Select label="Network" bind:value={resource.spec.networkId}>
-				{#each data.networks as item (item.metadata.id)}
+				{#each compatibleNetworks as item (item.metadata.id)}
 					<option value={item.metadata.id}>{item.metadata.name}</option>
 				{/each}
 			</Select>
-			<Select label="Volume class" hint={volumeClassHint} bind:value={resource.spec.volumeClassId}>
+			<Select
+				label="Volume class"
+				hint={volumeClassHint}
+				onchange={selectVolumeClass}
+				bind:value={resource.spec.volumeClassId}
+			>
 				{#each volumeClasses as item (item.metadata.id)}
 					<option value={item.metadata.id}>{item.metadata.name}</option>
 				{/each}

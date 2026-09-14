@@ -4,10 +4,18 @@
 		label: string;
 		hint?: string;
 		disabled?: boolean;
+		onchange?: (value: string) => void;
 		children?: import('svelte').Snippet;
 	}
 
-	let { value = $bindable(), label, hint = '', disabled = false, children }: Props = $props();
+	let {
+		value = $bindable(),
+		label,
+		hint = '',
+		disabled = false,
+		onchange,
+		children
+	}: Props = $props();
 </script>
 
 <div class="form-row">
@@ -18,7 +26,12 @@
 		{/if}
 	</div>
 	<div class="form-row__control">
-		<select class="select-native" {disabled} bind:value>
+		<select
+			class="select-native"
+			{disabled}
+			bind:value
+			onchange={(event) => onchange?.(event.currentTarget.value)}
+		>
 			{@render children?.()}
 		</select>
 	</div>

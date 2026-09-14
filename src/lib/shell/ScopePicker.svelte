@@ -3,16 +3,8 @@
 	import { invalidate } from '$app/navigation';
 	import * as Clients from '$lib/clients';
 	import type { OrganizationRead, ProjectRead } from '$lib/openapi/identity';
+	import * as ProjectUtil from '$lib/projectutil';
 	import Icon from '$lib/primitives/Icon.svelte';
-
-	const PROJECT_PALETTE = [
-		'oklch(0.65 0.18 220)',
-		'oklch(0.65 0.18 290)',
-		'oklch(0.68 0.16 30)',
-		'oklch(0.65 0.18 340)',
-		'oklch(0.65 0.16 170)',
-		'oklch(0.68 0.16 80)'
-	];
 
 	const MAX_RECENT = 5;
 	const RECENT_KEY = 'scope_recent_orgs';
@@ -214,8 +206,7 @@
 						class:menu__item--on={browseOrgID === organizationID && proj.metadata.id === projectID}
 						onclick={() => selectProject(proj.metadata.id)}
 					>
-						<span class="proj-pip" style="background:{PROJECT_PALETTE[i % PROJECT_PALETTE.length]}"
-						></span>
+						<span class="proj-pip" style="background:{ProjectUtil.color(i)}"></span>
 						{proj.metadata.name}
 					</button>
 				{/each}
