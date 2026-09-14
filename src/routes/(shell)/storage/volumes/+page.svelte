@@ -170,7 +170,7 @@
 						<ShellListItemBadges metadata={resource.metadata} projects={data.projects}>
 							{#snippet extra()}
 								<span class="chip chip--{resource.status.attachedAt ? 'ok' : 'muted'}">
-									<span class="dot"></span>{resource.status.attachedAt ? 'Attached' : 'Detached'}
+									<span class="dot"></span>{resource.status.attachedAt ? 'attached' : 'detached'}
 								</span>
 							{/snippet}
 						</ShellListItemBadges>
