@@ -8,11 +8,13 @@
 	import * as Region from '$lib/openapi/region';
 	import * as RegionUtil from '$lib/regionutil';
 	import { ageFormatter } from '$lib/formatters';
+	import { resolveChip } from '$lib/layouts/effectiveStatus';
 	import type { ShellPageSettings } from '$lib/layouts/types';
 	import ListPage from '$lib/layouts/ListPage.svelte';
 	import ShellList from '$lib/layouts/ShellList.svelte';
 	import ShellListItem from '$lib/layouts/ShellListItem.svelte';
 	import ShellListItemHeader from '$lib/layouts/ShellListItemHeader.svelte';
+	import ShellListItemBadges from '$lib/layouts/ShellListItemBadges.svelte';
 	import ShellListItemMetadata from '$lib/layouts/ShellListItemMetadata.svelte';
 	import ShellMetadataItem from '$lib/layouts/ShellMetadataItem.svelte';
 	import Placeholder from '$lib/layouts/Placeholder.svelte';
@@ -25,13 +27,43 @@
 		feature: 'Storage',
 		name: 'Volumes',
 		description: 'Manage your block storage volumes.',
-		icon: 'server'
+		icon: 'layers'
 	};
 
 	onMount(() => startAutoRefresh('layout:volumes'));
+	const hasCompatibleVolumeClass = $derived(
+		data.networks.some((network) =>
+			data.volumeClasses.some(
+				(volumeClass) => volumeClass.spec.regionId === network.status.regionId
+			)
+		)
+	);
+	const PROJECT_PALETTE = [
+		'oklch(0.65 0.18 220)',
+		'oklch(0.65 0.18 290)',
+		'oklch(0.68 0.16 30)',
+		'oklch(0.65 0.18 340)',
+		'oklch(0.65 0.16 170)',
+		'oklch(0.68 0.16 80)'
+	];
+
+	function volumeProject(resource: Region.VolumeV2Read) {
+		const index = data.projects.findIndex(
+			(project) => project.metadata.id === resource.metadata.projectId
+		);
+		if (index < 0) return null;
+		return {
+			name: data.projects[index].metadata.name,
+			color: PROJECT_PALETTE[index % PROJECT_PALETTE.length]
+		};
+	}
 
 	function networkName(id: string): string {
 		return data.networks.find((network) => network.metadata.id === id)?.metadata.name ?? id;
+	}
+
+	function volumeClassName(id: string): string {
+		return data.volumeClasses.find((item) => item.metadata.id === id)?.metadata.name ?? id;
 	}
 
 	function deleteVolume(resource: Region.VolumeV2Read) {
@@ -57,7 +89,18 @@
 	resources={data.volumes}
 	projects={data.projectID ? [] : data.projects}
 	regions={data.regions}
-	tableHeaders={['Name', 'Status', 'Project', 'Region', 'Network', 'Size', 'Attached', 'Age', '']}
+	tableHeaders={[
+		'Name',
+		'Status',
+		'Project',
+		'Region',
+		'Network',
+		'Volume class',
+		'Size',
+		'Attached',
+		'Age',
+		''
+	]}
 >
 	{#snippet bulkbar({ ids, clear })}
 		<ModalIcon
@@ -72,7 +115,7 @@
 	{/snippet}
 
 	{#snippet tools()}
-		{#if data.networks.length && data.volumeClasses.length}
+		{#if hasCompatibleVolumeClass}
 			<a href={resolve('/storage/volumes/create')} class="btn btn--primary"
 				><Icon name="plus" size={16} /> Create</a
 			>
@@ -81,19 +124,27 @@
 	{/snippet}
 
 	{#snippet tableRow(resource)}
+		{@const project = volumeProject(resource)}
+		{@const status = resolveChip(resource.metadata.provisioningStatus, null)}
 		<td class="primary"
 			><span>{resource.metadata.name}</span>
 			<div class="sub">{resource.metadata.id}</div></td
 		>
 		<td
-			><span class="chip chip--info"
-				><span class="dot"></span>{resource.metadata.provisioningStatus}</span
+			><span class="chip chip--{status?.chipClass ?? 'muted'}"
+				><span class="dot"></span>{status?.label ?? resource.metadata.provisioningStatus}</span
 			></td
 		>
-		<td
-			>{data.projects.find((project) => project.metadata.id === resource.metadata.projectId)
-				?.metadata.name ?? resource.metadata.projectId}</td
-		>
+		<td>
+			{#if project}
+				<span class="chip chip--name" title={project.name}>
+					<span class="dot" style="background:{project.color}"></span>
+					<span class="chip-label">{project.name}</span>
+				</span>
+			{:else}
+				{resource.metadata.projectId}
+			{/if}
+		</td>
 		<td
 			><span class="mono region-cell"
 				>{RegionUtil.flag(data.regions, resource.status.regionId)}
@@ -101,6 +152,7 @@
 			></td
 		>
 		<td>{networkName(resource.spec.networkId)}</td>
+		<td>{volumeClassName(resource.spec.volumeClassId)}</td>
 		<td>{resource.status.sizeGiB ?? resource.spec.sizeGiB} GiB</td>
 		<td
 			><span class="chip chip--{resource.status.attachedAt ? 'ok' : 'muted'}"
@@ -124,7 +176,16 @@
 		<ShellList>
 			{#each volumes as resource (resource.metadata.id)}
 				<ShellListItem id={resource.metadata.id}>
-					{#snippet main()}<ShellListItemHeader metadata={resource.metadata} />{/snippet}
+					{#snippet main()}
+						<span class="mono region-cell">
+							{RegionUtil.flag(data.regions, resource.status.regionId)}
+							{RegionUtil.name(data.regions, resource.status.regionId)}
+						</span>
+						<ShellListItemHeader metadata={resource.metadata} />
+					{/snippet}
+					{#snippet badges()}
+						<ShellListItemBadges metadata={resource.metadata} projects={data.projects} />
+					{/snippet}
 					{#snippet menu()}<ModalIcon
 							icon="trash"
 							label="Delete"
@@ -141,7 +202,12 @@
 							value={networkName(resource.spec.networkId)}
 						/>
 						<ShellMetadataItem
-							icon="server"
+							icon="layers"
+							label="Volume class"
+							value={volumeClassName(resource.spec.volumeClassId)}
+						/>
+						<ShellMetadataItem
+							icon="layers"
 							label="Size"
 							value={`${resource.status.sizeGiB ?? resource.spec.sizeGiB} GiB`}
 						/>
@@ -151,5 +217,13 @@
 		</ShellList>
 	{/snippet}
 
-	{#snippet empty()}<Placeholder>No volumes yet — create one to get started.</Placeholder>{/snippet}
+	{#snippet empty()}
+		{#if !data.networks.length}
+			<Placeholder>No networks exist yet — create a network before creating a volume.</Placeholder>
+		{:else if !hasCompatibleVolumeClass}
+			<Placeholder>No compatible volume classes are available.</Placeholder>
+		{:else}
+			<Placeholder>No volumes yet — create one to get started.</Placeholder>
+		{/if}
+	{/snippet}
 </ListPage>
