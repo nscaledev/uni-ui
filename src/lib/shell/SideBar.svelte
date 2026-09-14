@@ -117,6 +117,18 @@
 				]
 			},
 			{
+				base: '/storage',
+				title: 'Storage',
+				icon: 'server',
+				items: [
+					{
+						label: 'Volumes',
+						href: 'volumes',
+						rbac: [{ endpoint: 'region:volumes:v2', operations: [Identity.AclOperation.Read] }]
+					}
+				]
+			},
+			{
 				base: '/kubernetes',
 				title: 'Kubernetes',
 				icon: 'k8s',
