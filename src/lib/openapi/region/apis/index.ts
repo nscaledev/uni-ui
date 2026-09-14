@@ -8,3 +8,5 @@ export * from './LoadBalancersApi';
 export * from './NetworksApi';
 export * from './SSHCertificateAuthoritiesApi';
 export * from './SecurityGroupsApi';
+export * from './VolumeClassesApi';
+export * from './VolumesApi';

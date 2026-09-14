@@ -230,7 +230,9 @@ export function region(
 	Region.LoadBalancersApi &
 	Region.NetworksApi &
 	Region.SSHCertificateAuthoritiesApi &
-	Region.SecurityGroupsApi {
+	Region.SecurityGroupsApi &
+	Region.VolumeClassesApi &
+	Region.VolumesApi {
 	const config = new Region.Configuration({
 		basePath: env.PUBLIC_REGION_HOST,
 		accessToken: async () => accessToken(fetchImpl),
@@ -246,7 +248,9 @@ export function region(
 		new Region.LoadBalancersApi(config),
 		new Region.NetworksApi(config),
 		new Region.SSHCertificateAuthoritiesApi(config),
-		new Region.SecurityGroupsApi(config)
+		new Region.SecurityGroupsApi(config),
+		new Region.VolumeClassesApi(config),
+		new Region.VolumesApi(config)
 	]);
 }
 
