@@ -139,7 +139,7 @@
 		<td>{resource.status.sizeGiB ?? resource.spec.sizeGiB} GiB</td>
 		<td
 			><span class="chip chip--{resource.status.attachedAt ? 'ok' : 'muted'}"
-				><span class="dot"></span>{resource.status.attachedAt ? 'Yes' : 'No'}</span
+				><span class="dot"></span>{resource.status.attachedAt ? 'yes' : 'no'}</span
 			></td
 		>
 		<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
