@@ -51,7 +51,7 @@ export interface VolumeClassV2Spec {
 	 */
 	maximumSizeGiB?: number;
 	/**
-	 * Optional allowlist of Region flavors compatible with this volume class. Omitted or empty means no compatibility restriction.
+	 * Optional allowlist of Region flavors that can attach Volumes of this class to Servers. Omitted or empty means Server attachment is not supported; standalone Volume creation remains available.
 	 * @type {Set<string>}
 	 * @memberof VolumeClassV2Spec
 	 */

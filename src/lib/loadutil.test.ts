@@ -9,7 +9,7 @@ vi.mock('@sveltejs/kit', () => ({
 	})
 }));
 
-import { startAutoRefresh, assertNonEmptyList } from './loadutil';
+import { startAutoRefresh, startPolling, assertNonEmptyList } from './loadutil';
 import { invalidate } from '$app/navigation';
 import { navigating } from '$app/state';
 
@@ -87,6 +87,18 @@ describe('startAutoRefresh', () => {
 
 		vi.advanceTimersByTime(1);
 		expect(mockInvalidate).toHaveBeenCalledTimes(1);
+
+		cleanup();
+	});
+});
+
+describe('startPolling', () => {
+	it('calls the callback after the interval', () => {
+		const callback = vi.fn();
+		const cleanup = startPolling(callback, 5000);
+
+		vi.advanceTimersByTime(5000);
+		expect(callback).toHaveBeenCalledOnce();
 
 		cleanup();
 	});

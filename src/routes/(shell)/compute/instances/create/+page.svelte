@@ -2,9 +2,11 @@
 	import type { PageData } from './$types';
 	let { data }: { data: PageData } = $props();
 	import { uniqueNamesGenerator, adjectives, animals } from 'unique-names-generator';
+	import { validate as isUUID } from 'uuid';
 	import * as Clients from '$lib/clients';
 	import * as Compute from '$lib/openapi/compute';
 	import * as RegionUtil from '$lib/regionutil';
+	import { attachableVolumes, volumeCompatible } from '$lib/volumeutil';
 	import FormPage from '$lib/layouts/FormPage.svelte';
 	import ShellMetadataSection from '$lib/layouts/ShellMetadataSection.svelte';
 	import ShellSection from '$lib/layouts/ShellSection.svelte';
@@ -31,32 +33,51 @@
 			networkId: networkID,
 			flavorId: '',
 			imageId: '',
+			volumes: [],
 			sshCertificateAuthorityId: undefined
 		}
 	});
 	let userData = $state('');
 	let securityGroups: Array<string> = $state([]);
+	let volumes: Array<string> = $state([]);
 	let publicIP = $state(true);
 	let allowedSourceAddresses: Array<string> = $state([]);
 	let flavors = $derived(
-		data.flavors.filter((x) =>
-			data.images.some(
-				(y) => x.spec.disk >= y.spec.sizeGiB && x.spec.architecture === y.spec.architecture
+		data.flavors.filter(
+			(x) =>
+				isUUID(x.metadata.id) &&
+				data.images.some(
+					(y) => x.spec.disk >= y.spec.sizeGiB && x.spec.architecture === y.spec.architecture
+				)
+		)
+	);
+	let attachable = $derived(
+		attachableVolumes(data.volumes, data.volumeClasses, resource.spec.flavorId, volumes)
+	);
+	let volumesCompatible = $derived(
+		volumes.every((id) =>
+			volumeCompatible(
+				data.volumes.find((volume) => volume.metadata.id === id),
+				data.volumeClasses,
+				resource.spec.flavorId
 			)
 		)
 	);
 	$effect.pre(() => {
-		resource.spec.flavorId = flavors[0].metadata.id;
+		if (flavors.some((x) => x.metadata.id === resource.spec.flavorId)) return;
+		resource.spec.flavorId = flavors[0]?.metadata.id ?? '';
 	});
 	function lookupFlavor(id: string): Compute.Flavor {
 		return flavors.find((x) => x.metadata.id == id) as Compute.Flavor;
 	}
 	let images = $derived(
-		data.images.filter(
-			(x) =>
-				x.spec.sizeGiB <= lookupFlavor(resource.spec.flavorId).spec.disk &&
-				x.spec.architecture === lookupFlavor(resource.spec.flavorId).spec.architecture
-		)
+		resource.spec.flavorId
+			? data.images.filter(
+					(x) =>
+						x.spec.sizeGiB <= lookupFlavor(resource.spec.flavorId).spec.disk &&
+						x.spec.architecture === lookupFlavor(resource.spec.flavorId).spec.architecture
+				)
+			: []
 	);
 	function lookupImage(id: string): Compute.Image {
 		return images.find((x) => x.metadata.id == id) as Compute.Image;
@@ -73,9 +94,12 @@
 		data.networks?.find((n) => n.metadata.id === networkID)?.metadata.name ?? networkID
 	);
 	let metadataValid = $state(false);
-	let valid = $derived(metadataValid && !!resource.spec.flavorId && !!resource.spec.imageId);
+	let valid = $derived(
+		metadataValid && !!resource.spec.flavorId && !!resource.spec.imageId && volumesCompatible
+	);
 	function submit() {
 		if (!resource.spec.sshCertificateAuthorityId) delete resource.spec.sshCertificateAuthorityId;
+		resource.spec.volumes = volumes;
 		if (userData) resource.spec.userData = btoa(unescape(encodeURIComponent(userData)));
 		resource.spec.networking = {};
 		if (securityGroups.length) resource.spec.networking.securityGroups = securityGroups;
@@ -131,6 +155,18 @@
 			>
 				{#snippet contents(id: string)}<Image image={lookupImage(id)} />{/snippet}
 			</RichSelect>
+		</ShellSection>
+		<ShellSection title="Storage">
+			<MultiSelect
+				label="Volumes"
+				hint="Existing block volumes to attach to the instance."
+				value={volumes}
+				onValueChange={(e) => (volumes = e.value)}
+				options={attachable.map((x) => ({ value: x.metadata.id, label: x.metadata.name }))}
+			>
+				{#snippet selected(id: string)}{attachable.find((x) => x.metadata.id == id)?.metadata
+						.name}{/snippet}
+			</MultiSelect>
 		</ShellSection>
 		<ShellSection title="Networking">
 			<MultiSelect
