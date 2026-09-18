@@ -45,6 +45,15 @@ export const load: PageLoad = async ({ fetch, parent, url }) => {
 		projectID: [projectID]
 	});
 
+	const volumes = Clients.region(fetch).apiV2VolumesGet({
+		organizationID: [organizationID],
+		projectID: [projectID],
+		regionID: [regionID],
+		networkID: [networkID]
+	});
+
+	const volumeClasses = Clients.region(fetch).apiV2VolumeclassesGet({ regionID: [regionID] });
+
 	return {
 		projectID: projectID,
 		regionID: regionID,
@@ -52,6 +61,8 @@ export const load: PageLoad = async ({ fetch, parent, url }) => {
 		images: await assertNonEmptyList(images),
 		flavors: await assertNonEmptyList(flavors),
 		securityGroups: await securityGroups,
-		sshCertificateAuthorities: await sshCertificateAuthorities
+		sshCertificateAuthorities: await sshCertificateAuthorities,
+		volumes: await volumes,
+		volumeClasses: await volumeClasses
 	};
 };

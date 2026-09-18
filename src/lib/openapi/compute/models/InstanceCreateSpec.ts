@@ -45,6 +45,12 @@ export interface InstanceCreateSpec {
      */
     networking?: InstanceNetworking;
     /**
+     * Complete desired set of existing Volumes to attach to the Instance.
+     * @type {Array<string>}
+     * @memberof InstanceCreateSpec
+     */
+    volumes?: Array<string>;
+    /**
      * The SSH certificate authority used to bootstrap login trust when the backing server is
      * created.
      * @type {string}
@@ -106,6 +112,7 @@ export function InstanceCreateSpecFromJSONTyped(json: any, ignoreDiscriminator: 
         'flavorId': json['flavorId'],
         'imageId': json['imageId'],
         'networking': !exists(json, 'networking') ? undefined : InstanceNetworkingFromJSON(json['networking']),
+        'volumes': !exists(json, 'volumes') ? undefined : json['volumes'],
         'sshCertificateAuthorityId': !exists(json, 'sshCertificateAuthorityId') ? undefined : json['sshCertificateAuthorityId'],
         'userData': !exists(json, 'userData') ? undefined : json['userData'],
         'organizationId': json['organizationId'],
@@ -126,6 +133,7 @@ export function InstanceCreateSpecToJSON(value?: InstanceCreateSpec | null): any
         'flavorId': value.flavorId,
         'imageId': value.imageId,
         'networking': InstanceNetworkingToJSON(value.networking),
+        'volumes': value.volumes,
         'sshCertificateAuthorityId': value.sshCertificateAuthorityId,
         'userData': value.userData,
         'organizationId': value.organizationId,
@@ -133,4 +141,3 @@ export function InstanceCreateSpecToJSON(value?: InstanceCreateSpec | null): any
         'networkId': value.networkId,
     };
 }
-

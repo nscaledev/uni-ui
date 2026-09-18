@@ -1,8 +1,12 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	let { data }: { data: PageData } = $props();
+	import { onMount } from 'svelte';
+	import { validate as isUUID } from 'uuid';
 	import * as Clients from '$lib/clients';
 	import * as Compute from '$lib/openapi/compute';
+	import { startPolling } from '$lib/loadutil';
+	import { attachableVolumes, changedVolumeSelection, volumeCompatible } from '$lib/volumeutil';
 	import FormPage from '$lib/layouts/FormPage.svelte';
 	import ShellMetadataSection from '$lib/layouts/ShellMetadataSection.svelte';
 	import ShellSection from '$lib/layouts/ShellSection.svelte';
@@ -12,6 +16,7 @@
 	import Switch from '$lib/forms/Switch.svelte';
 	import InputChips from '$lib/forms/InputChips.svelte';
 	import Textarea from '$lib/forms/Textarea.svelte';
+	import { resolveChip } from '$lib/layouts/effectiveStatus';
 	import Flavor from '$lib/Flavor.svelte';
 	import Image from '$lib/Image.svelte';
 	import * as RegionUtil from '$lib/regionutil';
@@ -37,29 +42,58 @@
 			return '';
 		}
 	}
+	function initVolumeStatuses(): Array<Compute.InstanceVolumeStatus> {
+		return data.instance.status.volumes ?? [];
+	}
+	function initVolumes(): Array<string> {
+		return data.instance.spec.volumes ?? [];
+	}
 	let securityGroups: Array<string> = $state(initSecurityGroups());
+	const initialVolumes = initVolumes();
+	let volumes: Array<string> = $state(initVolumes());
+	let volumeStatuses: Array<Compute.InstanceVolumeStatus> = $state(initVolumeStatuses());
 	let publicIP = $state(initPublicIP());
 	let allowedSourceAddresses: Array<string> = $state(initAllowedSourceAddresses());
 	let userData = $state(initUserData());
 	let flavors = $derived(
-		data.flavors.filter((x) =>
-			data.images.some(
-				(y) => x.spec.disk >= y.spec.sizeGiB && x.spec.architecture === y.spec.architecture
+		data.flavors.filter(
+			(x) =>
+				isUUID(x.metadata.id) &&
+				data.images.some(
+					(y) => x.spec.disk >= y.spec.sizeGiB && x.spec.architecture === y.spec.architecture
+				)
+		)
+	);
+	let attachable = $derived(
+		attachableVolumes(data.volumes, data.volumeClasses, resource.spec.flavorId, [
+			...initialVolumes,
+			...volumes
+		])
+	);
+	let volumesCompatible = $derived(
+		volumes.every((id) =>
+			volumeCompatible(
+				data.volumes.find((volume) => volume.metadata.id === id),
+				data.volumeClasses,
+				resource.spec.flavorId
 			)
 		)
 	);
 	$effect.pre(() => {
-		resource.spec.flavorId = flavors[0].metadata.id;
+		if (flavors.some((x) => x.metadata.id === resource.spec.flavorId)) return;
+		resource.spec.flavorId = flavors[0]?.metadata.id ?? '';
 	});
 	function lookupFlavor(id: string): Compute.Flavor {
 		return flavors.find((x) => x.metadata.id == id) as Compute.Flavor;
 	}
 	let images = $derived(
-		data.images.filter(
-			(x) =>
-				x.spec.sizeGiB <= lookupFlavor(resource.spec.flavorId).spec.disk &&
-				x.spec.architecture === lookupFlavor(resource.spec.flavorId).spec.architecture
-		)
+		resource.spec.flavorId
+			? data.images.filter(
+					(x) =>
+						x.spec.sizeGiB <= lookupFlavor(resource.spec.flavorId).spec.disk &&
+						x.spec.architecture === lookupFlavor(resource.spec.flavorId).spec.architecture
+				)
+			: []
 	);
 	function lookupImage(id: string): Compute.Image {
 		return images.find((x) => x.metadata.id == id) as Compute.Image;
@@ -78,9 +112,14 @@
 			data.instance.status.networkId
 	);
 	let metadataValid = $state(false);
-	let valid = $derived(metadataValid && !!resource.spec.flavorId && !!resource.spec.imageId);
+	let valid = $derived(
+		metadataValid && !!resource.spec.flavorId && !!resource.spec.imageId && volumesCompatible
+	);
 	function submit() {
 		resource.spec.networking = {};
+		const changedVolumes = changedVolumeSelection(volumes, initialVolumes);
+		if (changedVolumes === undefined) delete resource.spec.volumes;
+		else resource.spec.volumes = changedVolumes;
 		if (securityGroups.length) resource.spec.networking.securityGroups = securityGroups;
 		if (publicIP) resource.spec.networking.publicIP = publicIP;
 		if (allowedSourceAddresses.length)
@@ -92,6 +131,20 @@
 			.then(() => window.location.assign('/compute/instances'))
 			.catch((e: Error) => Clients.error(e));
 	}
+	async function refreshVolumeStatuses(): Promise<void> {
+		try {
+			const instance = await Clients.compute().apiV2InstancesInstanceIDGet({
+				instanceID: data.instance.metadata.id
+			});
+			volumeStatuses = instance.status.volumes ?? [];
+		} catch (error) {
+			await Clients.error(error as Error);
+		}
+	}
+	onMount(() => {
+		void refreshVolumeStatuses();
+		return startPolling(refreshVolumeStatuses);
+	});
 </script>
 
 <FormPage
@@ -144,6 +197,47 @@
 				{#snippet contents(id: string)}<Image image={lookupImage(id)} />{/snippet}
 			</RichSelect>
 		</ShellSection>
+		<ShellSection title="Storage">
+			<MultiSelect
+				label="Volumes"
+				hint="Existing block volumes attached to the instance."
+				value={volumes}
+				onValueChange={(e) => (volumes = e.value)}
+				options={attachable.map((x) => ({ value: x.metadata.id, label: x.metadata.name }))}
+			>
+				{#snippet selected(id: string)}{attachable.find((x) => x.metadata.id == id)?.metadata
+						.name}{/snippet}
+			</MultiSelect>
+			{#if volumeStatuses.length}
+				<div class="table-wrap volume-statuses">
+					<table class="table">
+						<thead>
+							<tr><th>Volume</th><th>Status</th><th>Device</th><th>Message</th></tr>
+						</thead>
+						<tbody>
+							{#each volumeStatuses as status (status.id)}
+								{@const chip = resolveChip(status.provisioningStatus, null)}
+								<tr>
+									<td class="primary"
+										>{data.volumes.find((volume) => volume.metadata.id == status.id)?.metadata
+											.name ?? status.id}</td
+									>
+									<td>
+										{#if chip}
+											<span class="chip chip--{chip.chipClass}"
+												><span class="dot"></span>{chip.label}</span
+											>
+										{/if}
+									</td>
+									<td class="mono">{status.device ?? '—'}</td>
+									<td>{status.message ?? '—'}</td>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				</div>
+			{/if}
+		</ShellSection>
 		<ShellSection title="Networking">
 			<MultiSelect
 				label="Security groups"
@@ -191,3 +285,9 @@
 		</ShellSection>
 	{/snippet}
 </FormPage>
+
+<style>
+	.volume-statuses {
+		margin-top: 16px;
+	}
+</style>

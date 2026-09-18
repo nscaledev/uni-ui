@@ -48,6 +48,7 @@ models/InstanceSnapshotCreate.ts
 models/InstanceSpec.ts
 models/InstanceStatus.ts
 models/InstanceUpdate.ts
+models/InstanceVolumeStatus.ts
 models/MachinePool.ts
 models/ModelError.ts
 models/OpenidProtectedResource.ts

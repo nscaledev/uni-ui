@@ -48,6 +48,12 @@ export interface InstanceSpec {
      */
     networking?: InstanceNetworking;
     /**
+     * Complete desired set of existing Volumes to attach to the Instance.
+     * @type {Array<string>}
+     * @memberof InstanceSpec
+     */
+    volumes?: Array<string>;
+    /**
      * The SSH certificate authority used to bootstrap login trust when the backing server is
      * created.
      * @type {string}
@@ -88,6 +94,7 @@ export function InstanceSpecFromJSONTyped(json: any, ignoreDiscriminator: boolea
         'flavorId': json['flavorId'],
         'imageId': json['imageId'],
         'networking': !exists(json, 'networking') ? undefined : InstanceNetworkingFromJSON(json['networking']),
+        'volumes': !exists(json, 'volumes') ? undefined : json['volumes'],
         'sshCertificateAuthorityId': !exists(json, 'sshCertificateAuthorityId') ? undefined : json['sshCertificateAuthorityId'],
         'userData': !exists(json, 'userData') ? undefined : json['userData'],
     };
@@ -105,8 +112,8 @@ export function InstanceSpecToJSON(value?: InstanceSpec | null): any {
         'flavorId': value.flavorId,
         'imageId': value.imageId,
         'networking': InstanceNetworkingToJSON(value.networking),
+        'volumes': value.volumes,
         'sshCertificateAuthorityId': value.sshCertificateAuthorityId,
         'userData': value.userData,
     };
 }
-

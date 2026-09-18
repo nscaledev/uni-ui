@@ -38,11 +38,24 @@ export const load: PageLoad = async ({ fetch, parent, url, params }) => {
 		networkID: [instance.status.networkId]
 	});
 
+	const volumes = Clients.region(fetch).apiV2VolumesGet({
+		organizationID: [organizationID],
+		projectID: [instance.metadata.projectId],
+		regionID: [instance.status.regionId],
+		networkID: [instance.status.networkId]
+	});
+
+	const volumeClasses = Clients.region(fetch).apiV2VolumeclassesGet({
+		regionID: [instance.status.regionId]
+	});
+
 	return {
 		instance: instance,
 		names: names,
 		images: await assertNonEmptyList(images),
 		flavors: await assertNonEmptyList(flavors),
-		securityGroups: await securityGroups
+		securityGroups: await securityGroups,
+		volumes: await volumes,
+		volumeClasses: await volumeClasses
 	};
 };

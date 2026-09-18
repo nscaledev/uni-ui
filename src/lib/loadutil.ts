@@ -18,12 +18,16 @@ export async function assertNonEmptyList<Type extends Lengthable>(
 	return list;
 }
 
+export function startPolling(callback: () => void | Promise<void>, intervalMs = 5000): () => void {
+	const interval = setInterval(() => {
+		if (!navigating.to) void callback();
+	}, intervalMs);
+	return () => clearInterval(interval);
+}
+
 // startAutoRefresh schedules periodic invalidation of a SvelteKit load key,
 // skipping ticks while a navigation is in progress. Returns a cleanup function
 // intended for use as the onMount return value.
 export function startAutoRefresh(key: string, intervalMs = 5000): () => void {
-	const interval = setInterval(() => {
-		if (!navigating.to) invalidate(key);
-	}, intervalMs);
-	return () => clearInterval(interval);
+	return startPolling(() => invalidate(key), intervalMs);
 }

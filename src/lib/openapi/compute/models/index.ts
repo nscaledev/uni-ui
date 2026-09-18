@@ -43,6 +43,7 @@ export * from './InstanceSnapshotCreate';
 export * from './InstanceSpec';
 export * from './InstanceStatus';
 export * from './InstanceUpdate';
+export * from './InstanceVolumeStatus';
 export * from './MachinePool';
 export * from './ModelError';
 export * from './OpenidProtectedResource';
