@@ -54,12 +54,15 @@
 	let attachable = $derived(
 		attachableVolumes(data.volumes, data.volumeClasses, resource.spec.flavorId, volumes)
 	);
-	let volumesCompatible = $derived(
-		volumes.every((id) =>
-			volumeCompatible(
-				data.volumes.find((volume) => volume.metadata.id === id),
-				data.volumeClasses,
-				resource.spec.flavorId
+	let incompatibleVolumeIDs = $derived(
+		new Set(
+			volumes.filter(
+				(id) =>
+					!volumeCompatible(
+						data.volumes.find((volume) => volume.metadata.id === id),
+						data.volumeClasses,
+						resource.spec.flavorId
+					)
 			)
 		)
 	);
@@ -95,7 +98,10 @@
 	);
 	let metadataValid = $state(false);
 	let valid = $derived(
-		metadataValid && !!resource.spec.flavorId && !!resource.spec.imageId && volumesCompatible
+		metadataValid &&
+			!!resource.spec.flavorId &&
+			!!resource.spec.imageId &&
+			!incompatibleVolumeIDs.size
 	);
 	function submit() {
 		if (!resource.spec.sshCertificateAuthorityId) delete resource.spec.sshCertificateAuthorityId;
@@ -164,8 +170,13 @@
 				onValueChange={(e) => (volumes = e.value)}
 				options={attachable.map((x) => ({ value: x.metadata.id, label: x.metadata.name }))}
 			>
-				{#snippet selected(id: string)}{attachable.find((x) => x.metadata.id == id)?.metadata
-						.name}{/snippet}
+				{#snippet selected(id: string)}
+					<span class:volume-incompatible={incompatibleVolumeIDs.has(id)}>
+						{attachable.find((volume) => volume.metadata.id === id)?.metadata.name ?? id}
+						{#if incompatibleVolumeIDs.has(id)}
+							(incompatible with selected flavor){/if}
+					</span>
+				{/snippet}
 			</MultiSelect>
 		</ShellSection>
 		<ShellSection title="Networking">
@@ -215,3 +226,9 @@
 		</ShellSection>
 	{/snippet}
 </FormPage>
+
+<style>
+	.volume-incompatible {
+		color: var(--danger);
+	}
+</style>

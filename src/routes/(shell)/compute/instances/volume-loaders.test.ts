@@ -25,8 +25,8 @@ vi.mock('$lib/clients', () => ({
 vi.mock('$lib/loadutil', () => ({ assertNonEmptyList: <T>(value: Promise<T>) => value }));
 vi.mock('@sveltejs/kit', () => ({ error: vi.fn(), redirect: vi.fn() }));
 
-import { load as createLoad } from '../routes/(shell)/compute/instances/create/+page';
-import { load as editLoad } from '../routes/(shell)/compute/instances/edit/[id]/+page';
+import { load as createLoad } from './create/+page';
+import { load as editLoad } from './edit/[id]/+page';
 
 beforeEach(() => {
 	Object.values(api).forEach((mock) => mock.mockResolvedValue([{}]));
