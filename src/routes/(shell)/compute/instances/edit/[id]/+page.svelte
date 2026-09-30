@@ -64,34 +64,41 @@
 				)
 		)
 	);
+	let selectedFlavor = $derived(
+		flavors.find((flavor) => flavor.metadata.id === resource.spec.flavorId)
+	);
 	let attachable = $derived(
 		attachableVolumes(data.volumes, data.volumeClasses, resource.spec.flavorId, [
 			...initialVolumes,
 			...volumes
 		])
 	);
-	let volumesCompatible = $derived(
-		volumes.every((id) =>
-			volumeCompatible(
-				data.volumes.find((volume) => volume.metadata.id === id),
-				data.volumeClasses,
-				resource.spec.flavorId
+	let incompatibleVolumeIDs = $derived(
+		new Set(
+			volumes.filter(
+				(id) =>
+					!volumeCompatible(
+						data.volumes.find((volume) => volume.metadata.id === id),
+						data.volumeClasses,
+						resource.spec.flavorId
+					)
 			)
 		)
 	);
-	$effect.pre(() => {
-		if (flavors.some((x) => x.metadata.id === resource.spec.flavorId)) return;
-		resource.spec.flavorId = flavors[0]?.metadata.id ?? '';
-	});
+	let volumeChangesValid = $derived(
+		(resource.spec.flavorId === data.instance.spec.flavorId &&
+			changedVolumeSelection(volumes, initialVolumes) === undefined) ||
+			incompatibleVolumeIDs.size === 0
+	);
 	function lookupFlavor(id: string): Compute.Flavor {
 		return flavors.find((x) => x.metadata.id == id) as Compute.Flavor;
 	}
 	let images = $derived(
-		resource.spec.flavorId
+		selectedFlavor
 			? data.images.filter(
 					(x) =>
-						x.spec.sizeGiB <= lookupFlavor(resource.spec.flavorId).spec.disk &&
-						x.spec.architecture === lookupFlavor(resource.spec.flavorId).spec.architecture
+						x.spec.sizeGiB <= selectedFlavor.spec.disk &&
+						x.spec.architecture === selectedFlavor.spec.architecture
 				)
 			: []
 	);
@@ -113,7 +120,7 @@
 	);
 	let metadataValid = $state(false);
 	let valid = $derived(
-		metadataValid && !!resource.spec.flavorId && !!resource.spec.imageId && volumesCompatible
+		metadataValid && !!selectedFlavor && !!resource.spec.imageId && volumeChangesValid
 	);
 	function submit() {
 		resource.spec.networking = {};
@@ -132,19 +139,12 @@
 			.catch((e: Error) => Clients.error(e));
 	}
 	async function refreshVolumeStatuses(): Promise<void> {
-		try {
-			const instance = await Clients.compute().apiV2InstancesInstanceIDGet({
-				instanceID: data.instance.metadata.id
-			});
-			volumeStatuses = instance.status.volumes ?? [];
-		} catch (error) {
-			await Clients.error(error as Error);
-		}
+		const instance = await Clients.compute().apiV2InstancesInstanceIDGet({
+			instanceID: data.instance.metadata.id
+		});
+		volumeStatuses = instance.status.volumes ?? [];
 	}
-	onMount(() => {
-		void refreshVolumeStatuses();
-		return startPolling(refreshVolumeStatuses);
-	});
+	onMount(() => startPolling(refreshVolumeStatuses));
 </script>
 
 <FormPage
@@ -205,8 +205,14 @@
 				onValueChange={(e) => (volumes = e.value)}
 				options={attachable.map((x) => ({ value: x.metadata.id, label: x.metadata.name }))}
 			>
-				{#snippet selected(id: string)}{attachable.find((x) => x.metadata.id == id)?.metadata
-						.name}{/snippet}
+				{#snippet selected(id: string)}
+					<span class:volume-incompatible={!volumeChangesValid && incompatibleVolumeIDs.has(id)}>
+						{attachable.find((volume) => volume.metadata.id === id)?.metadata.name ?? id}
+						{#if !volumeChangesValid && incompatibleVolumeIDs.has(id)}
+							(incompatible with selected flavor)
+						{/if}
+					</span>
+				{/snippet}
 			</MultiSelect>
 			{#if volumeStatuses.length}
 				<div class="table-wrap volume-statuses">
@@ -289,5 +295,9 @@
 <style>
 	.volume-statuses {
 		margin-top: 16px;
+	}
+
+	.volume-incompatible {
+		color: var(--danger);
 	}
 </style>

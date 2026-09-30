@@ -102,6 +102,23 @@ describe('startPolling', () => {
 
 		cleanup();
 	});
+
+	it('stops after the callback fails', async () => {
+		const failure = new Error('failed');
+		const callback = vi.fn().mockRejectedValue(failure);
+		const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+		const cleanup = startPolling(callback, 5000);
+
+		await vi.advanceTimersByTimeAsync(5000);
+		expect(callback).toHaveBeenCalledOnce();
+		expect(consoleError).toHaveBeenCalledWith(failure);
+
+		await vi.advanceTimersByTimeAsync(10000);
+		expect(callback).toHaveBeenCalledOnce();
+
+		cleanup();
+		consoleError.mockRestore();
+	});
 });
 
 describe('assertNonEmptyList', () => {
