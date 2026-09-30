@@ -24,6 +24,7 @@ beforeEach(() => {
 
 afterEach(() => {
 	vi.useRealTimers();
+	vi.unstubAllGlobals();
 });
 
 describe('startAutoRefresh', () => {
@@ -97,6 +98,22 @@ describe('startPolling', () => {
 		const callback = vi.fn();
 		const cleanup = startPolling(callback, 5000);
 
+		vi.advanceTimersByTime(5000);
+		expect(callback).toHaveBeenCalledOnce();
+
+		cleanup();
+	});
+
+	it('pauses while the document is hidden', () => {
+		const documentState = { hidden: true };
+		vi.stubGlobal('document', documentState);
+		const callback = vi.fn();
+		const cleanup = startPolling(callback, 5000);
+
+		vi.advanceTimersByTime(5000);
+		expect(callback).not.toHaveBeenCalled();
+
+		documentState.hidden = false;
 		vi.advanceTimersByTime(5000);
 		expect(callback).toHaveBeenCalledOnce();
 

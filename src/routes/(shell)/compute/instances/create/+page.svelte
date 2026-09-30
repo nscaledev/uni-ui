@@ -2,9 +2,9 @@
 	import type { PageData } from './$types';
 	let { data }: { data: PageData } = $props();
 	import { uniqueNamesGenerator, adjectives, animals } from 'unique-names-generator';
-	import { validate as isUUID } from 'uuid';
 	import * as Clients from '$lib/clients';
 	import * as Compute from '$lib/openapi/compute';
+	import { selectableInstanceFlavors } from '$lib/instanceutil';
 	import * as RegionUtil from '$lib/regionutil';
 	import { attachableVolumes, volumeCompatible } from '$lib/volumeutil';
 	import FormPage from '$lib/layouts/FormPage.svelte';
@@ -42,15 +42,7 @@
 	let volumes: Array<string> = $state([]);
 	let publicIP = $state(true);
 	let allowedSourceAddresses: Array<string> = $state([]);
-	let flavors = $derived(
-		data.flavors.filter(
-			(x) =>
-				isUUID(x.metadata.id) &&
-				data.images.some(
-					(y) => x.spec.disk >= y.spec.sizeGiB && x.spec.architecture === y.spec.architecture
-				)
-		)
-	);
+	let flavors = $derived(selectableInstanceFlavors(data.flavors, data.images));
 	let attachable = $derived(
 		attachableVolumes(data.volumes, data.volumeClasses, resource.spec.flavorId, volumes)
 	);

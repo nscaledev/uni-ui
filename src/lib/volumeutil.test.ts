@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import type * as Region from '$lib/openapi/region';
-import { attachableVolumes, changedVolumeSelection, volumeCompatible } from './volumeutil';
+import {
+	attachableVolumes,
+	changedVolumeSelection,
+	refreshedVolumeSelection,
+	volumeCompatible
+} from './volumeutil';
 
 function volume(
 	id: string,
@@ -46,6 +51,17 @@ describe('attachableVolumes', () => {
 		expect(attachableVolumes(volumes, classes, 'flavor')).toEqual(volumes);
 	});
 
+	it('allows every lifecycle state except deprovisioning', () => {
+		const volumes = ['pending', 'provisioning', 'provisioned', 'error'].map((status) => {
+			const candidate = volume(status, 'class');
+			candidate.metadata.provisioningStatus = status as Region.ResourceProvisioningStatus;
+			return candidate;
+		});
+		const classes = [volumeClass('class', new Set(['flavor']))];
+
+		expect(attachableVolumes(volumes, classes, 'flavor')).toEqual(volumes);
+	});
+
 	it('retains selected volumes after a flavor change even when incompatible', () => {
 		const retained = volume('retained', 'restricted');
 		const classes = [volumeClass('restricted', new Set(['flavor-a']))];
@@ -86,5 +102,15 @@ describe('changedVolumeSelection', () => {
 
 	it('returns the complete replacement selection', () => {
 		expect(changedVolumeSelection(['two', 'three'], ['one'])).toEqual(['two', 'three']);
+	});
+});
+
+describe('refreshedVolumeSelection', () => {
+	it('updates an untouched selection', () => {
+		expect(refreshedVolumeSelection(['one'], ['one'], ['two'])).toEqual(['two']);
+	});
+
+	it('preserves a locally edited selection', () => {
+		expect(refreshedVolumeSelection(['two'], ['one'], ['three'])).toBeUndefined();
 	});
 });
