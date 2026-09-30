@@ -45,3 +45,13 @@ export function changedVolumeSelection(
 
 	return volumes;
 }
+
+export function refreshedVolumeSelection(
+	volumes: Array<string>,
+	initialVolumes: Array<string>,
+	refreshedVolumes: Array<string>
+): Array<string> | undefined {
+	return changedVolumeSelection(volumes, initialVolumes) === undefined
+		? refreshedVolumes
+		: undefined;
+}

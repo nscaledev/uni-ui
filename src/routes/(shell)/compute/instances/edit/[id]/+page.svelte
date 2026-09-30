@@ -2,11 +2,16 @@
 	import type { PageData } from './$types';
 	let { data }: { data: PageData } = $props();
 	import { onMount } from 'svelte';
-	import { validate as isUUID } from 'uuid';
 	import * as Clients from '$lib/clients';
 	import * as Compute from '$lib/openapi/compute';
+	import { selectableInstanceFlavors } from '$lib/instanceutil';
 	import { startPolling } from '$lib/loadutil';
-	import { attachableVolumes, changedVolumeSelection, volumeCompatible } from '$lib/volumeutil';
+	import {
+		attachableVolumes,
+		changedVolumeSelection,
+		refreshedVolumeSelection,
+		volumeCompatible
+	} from '$lib/volumeutil';
 	import FormPage from '$lib/layouts/FormPage.svelte';
 	import ShellMetadataSection from '$lib/layouts/ShellMetadataSection.svelte';
 	import ShellSection from '$lib/layouts/ShellSection.svelte';
@@ -49,21 +54,13 @@
 		return data.instance.spec.volumes ?? [];
 	}
 	let securityGroups: Array<string> = $state(initSecurityGroups());
-	const initialVolumes = initVolumes();
+	let initialVolumes: Array<string> = $state(initVolumes());
 	let volumes: Array<string> = $state(initVolumes());
 	let volumeStatuses: Array<Compute.InstanceVolumeStatus> = $state(initVolumeStatuses());
 	let publicIP = $state(initPublicIP());
 	let allowedSourceAddresses: Array<string> = $state(initAllowedSourceAddresses());
 	let userData = $state(initUserData());
-	let flavors = $derived(
-		data.flavors.filter(
-			(x) =>
-				isUUID(x.metadata.id) &&
-				data.images.some(
-					(y) => x.spec.disk >= y.spec.sizeGiB && x.spec.architecture === y.spec.architecture
-				)
-		)
-	);
+	let flavors = $derived(selectableInstanceFlavors(data.flavors, data.images));
 	let selectedFlavor = $derived(
 		flavors.find((flavor) => flavor.metadata.id === resource.spec.flavorId)
 	);
@@ -142,6 +139,15 @@
 		const instance = await Clients.compute().apiV2InstancesInstanceIDGet({
 			instanceID: data.instance.metadata.id
 		});
+		const refreshedVolumes = refreshedVolumeSelection(
+			volumes,
+			initialVolumes,
+			instance.spec.volumes ?? []
+		);
+		if (refreshedVolumes !== undefined) {
+			initialVolumes = refreshedVolumes;
+			volumes = refreshedVolumes;
+		}
 		volumeStatuses = instance.status.volumes ?? [];
 	}
 	onMount(() => startPolling(refreshVolumeStatuses));

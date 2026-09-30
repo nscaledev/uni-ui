@@ -20,7 +20,7 @@ export async function assertNonEmptyList<Type extends Lengthable>(
 
 export function startPolling(callback: () => void | Promise<void>, intervalMs = 5000): () => void {
 	const interval = setInterval(async () => {
-		if (navigating.to) return;
+		if (navigating.to || globalThis.document?.hidden) return;
 
 		try {
 			await callback();
