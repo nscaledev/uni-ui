@@ -87,8 +87,8 @@
 			changedVolumeSelection(volumes, initialVolumes) === undefined) ||
 			incompatibleVolumeIDs.size === 0
 	);
-	function lookupFlavor(id: string): Compute.Flavor {
-		return flavors.find((x) => x.metadata.id == id) as Compute.Flavor;
+	function lookupFlavor(id: string): Compute.Flavor | undefined {
+		return flavors.find((x) => x.metadata.id == id);
 	}
 	let images = $derived(
 		selectedFlavor
@@ -103,6 +103,7 @@
 		return images.find((x) => x.metadata.id == id) as Compute.Image;
 	}
 	$effect.pre(() => {
+		if (!selectedFlavor) return;
 		if (images.find((x) => x.metadata.id == resource.spec.imageId)) return;
 		resource.spec.imageId = images.length ? images[0].metadata.id : '';
 	});
@@ -191,8 +192,21 @@
 				label="Choose an instance flavor."
 				hint="CPU, GPU and memory resources allocated to the instance."
 			>
-				{#snippet contents(id: string)}<Flavor flavor={lookupFlavor(id)} />{/snippet}
+				{#snippet contents(id: string)}
+					{@const flavor = lookupFlavor(id)}
+					{#if flavor}
+						<Flavor {flavor} />
+					{:else}
+						<span class="flavor-unavailable">Unavailable flavor: {id}</span>
+					{/if}
+				{/snippet}
 			</RichSelect>
+			{#if !selectedFlavor}
+				<p class="flavor-unavailable" role="alert">
+					The selected flavor is no longer available or has no compatible images. Select an
+					available flavor before saving. Changing the flavor rebuilds the instance.
+				</p>
+			{/if}
 			<RichSelect
 				value={resource.spec.imageId}
 				onValueChange={(e) => (resource.spec.imageId = e.value)}
@@ -303,7 +317,8 @@
 		margin-top: 16px;
 	}
 
-	.volume-incompatible {
+	.volume-incompatible,
+	.flavor-unavailable {
 		color: var(--danger);
 	}
 </style>
