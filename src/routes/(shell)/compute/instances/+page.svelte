@@ -10,6 +10,7 @@
 	import * as Compute from '$lib/openapi/compute';
 	import * as Region from '$lib/openapi/region';
 	import * as RegionUtil from '$lib/regionutil';
+	import * as ProjectUtil from '$lib/projectutil';
 	import * as MachineStatus from '$lib/machineStatus';
 	import { resolveChip, fromPowerState } from '$lib/layouts/effectiveStatus';
 	import { ageFormatter } from '$lib/formatters';
@@ -52,24 +53,6 @@
 		);
 		return ca?.metadata.name ?? resource.spec.sshCertificateAuthorityId;
 	}
-	const PROJECT_PALETTE = [
-		'oklch(0.65 0.18 220)',
-		'oklch(0.65 0.18 290)',
-		'oklch(0.68 0.16 30)',
-		'oklch(0.65 0.18 340)',
-		'oklch(0.65 0.16 170)',
-		'oklch(0.68 0.16 80)'
-	];
-
-	function instanceProject(resource: Compute.InstanceRead) {
-		const idx = data.projects.findIndex((p) => p.metadata.id === resource.metadata.projectId);
-		if (idx < 0) return null;
-		return {
-			name: data.projects[idx].metadata.name,
-			color: PROJECT_PALETTE[idx % PROJECT_PALETTE.length]
-		};
-	}
-
 	function deleteInstance(resource: Compute.InstanceRead) {
 		Clients.compute()
 			.apiV2InstancesInstanceIDDelete({ instanceID: resource.metadata.id })
@@ -143,7 +126,7 @@
 			fromPowerState(resource.status.powerState),
 			resource.metadata.healthStatus
 		)}
-		{@const proj = instanceProject(resource)}
+		{@const proj = ProjectUtil.lookup(data.projects, resource.metadata.projectId)}
 		<td class="primary">
 			<a href={resolve(`/compute/instances/edit/${resource.metadata.id}`)}
 				>{resource.metadata.name}</a

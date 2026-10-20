@@ -10,6 +10,7 @@
 	import * as Clients from '$lib/clients';
 	import * as Region from '$lib/openapi/region';
 	import * as RegionUtil from '$lib/regionutil';
+	import * as ProjectUtil from '$lib/projectutil';
 	import * as Identity from '$lib/openapi/identity';
 	import { ageFormatter } from '$lib/formatters';
 
@@ -43,24 +44,6 @@
 		`projectID=${data.projectID ?? createProjectID}&regionID=${data.regions.length === 1 ? data.regions[0].metadata.id : createRegionID}`
 	);
 	const skipPopup = $derived(!!data.projectID && data.regions.length === 1);
-
-	const PROJECT_PALETTE = [
-		'oklch(0.65 0.18 220)',
-		'oklch(0.65 0.18 290)',
-		'oklch(0.68 0.16 30)',
-		'oklch(0.65 0.18 340)',
-		'oklch(0.65 0.16 170)',
-		'oklch(0.68 0.16 80)'
-	];
-
-	function networkProject(resource: Region.NetworkV2Read) {
-		const idx = data.projects.findIndex((p) => p.metadata.id === resource.metadata.projectId);
-		if (idx < 0) return null;
-		return {
-			name: data.projects[idx].metadata.name,
-			color: PROJECT_PALETTE[idx % PROJECT_PALETTE.length]
-		};
-	}
 
 	function statusKind(resource: Region.NetworkV2Read): string {
 		switch (resource.metadata.provisioningStatus) {
@@ -159,7 +142,7 @@
 	{/snippet}
 
 	{#snippet tableRow(resource)}
-		{@const proj = networkProject(resource)}
+		{@const proj = ProjectUtil.lookup(data.projects, resource.metadata.projectId)}
 		<td class="primary">
 			<a href={resolve(`/network/networks/edit/${resource.metadata.id}`)}
 				>{resource.metadata.name}</a
