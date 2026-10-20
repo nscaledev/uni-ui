@@ -9,7 +9,7 @@ vi.mock('@sveltejs/kit', () => ({
 	})
 }));
 
-import { startAutoRefresh, assertNonEmptyList } from './loadutil';
+import { startAutoRefresh, startPolling, assertNonEmptyList } from './loadutil';
 import { invalidate } from '$app/navigation';
 import { navigating } from '$app/state';
 
@@ -24,6 +24,7 @@ beforeEach(() => {
 
 afterEach(() => {
 	vi.useRealTimers();
+	vi.unstubAllGlobals();
 });
 
 describe('startAutoRefresh', () => {
@@ -89,6 +90,51 @@ describe('startAutoRefresh', () => {
 		expect(mockInvalidate).toHaveBeenCalledTimes(1);
 
 		cleanup();
+	});
+});
+
+describe('startPolling', () => {
+	it('calls the callback after the interval', () => {
+		const callback = vi.fn();
+		const cleanup = startPolling(callback, 5000);
+
+		vi.advanceTimersByTime(5000);
+		expect(callback).toHaveBeenCalledOnce();
+
+		cleanup();
+	});
+
+	it('pauses while the document is hidden', () => {
+		const documentState = { hidden: true };
+		vi.stubGlobal('document', documentState);
+		const callback = vi.fn();
+		const cleanup = startPolling(callback, 5000);
+
+		vi.advanceTimersByTime(5000);
+		expect(callback).not.toHaveBeenCalled();
+
+		documentState.hidden = false;
+		vi.advanceTimersByTime(5000);
+		expect(callback).toHaveBeenCalledOnce();
+
+		cleanup();
+	});
+
+	it('stops after the callback fails', async () => {
+		const failure = new Error('failed');
+		const callback = vi.fn().mockRejectedValue(failure);
+		const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+		const cleanup = startPolling(callback, 5000);
+
+		await vi.advanceTimersByTimeAsync(5000);
+		expect(callback).toHaveBeenCalledOnce();
+		expect(consoleError).toHaveBeenCalledWith(failure);
+
+		await vi.advanceTimersByTimeAsync(10000);
+		expect(callback).toHaveBeenCalledOnce();
+
+		cleanup();
+		consoleError.mockRestore();
 	});
 });
 

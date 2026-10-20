@@ -4,18 +4,10 @@
 	import { logout } from '$lib/credentials';
 	import type { IDToken } from '$lib/oidc';
 	import type { OrganizationRead, ProjectRead } from '$lib/openapi/identity';
+	import * as ProjectUtil from '$lib/projectutil';
 	import { tweaksOpen } from '$lib/stores/theme';
 	import ScopePicker from '$lib/shell/ScopePicker.svelte';
 	import OmniSearch from '$lib/shell/OmniSearch.svelte';
-
-	const PROJECT_PALETTE = [
-		'oklch(0.65 0.18 220)',
-		'oklch(0.65 0.18 290)',
-		'oklch(0.68 0.16 30)',
-		'oklch(0.65 0.18 340)',
-		'oklch(0.65 0.16 170)',
-		'oklch(0.68 0.16 80)'
-	];
 
 	interface Props {
 		profile: IDToken;
@@ -31,8 +23,7 @@
 	const project = $derived(projectID ? projects.find((p) => p.metadata.id === projectID) : null);
 
 	function projectColor(p: ProjectRead): string {
-		const i = projects.indexOf(p);
-		return PROJECT_PALETTE[i % PROJECT_PALETTE.length];
+		return ProjectUtil.color(projects.indexOf(p));
 	}
 
 	// ── scope picker ──────────────────────────────────────────

@@ -19,6 +19,12 @@ import {
     InstanceLifecyclePhaseFromJSONTyped,
     InstanceLifecyclePhaseToJSON,
 } from './InstanceLifecyclePhase';
+import type { InstanceVolumeStatus } from './InstanceVolumeStatus';
+import {
+    InstanceVolumeStatusFromJSON,
+    InstanceVolumeStatusFromJSONTyped,
+    InstanceVolumeStatusToJSON,
+} from './InstanceVolumeStatus';
 
 /**
  * Read only status information about a compute instance.
@@ -62,6 +68,12 @@ export interface InstanceStatus {
      * @memberof InstanceStatus
      */
     macAddress?: string;
+    /**
+     * Observed Volume attachment state, including attachments still being removed.
+     * @type {Array<InstanceVolumeStatus>}
+     * @memberof InstanceStatus
+     */
+    volumes?: Array<InstanceVolumeStatus>;
 }
 
 /**
@@ -91,6 +103,7 @@ export function InstanceStatusFromJSONTyped(json: any, ignoreDiscriminator: bool
         'privateIP': !exists(json, 'privateIP') ? undefined : json['privateIP'],
         'publicIP': !exists(json, 'publicIP') ? undefined : json['publicIP'],
         'macAddress': !exists(json, 'macAddress') ? undefined : json['macAddress'],
+        'volumes': !exists(json, 'volumes') ? undefined : ((json['volumes'] as Array<any>).map(InstanceVolumeStatusFromJSON)),
     };
 }
 
@@ -109,6 +122,6 @@ export function InstanceStatusToJSON(value?: InstanceStatus | null): any {
         'privateIP': value.privateIP,
         'publicIP': value.publicIP,
         'macAddress': value.macAddress,
+        'volumes': value.volumes === undefined ? undefined : ((value.volumes as Array<any>).map(InstanceVolumeStatusToJSON)),
     };
 }
-
