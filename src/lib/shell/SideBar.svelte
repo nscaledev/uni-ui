@@ -117,6 +117,23 @@
 				]
 			},
 			{
+				base: '/storage',
+				title: 'Storage',
+				icon: 'layers',
+				items: [
+					{
+						label: 'Volumes',
+						href: 'volumes',
+						rbac: [
+							{ endpoint: 'region:volumes:v2', operations: [Identity.AclOperation.Read] },
+							{ endpoint: 'region:volumeclasses:v2', operations: [Identity.AclOperation.Read] },
+							{ endpoint: 'region:networks:v2', operations: [Identity.AclOperation.Read] },
+							{ endpoint: 'region:regions', operations: [Identity.AclOperation.Read] }
+						]
+					}
+				]
+			},
+			{
 				base: '/kubernetes',
 				title: 'Kubernetes',
 				icon: 'k8s',
