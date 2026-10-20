@@ -16,10 +16,11 @@
 		"format": "prettier --write .",
 		"test:integration": "playwright test",
 		"test:unit": "vitest",
-		"openapi:identity": "openapi-generator-cli generate -g typescript-fetch --global-property skipFormModel=false -i https://raw.githubusercontent.com/unikorn-cloud/identity/main/pkg/openapi/server.spec.yaml -o src/lib/openapi/identity",
-		"openapi:kubernetes": "openapi-generator-cli generate -g typescript-fetch -i https://raw.githubusercontent.com/unikorn-cloud/kubernetes/main/pkg/openapi/server.spec.yaml -o src/lib/openapi/kubernetes",
-		"openapi:region": "openapi-generator-cli generate -g typescript-fetch -i https://raw.githubusercontent.com/unikorn-cloud/region/main/pkg/openapi/server.spec.yaml -o src/lib/openapi/region",
-		"openapi:compute": "openapi-generator-cli generate -g typescript-fetch -i https://raw.githubusercontent.com/unikorn-cloud/compute/main/pkg/openapi/server.spec.yaml -o src/lib/openapi/compute"
+		"openapi:generate": "docker run --rm -u $(id -u):$(id -g) -v \"$PWD:/local\" -w /local openapitools/openapi-generator-cli:v7.3.0",
+		"openapi:identity": "npm run openapi:generate -- generate -g typescript-fetch --global-property skipFormModel=false -i https://raw.githubusercontent.com/unikorn-cloud/identity/main/pkg/openapi/server.spec.yaml -o src/lib/openapi/identity",
+		"openapi:kubernetes": "npm run openapi:generate -- generate -g typescript-fetch -i https://raw.githubusercontent.com/unikorn-cloud/kubernetes/main/pkg/openapi/server.spec.yaml -o src/lib/openapi/kubernetes",
+		"openapi:region": "npm run openapi:generate -- generate -g typescript-fetch -i https://raw.githubusercontent.com/unikorn-cloud/region/main/pkg/openapi/server.spec.yaml -o src/lib/openapi/region",
+		"openapi:compute": "npm run openapi:generate -- generate -g typescript-fetch -i https://raw.githubusercontent.com/unikorn-cloud/compute/main/pkg/openapi/server.spec.yaml -o src/lib/openapi/compute"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.39.0",
@@ -53,7 +54,6 @@
 	"type": "module",
 	"dependencies": {
 		"@floating-ui/dom": "^1.6.8",
-		"@openapitools/openapi-generator-cli": "^2.40.1",
 		"@opentelemetry/api": "^1.8.0",
 		"@opentelemetry/core": "^2.8.0",
 		"@opentelemetry/resources": "^2.8.0",
