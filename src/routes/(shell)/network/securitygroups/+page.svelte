@@ -8,6 +8,7 @@
 	import * as Clients from '$lib/clients';
 	import * as Region from '$lib/openapi/region';
 	import * as RegionUtil from '$lib/regionutil';
+	import * as ProjectUtil from '$lib/projectutil';
 	import { resolveChip } from '$lib/layouts/effectiveStatus';
 	import { ageFormatter } from '$lib/formatters';
 	import type { ShellPageSettings } from '$lib/layouts/types.ts';
@@ -36,27 +37,10 @@
 		`networkID=${data.networks.length === 1 ? data.networks[0].metadata.id : createNetworkID}`
 	);
 	const skipPopup = $derived(data.networks.length === 1);
-	const PROJECT_PALETTE = [
-		'oklch(0.65 0.18 220)',
-		'oklch(0.65 0.18 290)',
-		'oklch(0.68 0.16 30)',
-		'oklch(0.65 0.18 340)',
-		'oklch(0.65 0.16 170)',
-		'oklch(0.68 0.16 80)'
-	];
-
 	function lookupNetwork(id: string): Region.NetworkV2Read {
 		return data.networks.find((x) => x.metadata.id == id) as Region.NetworkV2Read;
 	}
 
-	function securityGroupProject(resource: Region.SecurityGroupV2Read) {
-		const idx = data.projects.findIndex((p) => p.metadata.id === resource.metadata.projectId);
-		if (idx < 0) return null;
-		return {
-			name: data.projects[idx].metadata.name,
-			color: PROJECT_PALETTE[idx % PROJECT_PALETTE.length]
-		};
-	}
 	function deleteGroup(resource: Region.SecurityGroupV2Read) {
 		Clients.region()
 			.apiV2SecuritygroupsSecurityGroupIDDelete({ securityGroupID: resource.metadata.id })
@@ -96,7 +80,7 @@
 
 	{#snippet tableRow(resource)}
 		{@const chip = resolveChip(resource.metadata.provisioningStatus, null)}
-		{@const proj = securityGroupProject(resource)}
+		{@const proj = ProjectUtil.lookup(data.projects, resource.metadata.projectId)}
 		<td class="primary">
 			<a href={resolve(`/network/securitygroups/edit/${resource.metadata.id}`)}
 				>{resource.metadata.name}</a
