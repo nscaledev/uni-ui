@@ -1,8 +1,8 @@
 <script lang="ts">
-	import * as Validation from '$lib/validation';
-	import * as Kubernetes from '$lib/openapi/kubernetes';
-	import ShellSection from '$lib/layouts/ShellSection.svelte';
-	import TextInput from '$lib/forms/TextInput.svelte';
+	import * as Validation from '#lib/validation/index.ts';
+	import * as Kubernetes from '#lib/openapi/kubernetes/index.ts';
+	import ShellSection from '#lib/layouts/ShellSection.svelte';
+	import TextInput from '#lib/forms/TextInput.svelte';
 
 	// A list of names that already exist in this context for validation,
 	// so ensure you prune out the current one when using in an update

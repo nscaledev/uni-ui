@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type * as Compute from '$lib/openapi/compute';
+import type * as Compute from '#lib/openapi/compute/index.ts';
 import { selectableInstanceFlavors } from './instanceutil';
 
 function flavor(id: string, disk: number, architecture = 'x86_64'): Compute.Flavor {

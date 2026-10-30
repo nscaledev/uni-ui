@@ -6,8 +6,8 @@ const UI_ORIGIN = 'https://console.example.com';
 // The UI and identity are different hosts in every deployment, so these tests
 // pin the rule that actually matters: the callback must address identity. An
 // earlier same-host check satisfied a scanner and rejected every real login.
-vi.mock('$env/dynamic/public', () => ({
-	env: { PUBLIC_IDENTITY_HOST: IDENTITY }
+vi.mock('$app/env/public', () => ({
+	PUBLIC_IDENTITY_HOST: IDENTITY
 }));
 
 async function load(params: Record<string, string>) {
@@ -95,7 +95,7 @@ describe('login callback validation without an identity host', () => {
 	// Failing closed matters: with no identity host there is nothing to validate
 	// against, and accepting the callback would restore the open redirect.
 	it('fails rather than accepting any callback', async () => {
-		vi.doMock('$env/dynamic/public', () => ({ env: { PUBLIC_IDENTITY_HOST: '' } }));
+		vi.doMock('$app/env/public', () => ({ PUBLIC_IDENTITY_HOST: '' }));
 
 		expect(await statusOf(load(VALID))).toBe(500);
 	});

@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { computePosition, flip, offset, shift } from '@floating-ui/dom';
-	import Icon from '$lib/primitives/Icon.svelte';
-	import { logout } from '$lib/credentials';
-	import type { IDToken } from '$lib/oidc';
-	import type { OrganizationRead, ProjectRead } from '$lib/openapi/identity';
-	import * as ProjectUtil from '$lib/projectutil';
-	import { tweaksOpen } from '$lib/stores/theme';
-	import ScopePicker from '$lib/shell/ScopePicker.svelte';
-	import OmniSearch from '$lib/shell/OmniSearch.svelte';
+	import Icon from '#lib/primitives/Icon.svelte';
+	import { logout } from '#lib/credentials/index.ts';
+	import type { IDToken } from '#lib/oidc/index.ts';
+	import type { OrganizationRead, ProjectRead } from '#lib/openapi/identity/index.ts';
+	import * as ProjectUtil from '#lib/projectutil/index.ts';
+	import { tweaksOpen } from '#lib/stores/theme.ts';
+	import ScopePicker from '#lib/shell/ScopePicker.svelte';
+	import OmniSearch from '#lib/shell/OmniSearch.svelte';
 
 	interface Props {
 		profile: IDToken;

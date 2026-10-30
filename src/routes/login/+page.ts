@@ -1,6 +1,6 @@
 import type { PageLoad } from './$types';
 import { error } from '@sveltejs/kit';
-import { env } from '$env/dynamic/public';
+import { PUBLIC_IDENTITY_HOST } from '$app/env/public';
 
 export const load: PageLoad = async ({ url }) => {
 	const callback = url.searchParams.get('callback');
@@ -19,13 +19,13 @@ export const load: PageLoad = async ({ url }) => {
 		error(400, 'invalid callback parameter');
 	}
 
-	if (!env.PUBLIC_IDENTITY_HOST) {
+	if (!PUBLIC_IDENTITY_HOST) {
 		error(500, 'identity host not configured');
 	}
 
 	let identityUrl: URL;
 	try {
-		identityUrl = new URL(env.PUBLIC_IDENTITY_HOST);
+		identityUrl = new URL(PUBLIC_IDENTITY_HOST);
 	} catch {
 		error(500, 'identity host malformed');
 	}

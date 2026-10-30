@@ -2,20 +2,20 @@
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
 	import { resolve } from '$app/paths';
-	import { startAutoRefresh } from '$lib/loadutil';
+	import { startAutoRefresh } from '#lib/loadutil.ts';
 
 	let { data }: { data: PageData } = $props();
 
-	import * as Clients from '$lib/clients';
-	import * as RegionUtil from '$lib/regionutil';
-	import { ageFormatter } from '$lib/formatters';
+	import * as Clients from '#lib/clients/index.ts';
+	import * as RegionUtil from '#lib/regionutil/index.ts';
+	import { ageFormatter } from '#lib/formatters/index.ts';
 
-	import PageHeader from '$lib/layouts/PageHeader.svelte';
-	import ShellSection from '$lib/layouts/ShellSection.svelte';
-	import ShellMetadataItem from '$lib/layouts/ShellMetadataItem.svelte';
-	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
-	import LoadBalancerListenerV2 from '$lib/layouts/LoadBalancerListenerV2.svelte';
-	import Icon from '$lib/primitives/Icon.svelte';
+	import PageHeader from '#lib/layouts/PageHeader.svelte';
+	import ShellSection from '#lib/layouts/ShellSection.svelte';
+	import ShellMetadataItem from '#lib/layouts/ShellMetadataItem.svelte';
+	import ModalIcon from '#lib/layouts/ModalIcon.svelte';
+	import LoadBalancerListenerV2 from '#lib/layouts/LoadBalancerListenerV2.svelte';
+	import Icon from '#lib/primitives/Icon.svelte';
 
 	onMount(() => startAutoRefresh('layout:loadbalancers'));
 
@@ -52,7 +52,7 @@
 >
 	{#snippet actions()}
 		<a
-			href={resolve(`/network/loadbalancers/edit/${data.loadBalancer.metadata.id}`)}
+			href={resolve(`network/loadbalancers/edit/${data.loadBalancer.metadata.id}`)}
 			class="btn btn--ghost"
 		>
 			<Icon name="edit" size={14} /> Edit

@@ -3,26 +3,26 @@
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { startAutoRefresh } from '$lib/loadutil';
+	import { startAutoRefresh } from '#lib/loadutil.ts';
 	let { data }: { data: PageData } = $props();
-	import * as Clients from '$lib/clients';
-	import * as Kubernetes from '$lib/openapi/kubernetes';
-	import { resolveChip, fromHealthStatus } from '$lib/layouts/effectiveStatus';
-	import { ageFormatter } from '$lib/formatters';
-	import * as RegionUtil from '$lib/regionutil';
-	import * as ProjectUtil from '$lib/projectutil';
-	import type { ShellPageSettings } from '$lib/layouts/types.ts';
-	import ListPage from '$lib/layouts/ListPage.svelte';
-	import ShellList from '$lib/layouts/ShellList.svelte';
-	import ShellListItem from '$lib/layouts/ShellListItem.svelte';
-	import ShellListItemHeader from '$lib/layouts/ShellListItemHeader.svelte';
-	import ShellListItemBadges from '$lib/layouts/ShellListItemBadges.svelte';
-	import ShellListItemMetadata from '$lib/layouts/ShellListItemMetadata.svelte';
-	import Placeholder from '$lib/layouts/Placeholder.svelte';
-	import PopupButton from '$lib/forms/PopupButton.svelte';
-	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
-	import RowMenu from '$lib/layouts/RowMenu.svelte';
-	import Icon from '$lib/primitives/Icon.svelte';
+	import * as Clients from '#lib/clients/index.ts';
+	import * as Kubernetes from '#lib/openapi/kubernetes/index.ts';
+	import { resolveChip, fromHealthStatus } from '#lib/layouts/effectiveStatus.ts';
+	import { ageFormatter } from '#lib/formatters/index.ts';
+	import * as RegionUtil from '#lib/regionutil/index.ts';
+	import * as ProjectUtil from '#lib/projectutil/index.ts';
+	import type { ShellPageSettings } from '#lib/layouts/types.ts';
+	import ListPage from '#lib/layouts/ListPage.svelte';
+	import ShellList from '#lib/layouts/ShellList.svelte';
+	import ShellListItem from '#lib/layouts/ShellListItem.svelte';
+	import ShellListItemHeader from '#lib/layouts/ShellListItemHeader.svelte';
+	import ShellListItemBadges from '#lib/layouts/ShellListItemBadges.svelte';
+	import ShellListItemMetadata from '#lib/layouts/ShellListItemMetadata.svelte';
+	import Placeholder from '#lib/layouts/Placeholder.svelte';
+	import PopupButton from '#lib/forms/PopupButton.svelte';
+	import ModalIcon from '#lib/layouts/ModalIcon.svelte';
+	import RowMenu from '#lib/layouts/RowMenu.svelte';
+	import Icon from '#lib/primitives/Icon.svelte';
 	const settings: ShellPageSettings = {
 		feature: 'Kubernetes',
 		name: 'Clusters',
@@ -156,7 +156,7 @@
 		{#if !data.projects.length}
 			<button class="btn btn--primary" disabled><Icon name="plus" size={16} /> Create</button>
 		{:else if skipPopup}
-			<a href={resolve(`/kubernetes/clusters/create?${createQuery}`)} class="btn btn--primary"
+			<a href={resolve(`kubernetes/clusters/create?${createQuery}`)} class="btn btn--primary"
 				><Icon name="plus" size={16} /> Create</a
 			>
 		{:else}
@@ -188,7 +188,7 @@
 						<div class="create-popup__footer">
 							<button onclick={close} class="btn btn--ghost btn--sm">Cancel</button>
 							<a
-								href={resolve(`/kubernetes/clusters/create?${createQuery}`)}
+								href={resolve(`kubernetes/clusters/create?${createQuery}`)}
 								class="btn btn--primary btn--sm">Continue</a
 							>
 						</div>

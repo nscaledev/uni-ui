@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
+	import { browser } from '$app/env';
 	import { invalidate } from '$app/navigation';
-	import * as Clients from '$lib/clients';
-	import type { OrganizationRead, ProjectRead } from '$lib/openapi/identity';
-	import * as ProjectUtil from '$lib/projectutil';
-	import Icon from '$lib/primitives/Icon.svelte';
+	import * as Clients from '#lib/clients/index.ts';
+	import type { OrganizationRead, ProjectRead } from '#lib/openapi/identity/index.ts';
+	import * as ProjectUtil from '#lib/projectutil/index.ts';
+	import Icon from '#lib/primitives/Icon.svelte';
 
 	const MAX_RECENT = 5;
 	const RECENT_KEY = 'scope_recent_orgs';

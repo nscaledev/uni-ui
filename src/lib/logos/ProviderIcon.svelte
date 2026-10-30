@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as Identity from '$lib/openapi/identity';
+	import * as Identity from '#lib/openapi/identity/index.ts';
 
 	interface Props {
 		type: Identity.Oauth2ProviderType;

@@ -2,18 +2,18 @@
 	import type { PageData } from './$types';
 	let { data }: { data: PageData } = $props();
 	import { uniqueNamesGenerator, adjectives, animals } from 'unique-names-generator';
-	import * as Clients from '$lib/clients';
-	import * as Kubernetes from '$lib/openapi/kubernetes';
-	import * as RegionUtil from '$lib/regionutil';
-	import FormPage from '$lib/layouts/FormPage.svelte';
-	import ShellMetadataSection from '$lib/layouts/ShellMetadataSection.svelte';
-	import ShellSection from '$lib/layouts/ShellSection.svelte';
-	import Select from '$lib/forms/Select.svelte';
-	import Switch from '$lib/forms/Switch.svelte';
-	import TimeWindow from '$lib/layouts/TimeWindow.svelte';
-	import ResourceList from '$lib/layouts/ResourceList.svelte';
-	import KubernetesWorkloadPool from '$lib/KubernetesWorkloadPool.svelte';
-	import Flavor from '$lib/Flavor.svelte';
+	import * as Clients from '#lib/clients/index.ts';
+	import * as Kubernetes from '#lib/openapi/kubernetes/index.ts';
+	import * as RegionUtil from '#lib/regionutil/index.ts';
+	import FormPage from '#lib/layouts/FormPage.svelte';
+	import ShellMetadataSection from '#lib/layouts/ShellMetadataSection.svelte';
+	import ShellSection from '#lib/layouts/ShellSection.svelte';
+	import Select from '#lib/forms/Select.svelte';
+	import Switch from '#lib/forms/Switch.svelte';
+	import TimeWindow from '#lib/layouts/TimeWindow.svelte';
+	import ResourceList from '#lib/layouts/ResourceList.svelte';
+	import KubernetesWorkloadPool from '#lib/KubernetesWorkloadPool.svelte';
+	import Flavor from '#lib/Flavor.svelte';
 	function initialVersions(): Array<string> {
 		return [...new Set(data.images.map((x) => x.spec.softwareVersions?.kubernetes || ''))]
 			.sort()

@@ -1,7 +1,7 @@
 <script lang="ts">
 	/* Required for styling */
 	import '../app.css';
-	import { env } from '$env/dynamic/public';
+	import { PUBLIC_FAVICON, PUBLIC_TITLE } from '$app/env/public';
 
 	interface Props {
 		children?: import('svelte').Snippet;
@@ -11,9 +11,9 @@
 </script>
 
 <svelte:head>
-	<title>{env.PUBLIC_TITLE}</title>
-	{#if env.PUBLIC_FAVICON}
-		<link rel="icon" href={env.PUBLIC_FAVICON} type="image/svg+xml" />
+	<title>{PUBLIC_TITLE}</title>
+	{#if PUBLIC_FAVICON}
+		<link rel="icon" href={PUBLIC_FAVICON} type="image/svg+xml" />
 	{/if}
 </svelte:head>
 

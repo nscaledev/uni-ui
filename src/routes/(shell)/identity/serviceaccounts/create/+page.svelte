@@ -2,14 +2,14 @@
 	import type { PageData } from './$types';
 	import { resolve } from '$app/paths';
 	let { data }: { data: PageData } = $props();
-	import * as Clients from '$lib/clients';
-	import * as Identity from '$lib/openapi/identity';
-	import FormPage from '$lib/layouts/FormPage.svelte';
-	import ShellMetadataSection from '$lib/layouts/ShellMetadataSection.svelte';
-	import ShellSection from '$lib/layouts/ShellSection.svelte';
-	import MultiSelect from '$lib/forms/MultiSelect.svelte';
-	import Clipboard from '$lib/forms/Clipboard.svelte';
-	import Button from '$lib/forms/Button.svelte';
+	import * as Clients from '#lib/clients/index.ts';
+	import * as Identity from '#lib/openapi/identity/index.ts';
+	import FormPage from '#lib/layouts/FormPage.svelte';
+	import ShellMetadataSection from '#lib/layouts/ShellMetadataSection.svelte';
+	import ShellSection from '#lib/layouts/ShellSection.svelte';
+	import MultiSelect from '#lib/forms/MultiSelect.svelte';
+	import Clipboard from '#lib/forms/Clipboard.svelte';
+	import Button from '#lib/forms/Button.svelte';
 	let names = $derived(data.serviceAccounts.map((x) => x.metadata.name));
 	let resource: Identity.ServiceAccountWrite = $state({
 		metadata: { name: '' },
@@ -32,7 +32,7 @@
 
 {#if serviceAccount}
 	<nav class="breadcrumb" aria-label="Breadcrumb">
-		<a href={resolve('/identity/serviceaccounts')}>Service Accounts</a>
+		<a href={resolve('identity/serviceaccounts')}>Service Accounts</a>
 		<span class="sep">/</span>
 		<span>Token</span>
 	</nav>

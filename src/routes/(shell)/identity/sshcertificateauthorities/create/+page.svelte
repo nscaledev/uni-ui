@@ -1,14 +1,14 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	let { data }: { data: PageData } = $props();
-	import * as Clients from '$lib/clients';
-	import * as Region from '$lib/openapi/region';
-	import * as Validation from '$lib/validation';
-	import FormPage from '$lib/layouts/FormPage.svelte';
-	import ShellMetadataSection from '$lib/layouts/ShellMetadataSection.svelte';
-	import ShellSection from '$lib/layouts/ShellSection.svelte';
-	import Select from '$lib/forms/Select.svelte';
-	import TextInput from '$lib/forms/TextInput.svelte';
+	import * as Clients from '#lib/clients/index.ts';
+	import * as Region from '#lib/openapi/region/index.ts';
+	import * as Validation from '#lib/validation/index.ts';
+	import FormPage from '#lib/layouts/FormPage.svelte';
+	import ShellMetadataSection from '#lib/layouts/ShellMetadataSection.svelte';
+	import ShellSection from '#lib/layouts/ShellSection.svelte';
+	import Select from '#lib/forms/Select.svelte';
+	import TextInput from '#lib/forms/TextInput.svelte';
 	let names = $derived(data.sshCertificateAuthorities.map((x) => x.metadata.name));
 	const initialProjectID = data.projects[0]?.metadata.id || '';
 	let resource: {

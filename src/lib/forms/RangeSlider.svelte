@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Slider } from 'bits-ui';
-	import type { NumberFormatter } from '$lib/formatters';
+	import type { NumberFormatter } from '#lib/formatters/index.ts';
 
 	interface Props {
 		name?: string;

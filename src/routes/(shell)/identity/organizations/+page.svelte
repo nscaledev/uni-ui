@@ -1,11 +1,11 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	let { data }: { data: PageData } = $props();
-	import * as Clients from '$lib/clients';
-	import * as Validation from '$lib/validation';
-	import FormPage from '$lib/layouts/FormPage.svelte';
-	import ShellSection from '$lib/layouts/ShellSection.svelte';
-	import TextInput from '$lib/forms/TextInput.svelte';
+	import * as Clients from '#lib/clients/index.ts';
+	import * as Validation from '#lib/validation/index.ts';
+	import FormPage from '#lib/layouts/FormPage.svelte';
+	import ShellSection from '#lib/layouts/ShellSection.svelte';
+	import TextInput from '#lib/forms/TextInput.svelte';
 	let organization = $state(structuredClone(data.organization));
 	let valid = $state(false);
 	function submit() {

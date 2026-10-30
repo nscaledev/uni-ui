@@ -1,11 +1,11 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	let { data }: { data: PageData } = $props();
-	import * as Clients from '$lib/clients';
-	import FormPage from '$lib/layouts/FormPage.svelte';
-	import ShellMetadataSection from '$lib/layouts/ShellMetadataSection.svelte';
-	import ShellSection from '$lib/layouts/ShellSection.svelte';
-	import MultiSelect from '$lib/forms/MultiSelect.svelte';
+	import * as Clients from '#lib/clients/index.ts';
+	import FormPage from '#lib/layouts/FormPage.svelte';
+	import ShellMetadataSection from '#lib/layouts/ShellMetadataSection.svelte';
+	import ShellSection from '#lib/layouts/ShellSection.svelte';
+	import MultiSelect from '#lib/forms/MultiSelect.svelte';
 	let resource = $state(structuredClone(data.group));
 	let metadataValid = $state(false);
 	let valid = $derived(metadataValid);

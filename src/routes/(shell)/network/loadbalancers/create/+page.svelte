@@ -5,18 +5,18 @@
 
 	import { uniqueNamesGenerator, adjectives, animals } from 'unique-names-generator';
 
-	import * as Clients from '$lib/clients';
-	import * as Region from '$lib/openapi/region';
-	import * as RegionUtil from '$lib/regionutil';
+	import * as Clients from '#lib/clients/index.ts';
+	import * as Region from '#lib/openapi/region/index.ts';
+	import * as RegionUtil from '#lib/regionutil/index.ts';
 
-	import FormPage from '$lib/layouts/FormPage.svelte';
-	import ShellMetadataSection from '$lib/layouts/ShellMetadataSection.svelte';
-	import ShellSection from '$lib/layouts/ShellSection.svelte';
-	import ResourceList from '$lib/layouts/ResourceList.svelte';
-	import TextInput from '$lib/forms/TextInput.svelte';
-	import Switch from '$lib/forms/Switch.svelte';
-	import LoadBalancerListenerV2 from '$lib/layouts/LoadBalancerListenerV2.svelte';
-	import Icon from '$lib/primitives/Icon.svelte';
+	import FormPage from '#lib/layouts/FormPage.svelte';
+	import ShellMetadataSection from '#lib/layouts/ShellMetadataSection.svelte';
+	import ShellSection from '#lib/layouts/ShellSection.svelte';
+	import ResourceList from '#lib/layouts/ResourceList.svelte';
+	import TextInput from '#lib/forms/TextInput.svelte';
+	import Switch from '#lib/forms/Switch.svelte';
+	import LoadBalancerListenerV2 from '#lib/layouts/LoadBalancerListenerV2.svelte';
+	import Icon from '#lib/primitives/Icon.svelte';
 
 	function initialNetworkID(): string {
 		return data.network.metadata.id;

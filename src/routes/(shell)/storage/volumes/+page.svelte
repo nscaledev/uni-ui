@@ -3,25 +3,25 @@
 	import { invalidate } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
-	import { startAutoRefresh } from '$lib/loadutil';
-	import * as Clients from '$lib/clients';
-	import * as Region from '$lib/openapi/region';
-	import * as RegionUtil from '$lib/regionutil';
-	import * as ProjectUtil from '$lib/projectutil';
-	import { ageFormatter } from '$lib/formatters';
-	import { resolveChip } from '$lib/layouts/effectiveStatus';
-	import type { ShellPageSettings } from '$lib/layouts/types';
-	import ListPage from '$lib/layouts/ListPage.svelte';
-	import ShellList from '$lib/layouts/ShellList.svelte';
-	import ShellListItem from '$lib/layouts/ShellListItem.svelte';
-	import ShellListItemHeader from '$lib/layouts/ShellListItemHeader.svelte';
-	import ShellListItemBadges from '$lib/layouts/ShellListItemBadges.svelte';
-	import ShellListItemMetadata from '$lib/layouts/ShellListItemMetadata.svelte';
-	import ShellMetadataItem from '$lib/layouts/ShellMetadataItem.svelte';
-	import Placeholder from '$lib/layouts/Placeholder.svelte';
-	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
-	import RowMenu from '$lib/layouts/RowMenu.svelte';
-	import Icon from '$lib/primitives/Icon.svelte';
+	import { startAutoRefresh } from '#lib/loadutil.ts';
+	import * as Clients from '#lib/clients/index.ts';
+	import * as Region from '#lib/openapi/region/index.ts';
+	import * as RegionUtil from '#lib/regionutil/index.ts';
+	import * as ProjectUtil from '#lib/projectutil/index.ts';
+	import { ageFormatter } from '#lib/formatters/index.ts';
+	import { resolveChip } from '#lib/layouts/effectiveStatus.ts';
+	import type { ShellPageSettings } from '#lib/layouts/types.ts';
+	import ListPage from '#lib/layouts/ListPage.svelte';
+	import ShellList from '#lib/layouts/ShellList.svelte';
+	import ShellListItem from '#lib/layouts/ShellListItem.svelte';
+	import ShellListItemHeader from '#lib/layouts/ShellListItemHeader.svelte';
+	import ShellListItemBadges from '#lib/layouts/ShellListItemBadges.svelte';
+	import ShellListItemMetadata from '#lib/layouts/ShellListItemMetadata.svelte';
+	import ShellMetadataItem from '#lib/layouts/ShellMetadataItem.svelte';
+	import Placeholder from '#lib/layouts/Placeholder.svelte';
+	import ModalIcon from '#lib/layouts/ModalIcon.svelte';
+	import RowMenu from '#lib/layouts/RowMenu.svelte';
+	import Icon from '#lib/primitives/Icon.svelte';
 
 	let { data }: { data: PageData } = $props();
 	const settings: ShellPageSettings = {
@@ -97,7 +97,7 @@
 
 	{#snippet tools()}
 		{#if hasCompatibleVolumeClass}
-			<a href={resolve('/storage/volumes/create')} class="btn btn--primary"
+			<a href={resolve('storage/volumes/create')} class="btn btn--primary"
 				><Icon name="plus" size={16} /> Create</a
 			>
 		{:else}<button class="btn btn--primary" disabled><Icon name="plus" size={16} /> Create</button

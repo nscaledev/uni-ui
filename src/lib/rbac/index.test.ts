@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { organizationScopesAllowed } from './index';
-import type { Acl } from '$lib/openapi/identity';
-import { AclOperation } from '$lib/openapi/identity';
+import type { Acl } from '#lib/openapi/identity/index.ts';
+import { AclOperation } from '#lib/openapi/identity/index.ts';
 
 const ORG_ID = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';
 const OTHER_ORG_ID = 'b1ffcd00-ad1c-5fg9-cc7e-7cc0ce491b22';

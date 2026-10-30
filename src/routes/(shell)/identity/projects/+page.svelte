@@ -3,20 +3,20 @@
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { startAutoRefresh } from '$lib/loadutil';
+	import { startAutoRefresh } from '#lib/loadutil.ts';
 	let { data }: { data: PageData } = $props();
-	import * as Clients from '$lib/clients';
-	import type { ShellPageSettings } from '$lib/layouts/types.ts';
-	import ListPage from '$lib/layouts/ListPage.svelte';
-	import ShellList from '$lib/layouts/ShellList.svelte';
-	import ShellListItem from '$lib/layouts/ShellListItem.svelte';
-	import ShellListItemHeader from '$lib/layouts/ShellListItemHeader.svelte';
-	import ShellListItemBadges from '$lib/layouts/ShellListItemBadges.svelte';
-	import ShellListItemMetadata from '$lib/layouts/ShellListItemMetadata.svelte';
-	import Placeholder from '$lib/layouts/Placeholder.svelte';
-	import Button from '$lib/forms/Button.svelte';
-	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
-	import Icon from '$lib/primitives/Icon.svelte';
+	import * as Clients from '#lib/clients/index.ts';
+	import type { ShellPageSettings } from '#lib/layouts/types.ts';
+	import ListPage from '#lib/layouts/ListPage.svelte';
+	import ShellList from '#lib/layouts/ShellList.svelte';
+	import ShellListItem from '#lib/layouts/ShellListItem.svelte';
+	import ShellListItemHeader from '#lib/layouts/ShellListItemHeader.svelte';
+	import ShellListItemBadges from '#lib/layouts/ShellListItemBadges.svelte';
+	import ShellListItemMetadata from '#lib/layouts/ShellListItemMetadata.svelte';
+	import Placeholder from '#lib/layouts/Placeholder.svelte';
+	import Button from '#lib/forms/Button.svelte';
+	import ModalIcon from '#lib/layouts/ModalIcon.svelte';
+	import Icon from '#lib/primitives/Icon.svelte';
 	const settings: ShellPageSettings = {
 		feature: 'Identity',
 		name: 'Projects',
@@ -51,7 +51,7 @@
 						/>{/snippet}
 					{#snippet badges()}<ShellListItemBadges metadata={resource.metadata} />{/snippet}
 					{#snippet menu()}
-						<a href={resolve(`/identity/projects/view/${resource.metadata.id}`)} class="menu__item">
+						<a href={resolve(`identity/projects/view/${resource.metadata.id}`)} class="menu__item">
 							<Icon name="edit" size={14} /> Edit
 						</a>
 						<ModalIcon

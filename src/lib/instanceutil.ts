@@ -1,4 +1,4 @@
-import type * as Compute from '$lib/openapi/compute';
+import type * as Compute from '#lib/openapi/compute/index.ts';
 
 export function selectableInstanceFlavors(
 	flavors: Array<Compute.Flavor>,

@@ -1,15 +1,15 @@
 <script lang="ts">
-	import * as Kubernetes from '$lib/openapi/kubernetes';
+	import * as Kubernetes from '#lib/openapi/kubernetes/index.ts';
 
-	import * as Formatters from '$lib/formatters';
-	import * as Validation from '$lib/validation';
-	import ShellSection from '$lib/layouts/ShellSection.svelte';
-	import TextInput from '$lib/forms/TextInput.svelte';
-	import Switch from '$lib/forms/Switch.svelte';
-	import Select from '$lib/forms/Select.svelte';
-	import RangeSlider from '$lib/forms/RangeSlider.svelte';
-	import RichSelect from '$lib/forms/RichSelect.svelte';
-	import Flavor from '$lib/Flavor.svelte';
+	import * as Formatters from '#lib/formatters/index.ts';
+	import * as Validation from '#lib/validation/index.ts';
+	import ShellSection from '#lib/layouts/ShellSection.svelte';
+	import TextInput from '#lib/forms/TextInput.svelte';
+	import Switch from '#lib/forms/Switch.svelte';
+	import Select from '#lib/forms/Select.svelte';
+	import RangeSlider from '#lib/forms/RangeSlider.svelte';
+	import RichSelect from '#lib/forms/RichSelect.svelte';
+	import Flavor from '#lib/Flavor.svelte';
 
 	interface Props {
 		/* The pool should be bound to expose the built configuration */

@@ -3,24 +3,24 @@
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { startAutoRefresh } from '$lib/loadutil';
+	import { startAutoRefresh } from '#lib/loadutil.ts';
 
 	let { data }: { data: PageData } = $props();
 
-	import * as Clients from '$lib/clients';
-	import { resolveChip } from '$lib/layouts/effectiveStatus';
-	import { ageFormatter } from '$lib/formatters';
-	import type { ShellPageSettings } from '$lib/layouts/types.ts';
-	import ListPage from '$lib/layouts/ListPage.svelte';
-	import ShellList from '$lib/layouts/ShellList.svelte';
-	import ShellListItem from '$lib/layouts/ShellListItem.svelte';
-	import ShellListItemHeader from '$lib/layouts/ShellListItemHeader.svelte';
-	import ShellListItemBadges from '$lib/layouts/ShellListItemBadges.svelte';
-	import ShellListItemMetadata from '$lib/layouts/ShellListItemMetadata.svelte';
-	import Placeholder from '$lib/layouts/Placeholder.svelte';
-	import Button from '$lib/forms/Button.svelte';
-	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
-	import RowMenu from '$lib/layouts/RowMenu.svelte';
+	import * as Clients from '#lib/clients/index.ts';
+	import { resolveChip } from '#lib/layouts/effectiveStatus.ts';
+	import { ageFormatter } from '#lib/formatters/index.ts';
+	import type { ShellPageSettings } from '#lib/layouts/types.ts';
+	import ListPage from '#lib/layouts/ListPage.svelte';
+	import ShellList from '#lib/layouts/ShellList.svelte';
+	import ShellListItem from '#lib/layouts/ShellListItem.svelte';
+	import ShellListItemHeader from '#lib/layouts/ShellListItemHeader.svelte';
+	import ShellListItemBadges from '#lib/layouts/ShellListItemBadges.svelte';
+	import ShellListItemMetadata from '#lib/layouts/ShellListItemMetadata.svelte';
+	import Placeholder from '#lib/layouts/Placeholder.svelte';
+	import Button from '#lib/forms/Button.svelte';
+	import ModalIcon from '#lib/layouts/ModalIcon.svelte';
+	import RowMenu from '#lib/layouts/RowMenu.svelte';
 
 	const settings: ShellPageSettings = {
 		feature: 'Identity',
@@ -76,8 +76,7 @@
 		{@const chip = resolveChip(resource.metadata.provisioningStatus, null)}
 		{@const members = (resource.spec.userIDs?.length ?? 0) + resource.spec.serviceAccountIDs.length}
 		<td class="primary">
-			<a href={resolve(`/identity/groups/view/${resource.metadata.id}`)}>{resource.metadata.name}</a
-			>
+			<a href={resolve(`identity/groups/view/${resource.metadata.id}`)}>{resource.metadata.name}</a>
 			<div class="sub">{resource.metadata.id}</div>
 		</td>
 		<td>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type * as Kubernetes from '$lib/openapi/kubernetes';
+	import type * as Kubernetes from '#lib/openapi/kubernetes/index.ts';
 
 	interface Props {
 		title?: string;

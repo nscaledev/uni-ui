@@ -2,20 +2,20 @@
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
-	import { startAutoRefresh } from '$lib/loadutil';
+	import { startAutoRefresh } from '#lib/loadutil.ts';
 	let { data }: { data: PageData } = $props();
-	import * as Clients from '$lib/clients';
-	import type { ShellPageSettings } from '$lib/layouts/types.ts';
-	import ListPage from '$lib/layouts/ListPage.svelte';
-	import ShellList from '$lib/layouts/ShellList.svelte';
-	import ShellListItem from '$lib/layouts/ShellListItem.svelte';
-	import ShellListItemHeader from '$lib/layouts/ShellListItemHeader.svelte';
-	import ShellListItemBadges from '$lib/layouts/ShellListItemBadges.svelte';
-	import ShellListItemMetadata from '$lib/layouts/ShellListItemMetadata.svelte';
-	import ShellMetadataItem from '$lib/layouts/ShellMetadataItem.svelte';
-	import Placeholder from '$lib/layouts/Placeholder.svelte';
-	import Button from '$lib/forms/Button.svelte';
-	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
+	import * as Clients from '#lib/clients/index.ts';
+	import type { ShellPageSettings } from '#lib/layouts/types.ts';
+	import ListPage from '#lib/layouts/ListPage.svelte';
+	import ShellList from '#lib/layouts/ShellList.svelte';
+	import ShellListItem from '#lib/layouts/ShellListItem.svelte';
+	import ShellListItemHeader from '#lib/layouts/ShellListItemHeader.svelte';
+	import ShellListItemBadges from '#lib/layouts/ShellListItemBadges.svelte';
+	import ShellListItemMetadata from '#lib/layouts/ShellListItemMetadata.svelte';
+	import ShellMetadataItem from '#lib/layouts/ShellMetadataItem.svelte';
+	import Placeholder from '#lib/layouts/Placeholder.svelte';
+	import Button from '#lib/forms/Button.svelte';
+	import ModalIcon from '#lib/layouts/ModalIcon.svelte';
 	const settings: ShellPageSettings = {
 		feature: 'Identity',
 		name: 'SSH Certificate CAs',

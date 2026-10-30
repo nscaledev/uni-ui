@@ -1,4 +1,4 @@
-import * as Compute from '$lib/openapi/compute';
+import * as Compute from '#lib/openapi/compute/index.ts';
 
 export function statusColor(s: Compute.InstanceLifecyclePhase): string {
 	switch (s) {

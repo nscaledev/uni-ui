@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { toastsStore, toaster } from '$lib/toaster';
-	import Icon from '$lib/primitives/Icon.svelte';
+	import { toastsStore, toaster } from '#lib/toaster.ts';
+	import Icon from '#lib/primitives/Icon.svelte';
 
 	const iconMap = {
 		success: 'checkCircle',

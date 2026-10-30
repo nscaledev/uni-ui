@@ -1,12 +1,12 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	let { data }: { data: PageData } = $props();
-	import * as Clients from '$lib/clients';
-	import * as Identity from '$lib/openapi/identity';
-	import FormPage from '$lib/layouts/FormPage.svelte';
-	import ShellMetadataSection from '$lib/layouts/ShellMetadataSection.svelte';
-	import ShellSection from '$lib/layouts/ShellSection.svelte';
-	import MultiSelect from '$lib/forms/MultiSelect.svelte';
+	import * as Clients from '#lib/clients/index.ts';
+	import * as Identity from '#lib/openapi/identity/index.ts';
+	import FormPage from '#lib/layouts/FormPage.svelte';
+	import ShellMetadataSection from '#lib/layouts/ShellMetadataSection.svelte';
+	import ShellSection from '#lib/layouts/ShellSection.svelte';
+	import MultiSelect from '#lib/forms/MultiSelect.svelte';
 	let names = $derived(data.groups.map((x) => x.metadata.name));
 	let resource: Identity.GroupWrite = $state({
 		metadata: { name: '' },

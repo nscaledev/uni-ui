@@ -9,7 +9,7 @@ const api = vi.hoisted(() => ({
 	volumeClasses: vi.fn()
 }));
 
-vi.mock('$lib/clients', () => ({
+vi.mock('#lib/clients/index.ts', () => ({
 	compute: () => ({
 		apiV1OrganizationsOrganizationIDRegionsRegionIDImagesGet: api.images,
 		apiV1OrganizationsOrganizationIDRegionsRegionIDFlavorsGet: api.flavors
@@ -22,7 +22,7 @@ vi.mock('$lib/clients', () => ({
 	})
 }));
 
-vi.mock('$lib/loadutil', () => ({ assertNonEmptyList: <T>(value: Promise<T>) => value }));
+vi.mock('#lib/loadutil.ts', () => ({ assertNonEmptyList: <T>(value: Promise<T>) => value }));
 vi.mock('@sveltejs/kit', () => ({ error: vi.fn(), redirect: vi.fn() }));
 
 import { load as createLoad } from './create/+page';

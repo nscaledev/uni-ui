@@ -3,12 +3,12 @@
 
 	let { data }: { data: PageData } = $props();
 
-	import type { ShellPageSettings } from '$lib/layouts/types.ts';
-	import ShellPageHeader from '$lib/layouts/ShellPageHeader.svelte';
-	import ShellViewHeader from '$lib/layouts/ShellViewHeader.svelte';
-	import ShellMetadataItem from '$lib/layouts/ShellMetadataItem.svelte';
-	import ShellSection from '$lib/layouts/ShellSection.svelte';
-	import Clipboard from '$lib/forms/Clipboard.svelte';
+	import type { ShellPageSettings } from '#lib/layouts/types.ts';
+	import ShellPageHeader from '#lib/layouts/ShellPageHeader.svelte';
+	import ShellViewHeader from '#lib/layouts/ShellViewHeader.svelte';
+	import ShellMetadataItem from '#lib/layouts/ShellMetadataItem.svelte';
+	import ShellSection from '#lib/layouts/ShellSection.svelte';
+	import Clipboard from '#lib/forms/Clipboard.svelte';
 
 	const settings: ShellPageSettings = {
 		feature: 'Identity',

@@ -1,9 +1,9 @@
 import type { PageServerLoad } from './$types';
 
 import { error } from '@sveltejs/kit';
-import { env } from '$env/dynamic/private';
+import { OIDC_CLIENT_ID, OIDC_CLIENT_SECRET } from '$app/env/private';
 
-import * as OIDC from '$lib/oidc';
+import * as OIDC from '#lib/oidc/index.ts';
 
 // This forms the basis of a GET /oauth2/refresh?refresh_token=foo handler.  Given
 // the client ID and secret are secret we need to do this.  We return the new token
@@ -14,12 +14,12 @@ export const load: PageServerLoad = async ({ fetch, url, setHeaders }) => {
 		error(400, 'OIDC refresh token not set');
 	}
 
-	const clientID = env.OIDC_CLIENT_ID;
+	const clientID = OIDC_CLIENT_ID;
 	if (!clientID) {
 		error(400, 'OIDC client ID not set');
 	}
 
-	const clientSecret = env.OIDC_CLIENT_SECRET;
+	const clientSecret = OIDC_CLIENT_SECRET;
 	if (!clientSecret) {
 		error(400, 'OIDC client secret not set');
 	}

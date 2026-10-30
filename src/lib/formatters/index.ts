@@ -1,4 +1,4 @@
-import * as Region from '$lib/openapi/region';
+import * as Region from '#lib/openapi/region/index.ts';
 
 export type NumberFormatter = (n: number) => string;
 

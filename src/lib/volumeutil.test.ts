@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type * as Region from '$lib/openapi/region';
+import type * as Region from '#lib/openapi/region/index.ts';
 import {
 	attachableVolumes,
 	changedVolumeSelection,

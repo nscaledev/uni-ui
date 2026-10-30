@@ -1,10 +1,10 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 
-	import * as Kubernetes from '$lib/openapi/kubernetes';
-	import * as Formatters from '$lib/formatters';
+	import * as Kubernetes from '#lib/openapi/kubernetes/index.ts';
+	import * as Formatters from '#lib/formatters/index.ts';
 
-	import ShellMetadataItem from '$lib/layouts/ShellMetadataItem.svelte';
+	import ShellMetadataItem from '#lib/layouts/ShellMetadataItem.svelte';
 
 	interface Props {
 		metadata?: Kubernetes.ResourceReadMetadata;

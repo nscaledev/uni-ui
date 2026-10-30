@@ -1,6 +1,6 @@
 <script lang="ts">
-	import * as Validation from '$lib/validation';
-	import FieldWrapper from '$lib/primitives/FieldWrapper.svelte';
+	import * as Validation from '#lib/validation/index.ts';
+	import FieldWrapper from '#lib/primitives/FieldWrapper.svelte';
 
 	interface Props {
 		value: string | undefined;

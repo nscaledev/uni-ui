@@ -3,10 +3,10 @@ import SHA512 from 'crypto-js/sha512';
 import CryptoJS from 'crypto-js/core';
 
 import type { JWTVerifyResult } from 'jose';
-import { env } from '$env/dynamic/public';
+import { PUBLIC_IDENTITY_HOST } from '$app/env/public';
 
 // These are required variables from the environment.
-export const issuer = env.PUBLIC_IDENTITY_HOST || '';
+export const issuer = PUBLIC_IDENTITY_HOST || '';
 
 export type IDToken = {
 	// openid scope.

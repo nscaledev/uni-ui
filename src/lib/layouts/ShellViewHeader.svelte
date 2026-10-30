@@ -1,10 +1,10 @@
 <script lang="ts">
-	import * as Identity from '$lib/openapi/identity';
-	import * as Formatters from '$lib/formatters';
-	import * as ProvisioningStatus from '$lib/provisioningStatus';
-	import * as HealthStatus from '$lib/healthStatus';
-	import Badge from '$lib/layouts/Badge.svelte';
-	import ShellMetadataItem from '$lib/layouts/ShellMetadataItem.svelte';
+	import * as Identity from '#lib/openapi/identity/index.ts';
+	import * as Formatters from '#lib/formatters/index.ts';
+	import * as ProvisioningStatus from '#lib/provisioningStatus/index.ts';
+	import * as HealthStatus from '#lib/healthStatus/index.ts';
+	import Badge from '#lib/layouts/Badge.svelte';
+	import ShellMetadataItem from '#lib/layouts/ShellMetadataItem.svelte';
 
 	import type { Snippet } from 'svelte';
 

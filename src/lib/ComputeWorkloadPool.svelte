@@ -1,20 +1,20 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 
-	import * as Compute from '$lib/openapi/compute';
+	import * as Compute from '#lib/openapi/compute/index.ts';
 
-	import * as Formatters from '$lib/formatters';
-	import * as Validation from '$lib/validation';
-	import ShellSection from '$lib/layouts/ShellSection.svelte';
-	import TextInput from '$lib/forms/TextInput.svelte';
-	import Switch from '$lib/forms/Switch.svelte';
-	import RichSelect from '$lib/forms/RichSelect.svelte';
-	import RangeSlider from '$lib/forms/RangeSlider.svelte';
-	import Select from '$lib/forms/Select.svelte';
-	import InputChips from '$lib/forms/InputChips.svelte';
-	import Flavor from '$lib/Flavor.svelte';
-	import Image from '$lib/Image.svelte';
-	import ComputeWorkloadPoolSecurityRule from '$lib/ComputeWorkloadPoolSecurityRule.svelte';
+	import * as Formatters from '#lib/formatters/index.ts';
+	import * as Validation from '#lib/validation/index.ts';
+	import ShellSection from '#lib/layouts/ShellSection.svelte';
+	import TextInput from '#lib/forms/TextInput.svelte';
+	import Switch from '#lib/forms/Switch.svelte';
+	import RichSelect from '#lib/forms/RichSelect.svelte';
+	import RangeSlider from '#lib/forms/RangeSlider.svelte';
+	import Select from '#lib/forms/Select.svelte';
+	import InputChips from '#lib/forms/InputChips.svelte';
+	import Flavor from '#lib/Flavor.svelte';
+	import Image from '#lib/Image.svelte';
+	import ComputeWorkloadPoolSecurityRule from '#lib/ComputeWorkloadPoolSecurityRule.svelte';
 
 	interface Props {
 		// The pool should be bound to expose the built configuration.

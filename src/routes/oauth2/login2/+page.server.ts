@@ -1,12 +1,12 @@
 import type { PageServerLoad } from './$types';
 
 import { redirect, error } from '@sveltejs/kit';
-import { env } from '$env/dynamic/private';
+import { OIDC_CLIENT_ID } from '$app/env/private';
 
 import Base64url from 'crypto-js/enc-base64url';
 import SHA256 from 'crypto-js/sha256';
 
-import * as OIDC from '$lib/oidc';
+import * as OIDC from '#lib/oidc/index.ts';
 
 // We hit /oauth2/login which has set our cookies for the nonce and PKCE, now we
 // can begin the oauth2 flow for real...
@@ -23,7 +23,7 @@ export const load: PageServerLoad = async ({ fetch, url, cookies }) => {
 		error(400, 'OIDC code challenge verifier not set');
 	}
 
-	const clientID = env.OIDC_CLIENT_ID;
+	const clientID = OIDC_CLIENT_ID;
 	if (!clientID) {
 		error(400, 'OIDC client ID not set');
 	}

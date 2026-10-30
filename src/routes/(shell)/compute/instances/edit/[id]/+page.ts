@@ -3,8 +3,8 @@ export const ssr = false;
 import type { PageLoad } from './$types';
 import { redirect } from '@sveltejs/kit';
 
-import * as Clients from '$lib/clients';
-import { assertNonEmptyList } from '$lib/loadutil';
+import * as Clients from '#lib/clients/index.ts';
+import { assertNonEmptyList } from '#lib/loadutil.ts';
 
 export const load: PageLoad = async ({ fetch, parent, url, params }) => {
 	const { organizationID, instances } = await parent();

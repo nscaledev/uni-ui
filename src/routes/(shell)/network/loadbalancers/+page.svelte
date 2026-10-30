@@ -3,29 +3,29 @@
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { startAutoRefresh } from '$lib/loadutil';
+	import { startAutoRefresh } from '#lib/loadutil.ts';
 
 	let { data }: { data: PageData } = $props();
 
-	import * as Clients from '$lib/clients';
-	import * as Region from '$lib/openapi/region';
-	import * as RegionUtil from '$lib/regionutil';
-	import * as Identity from '$lib/openapi/identity';
-	import { ageFormatter } from '$lib/formatters';
+	import * as Clients from '#lib/clients/index.ts';
+	import * as Region from '#lib/openapi/region/index.ts';
+	import * as RegionUtil from '#lib/regionutil/index.ts';
+	import * as Identity from '#lib/openapi/identity/index.ts';
+	import { ageFormatter } from '#lib/formatters/index.ts';
 
-	import type { ShellPageSettings } from '$lib/layouts/types.ts';
-	import ListPage from '$lib/layouts/ListPage.svelte';
-	import ShellList from '$lib/layouts/ShellList.svelte';
-	import ShellListItem from '$lib/layouts/ShellListItem.svelte';
-	import ShellListItemHeader from '$lib/layouts/ShellListItemHeader.svelte';
-	import ShellListItemBadges from '$lib/layouts/ShellListItemBadges.svelte';
-	import ShellListItemMetadata from '$lib/layouts/ShellListItemMetadata.svelte';
-	import ShellMetadataItem from '$lib/layouts/ShellMetadataItem.svelte';
-	import Placeholder from '$lib/layouts/Placeholder.svelte';
-	import ModalIcon from '$lib/layouts/ModalIcon.svelte';
-	import RowMenu from '$lib/layouts/RowMenu.svelte';
-	import PopupButton from '$lib/forms/PopupButton.svelte';
-	import Icon from '$lib/primitives/Icon.svelte';
+	import type { ShellPageSettings } from '#lib/layouts/types.ts';
+	import ListPage from '#lib/layouts/ListPage.svelte';
+	import ShellList from '#lib/layouts/ShellList.svelte';
+	import ShellListItem from '#lib/layouts/ShellListItem.svelte';
+	import ShellListItemHeader from '#lib/layouts/ShellListItemHeader.svelte';
+	import ShellListItemBadges from '#lib/layouts/ShellListItemBadges.svelte';
+	import ShellListItemMetadata from '#lib/layouts/ShellListItemMetadata.svelte';
+	import ShellMetadataItem from '#lib/layouts/ShellMetadataItem.svelte';
+	import Placeholder from '#lib/layouts/Placeholder.svelte';
+	import ModalIcon from '#lib/layouts/ModalIcon.svelte';
+	import RowMenu from '#lib/layouts/RowMenu.svelte';
+	import PopupButton from '#lib/forms/PopupButton.svelte';
+	import Icon from '#lib/primitives/Icon.svelte';
 
 	const settings: ShellPageSettings = {
 		feature: 'Network',
@@ -100,7 +100,7 @@
 			<button class="btn btn--primary" disabled><Icon name="plus" size={16} /> Create</button>
 		{:else if skipPopup}
 			<a
-				href={resolve(`/network/loadbalancers/create?networkID=${createNetworkID}`)}
+				href={resolve(`network/loadbalancers/create?networkID=${createNetworkID}`)}
 				class="btn btn--primary"><Icon name="plus" size={16} /> Create</a
 			>
 		{:else}
@@ -119,7 +119,7 @@
 						<div class="create-popup__footer">
 							<button onclick={close} class="btn btn--ghost btn--sm">Cancel</button>
 							<a
-								href={resolve(`/network/loadbalancers/create?networkID=${createNetworkID}`)}
+								href={resolve(`network/loadbalancers/create?networkID=${createNetworkID}`)}
 								class="btn btn--primary btn--sm">Continue</a
 							>
 						</div>
@@ -131,7 +131,7 @@
 
 	{#snippet tableRow(resource)}
 		<td class="primary">
-			<a href={resolve(`/network/loadbalancers/view/${resource.metadata.id}`)}
+			<a href={resolve(`network/loadbalancers/view/${resource.metadata.id}`)}
 				>{resource.metadata.name}</a
 			>
 			<div class="sub">{resource.metadata.id}</div>
@@ -155,10 +155,10 @@
 		<td><span class="mono">{ageFormatter(resource.metadata.creationTime)}</span></td>
 		<RowMenu>
 			{#snippet menu()}
-				<a href={resolve(`/network/loadbalancers/view/${resource.metadata.id}`)} class="menu__item">
+				<a href={resolve(`network/loadbalancers/view/${resource.metadata.id}`)} class="menu__item">
 					<Icon name="eye" size={14} /> View
 				</a>
-				<a href={resolve(`/network/loadbalancers/edit/${resource.metadata.id}`)} class="menu__item">
+				<a href={resolve(`network/loadbalancers/edit/${resource.metadata.id}`)} class="menu__item">
 					<Icon name="edit" size={14} /> Edit
 				</a>
 				<ModalIcon
@@ -195,13 +195,13 @@
 
 					{#snippet menu()}
 						<a
-							href={resolve(`/network/loadbalancers/view/${resource.metadata.id}`)}
+							href={resolve(`network/loadbalancers/view/${resource.metadata.id}`)}
 							class="menu__item"
 						>
 							<Icon name="eye" size={14} /> View
 						</a>
 						<a
-							href={resolve(`/network/loadbalancers/edit/${resource.metadata.id}`)}
+							href={resolve(`network/loadbalancers/edit/${resource.metadata.id}`)}
 							class="menu__item"
 						>
 							<Icon name="edit" size={14} /> Edit
