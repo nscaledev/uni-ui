@@ -1,4 +1,4 @@
-import type { RegionRead } from '$lib/openapi/region';
+import type { RegionRead } from '#lib/openapi/region/index.ts';
 
 export function name(regions: Array<RegionRead> | undefined, regionID: string): string {
 	if (!regions || !regionID) return 'unknown';

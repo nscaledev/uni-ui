@@ -4,7 +4,6 @@ import typescriptEslint from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 import svelte from 'eslint-plugin-svelte';
 import prettier from 'eslint-config-prettier';
-import svelteConfig from './svelte.config.js';
 
 export default [
 	{
@@ -47,8 +46,7 @@ export default [
 		languageOptions: {
 			parserOptions: {
 				parser: tsParser,
-				extraFileExtensions: ['.svelte'],
-				svelteConfig
+				extraFileExtensions: ['.svelte']
 			}
 		}
 	}

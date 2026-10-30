@@ -2,29 +2,29 @@
 	import type { PageData } from './$types';
 	let { data }: { data: PageData } = $props();
 	import { onMount } from 'svelte';
-	import * as Clients from '$lib/clients';
-	import * as Compute from '$lib/openapi/compute';
-	import { selectableInstanceFlavors } from '$lib/instanceutil';
-	import { startPolling } from '$lib/loadutil';
+	import * as Clients from '#lib/clients/index.ts';
+	import * as Compute from '#lib/openapi/compute/index.ts';
+	import { selectableInstanceFlavors } from '#lib/instanceutil.ts';
+	import { startPolling } from '#lib/loadutil.ts';
 	import {
 		attachableVolumes,
 		changedVolumeSelection,
 		refreshedVolumeSelection,
 		volumeCompatible
-	} from '$lib/volumeutil';
-	import FormPage from '$lib/layouts/FormPage.svelte';
-	import ShellMetadataSection from '$lib/layouts/ShellMetadataSection.svelte';
-	import ShellSection from '$lib/layouts/ShellSection.svelte';
-	import RichSelect from '$lib/forms/RichSelect.svelte';
-	import MultiSelect from '$lib/forms/MultiSelect.svelte';
-	import Select from '$lib/forms/Select.svelte';
-	import Switch from '$lib/forms/Switch.svelte';
-	import InputChips from '$lib/forms/InputChips.svelte';
-	import Textarea from '$lib/forms/Textarea.svelte';
-	import { resolveChip } from '$lib/layouts/effectiveStatus';
-	import Flavor from '$lib/Flavor.svelte';
-	import Image from '$lib/Image.svelte';
-	import * as RegionUtil from '$lib/regionutil';
+	} from '#lib/volumeutil.ts';
+	import FormPage from '#lib/layouts/FormPage.svelte';
+	import ShellMetadataSection from '#lib/layouts/ShellMetadataSection.svelte';
+	import ShellSection from '#lib/layouts/ShellSection.svelte';
+	import RichSelect from '#lib/forms/RichSelect.svelte';
+	import MultiSelect from '#lib/forms/MultiSelect.svelte';
+	import Select from '#lib/forms/Select.svelte';
+	import Switch from '#lib/forms/Switch.svelte';
+	import InputChips from '#lib/forms/InputChips.svelte';
+	import Textarea from '#lib/forms/Textarea.svelte';
+	import { resolveChip } from '#lib/layouts/effectiveStatus.ts';
+	import Flavor from '#lib/Flavor.svelte';
+	import Image from '#lib/Image.svelte';
+	import * as RegionUtil from '#lib/regionutil/index.ts';
 	let resource = $derived.by(() => {
 		let instance = $state(data.instance);
 		return instance;

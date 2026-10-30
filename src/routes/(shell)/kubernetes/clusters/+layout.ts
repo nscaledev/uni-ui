@@ -1,8 +1,8 @@
 export const ssr = false;
 
 import type { LayoutLoad } from './$types';
-import * as Clients from '$lib/clients';
-import * as Kubernetes from '$lib/openapi/kubernetes';
+import * as Clients from '#lib/clients/index.ts';
+import * as Kubernetes from '#lib/openapi/kubernetes/index.ts';
 
 export const load: LayoutLoad = async ({ fetch, depends, parent }) => {
 	depends('layout:clusters');

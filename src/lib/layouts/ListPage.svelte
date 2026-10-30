@@ -4,18 +4,18 @@
 >
 	import type { Snippet } from 'svelte';
 	import { setContext } from 'svelte';
-	import { computeStats } from '$lib/layouts/stats';
-	import { ageFormatter } from '$lib/formatters';
-	import type { ShellPageSettings } from '$lib/layouts/types';
-	import ShellPageHeader from '$lib/layouts/ShellPageHeader.svelte';
-	import BulkBar from '$lib/layouts/BulkBar.svelte';
-	import FilterChip from '$lib/forms/FilterChip.svelte';
-	import Icon from '$lib/primitives/Icon.svelte';
-	import * as Identity from '$lib/openapi/identity';
-	import * as ProjectUtil from '$lib/projectutil';
-	import { countryFlag } from '$lib/regionutil';
-	import { view } from '$lib/stores/theme';
-	import { omniQuery, omniFilters } from '$lib/stores/search';
+	import { computeStats } from '#lib/layouts/stats.ts';
+	import { ageFormatter } from '#lib/formatters/index.ts';
+	import type { ShellPageSettings } from '#lib/layouts/types.ts';
+	import ShellPageHeader from '#lib/layouts/ShellPageHeader.svelte';
+	import BulkBar from '#lib/layouts/BulkBar.svelte';
+	import FilterChip from '#lib/forms/FilterChip.svelte';
+	import Icon from '#lib/primitives/Icon.svelte';
+	import * as Identity from '#lib/openapi/identity/index.ts';
+	import * as ProjectUtil from '#lib/projectutil/index.ts';
+	import { countryFlag } from '#lib/regionutil/index.ts';
+	import { view } from '#lib/stores/theme.ts';
+	import { omniQuery, omniFilters } from '#lib/stores/search.ts';
 
 	interface NamedItem {
 		metadata: { id: string; name: string };

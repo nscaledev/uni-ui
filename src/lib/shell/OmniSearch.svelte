@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
-	import Icon from '$lib/primitives/Icon.svelte';
-	import { omniQuery, omniFilters } from '$lib/stores/search';
-	import * as Identity from '$lib/openapi/identity';
+	import { browser } from '$app/env';
+	import Icon from '#lib/primitives/Icon.svelte';
+	import { omniQuery, omniFilters } from '#lib/stores/search.ts';
+	import * as Identity from '#lib/openapi/identity/index.ts';
 
 	const FILTER_KEYS = ['status', 'project', 'region'] as const;
 	type FilterKey = (typeof FILTER_KEYS)[number];

@@ -1,9 +1,9 @@
 <script lang="ts">
-	import * as Compute from '$lib/openapi/compute';
-	import Select from '$lib/forms/Select.svelte';
-	import TextInput from '$lib/forms/TextInput.svelte';
-	import InputChips from '$lib/forms/InputChips.svelte';
-	import * as Validators from '$lib/validation';
+	import * as Compute from '#lib/openapi/compute/index.ts';
+	import Select from '#lib/forms/Select.svelte';
+	import TextInput from '#lib/forms/TextInput.svelte';
+	import InputChips from '#lib/forms/InputChips.svelte';
+	import * as Validators from '#lib/validation/index.ts';
 
 	interface Props {
 		// rule is the object we are filling in.

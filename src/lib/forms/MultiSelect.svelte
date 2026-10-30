@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import { Combobox } from 'bits-ui';
-	import Icon from '$lib/primitives/Icon.svelte';
+	import Icon from '#lib/primitives/Icon.svelte';
 
 	interface Option {
 		label: string;

@@ -1,4 +1,4 @@
-import type * as Region from '$lib/openapi/region';
+import type * as Region from '#lib/openapi/region/index.ts';
 
 export function attachableVolumes(
 	volumes: Array<Region.VolumeV2Read>,

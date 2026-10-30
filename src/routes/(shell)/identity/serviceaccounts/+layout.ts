@@ -2,7 +2,7 @@ export const ssr = false;
 
 import type { LayoutLoad } from './$types';
 
-import * as Clients from '$lib/clients';
+import * as Clients from '#lib/clients/index.ts';
 
 export const load: LayoutLoad = async ({ fetch, depends, parent }) => {
 	depends('layout:serviceaccounts');

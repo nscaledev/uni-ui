@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import Button from '$lib/forms/Button.svelte';
-	import PageHeader from '$lib/layouts/PageHeader.svelte';
+	import Button from '#lib/forms/Button.svelte';
+	import PageHeader from '#lib/layouts/PageHeader.svelte';
 
 	interface BreadcrumbItem {
 		label: string;

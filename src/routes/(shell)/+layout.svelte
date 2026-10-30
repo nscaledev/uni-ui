@@ -23,12 +23,12 @@
 	});
 	trace.setGlobalTracerProvider(provider);
 
-	import Toast from '$lib/primitives/Toast.svelte';
-	import Spinner from '$lib/primitives/Spinner.svelte';
-	import Brand from '$lib/shell/Brand.svelte';
-	import SideBar from '$lib/shell/SideBar.svelte';
-	import Header from '$lib/shell/Header.svelte';
-	import Tweaks from '$lib/shell/Tweaks.svelte';
+	import Toast from '#lib/primitives/Toast.svelte';
+	import Spinner from '#lib/primitives/Spinner.svelte';
+	import Brand from '#lib/shell/Brand.svelte';
+	import SideBar from '#lib/shell/SideBar.svelte';
+	import Header from '#lib/shell/Header.svelte';
+	import Tweaks from '#lib/shell/Tweaks.svelte';
 
 	let loading = $state(false);
 	beforeNavigate(() => (loading = true));

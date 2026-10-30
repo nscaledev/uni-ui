@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as Region from '$lib/openapi/region';
+	import * as Region from '#lib/openapi/region/index.ts';
 
 	interface Props {
 		flavor: Region.Flavor | undefined;

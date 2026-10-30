@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import { getContext } from 'svelte';
-	import Icon from '$lib/primitives/Icon.svelte';
+	import Icon from '#lib/primitives/Icon.svelte';
 
 	interface SelectContext {
 		isSelected: (id: string) => boolean;

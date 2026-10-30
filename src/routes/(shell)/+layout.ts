@@ -3,9 +3,9 @@ export const ssr = false;
 import type { LayoutLoad } from './$types';
 import { error, redirect } from '@sveltejs/kit';
 
-import * as Clients from '$lib/clients';
-import type { InternalToken } from '$lib/oauth2';
-import * as OIDC from '$lib/oidc';
+import * as Clients from '#lib/clients/index.ts';
+import type { InternalToken } from '#lib/oauth2/index.ts';
+import * as OIDC from '#lib/oidc/index.ts';
 
 function getSessionData<Type>(key: string): Type | undefined {
 	const data = window.sessionStorage.getItem(key);

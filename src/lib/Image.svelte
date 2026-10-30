@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as Compute from '$lib/openapi/compute';
+	import * as Compute from '#lib/openapi/compute/index.ts';
 
 	interface Props {
 		image?: Compute.Image;

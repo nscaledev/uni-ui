@@ -1,5 +1,5 @@
-import { sessionstore } from '$lib/sessionstore';
-import * as Identity from '$lib/openapi/identity';
+import { sessionstore } from '#lib/sessionstore/index.ts';
+import * as Identity from '#lib/openapi/identity/index.ts';
 
 // OrganizationInfo wraps up stuff about an organization that should
 // be atomic to make life easier for pages.

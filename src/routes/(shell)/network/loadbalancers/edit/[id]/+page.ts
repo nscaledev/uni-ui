@@ -3,7 +3,7 @@ export const ssr = false;
 import type { PageLoad } from './$types';
 import { redirect } from '@sveltejs/kit';
 
-import type * as Region from '$lib/openapi/region';
+import type * as Region from '#lib/openapi/region/index.ts';
 
 function cloneListeners(
 	listeners: Array<Region.LoadBalancerListenerV2>

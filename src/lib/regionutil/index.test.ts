@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { name, flag, countryFlag } from './index';
-import type { RegionRead } from '$lib/openapi/region';
+import type { RegionRead } from '#lib/openapi/region/index.ts';
 
 function makeRegion(id: string, regionName: string): RegionRead {
 	return { metadata: { id, name: regionName } } as RegionRead;

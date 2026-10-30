@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Spinner from '$lib/primitives/Spinner.svelte';
+	import Spinner from '#lib/primitives/Spinner.svelte';
 </script>
 
 <!-- Never rendered — page.ts redirect blocks this — but kept as a fallback -->

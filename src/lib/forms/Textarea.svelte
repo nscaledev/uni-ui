@@ -1,5 +1,5 @@
 <script lang="ts">
-	import FieldWrapper from '$lib/primitives/FieldWrapper.svelte';
+	import FieldWrapper from '#lib/primitives/FieldWrapper.svelte';
 
 	interface Props {
 		value: string | undefined;

@@ -1,15 +1,15 @@
 <script lang="ts">
-	import * as Validation from '$lib/validation';
-	import * as Region from '$lib/openapi/region';
+	import * as Validation from '#lib/validation/index.ts';
+	import * as Region from '#lib/openapi/region/index.ts';
 
-	import ResourceList from '$lib/layouts/ResourceList.svelte';
-	import ShellMetadataItem from '$lib/layouts/ShellMetadataItem.svelte';
-	import TextInput from '$lib/forms/TextInput.svelte';
-	import NumberInput from '$lib/forms/NumberInput.svelte';
-	import Select from '$lib/forms/Select.svelte';
-	import Switch from '$lib/forms/Switch.svelte';
-	import InputChips from '$lib/forms/InputChips.svelte';
-	import Icon from '$lib/primitives/Icon.svelte';
+	import ResourceList from '#lib/layouts/ResourceList.svelte';
+	import ShellMetadataItem from '#lib/layouts/ShellMetadataItem.svelte';
+	import TextInput from '#lib/forms/TextInput.svelte';
+	import NumberInput from '#lib/forms/NumberInput.svelte';
+	import Select from '#lib/forms/Select.svelte';
+	import Switch from '#lib/forms/Switch.svelte';
+	import InputChips from '#lib/forms/InputChips.svelte';
+	import Icon from '#lib/primitives/Icon.svelte';
 
 	interface Props {
 		listener: Region.LoadBalancerListenerV2;

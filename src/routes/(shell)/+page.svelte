@@ -4,8 +4,8 @@
 	let { data }: { data: PageData } = $props();
 
 	import prettyBytes from 'pretty-bytes';
-	import Icon from '$lib/primitives/Icon.svelte';
-	import ProgressRing from '$lib/primitives/ProgressRing.svelte';
+	import Icon from '#lib/primitives/Icon.svelte';
+	import ProgressRing from '#lib/primitives/ProgressRing.svelte';
 
 	const KIND_ICONS: Record<string, string> = {
 		'kubernetes:clusters': 'k8s',

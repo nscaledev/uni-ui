@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { appearance, surface, tweaksOpen } from '$lib/stores/theme';
-	import { browser } from '$app/environment';
+	import { appearance, surface, tweaksOpen } from '#lib/stores/theme.ts';
+	import { browser } from '$app/env';
 
 	const appearances = [
 		{ value: 'light', label: 'Light' },

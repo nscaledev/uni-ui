@@ -1,14 +1,14 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	let { data }: { data: PageData } = $props();
-	import * as Clients from '$lib/clients';
-	import * as Region from '$lib/openapi/region';
-	import * as RegionUtil from '$lib/regionutil';
-	import FormPage from '$lib/layouts/FormPage.svelte';
-	import ShellMetadataSection from '$lib/layouts/ShellMetadataSection.svelte';
-	import ResourceList from '$lib/layouts/ResourceList.svelte';
-	import SecurityGroupRuleV2 from '$lib/SecurityGroupRuleV2.svelte';
-	import Icon from '$lib/primitives/Icon.svelte';
+	import * as Clients from '#lib/clients/index.ts';
+	import * as Region from '#lib/openapi/region/index.ts';
+	import * as RegionUtil from '#lib/regionutil/index.ts';
+	import FormPage from '#lib/layouts/FormPage.svelte';
+	import ShellMetadataSection from '#lib/layouts/ShellMetadataSection.svelte';
+	import ResourceList from '#lib/layouts/ResourceList.svelte';
+	import SecurityGroupRuleV2 from '#lib/SecurityGroupRuleV2.svelte';
+	import Icon from '#lib/primitives/Icon.svelte';
 	let names: Array<string> = [];
 	const projectName = $derived(
 		data.projects.find((p) => p.metadata.id === data.securityGroup.metadata.projectId)?.metadata

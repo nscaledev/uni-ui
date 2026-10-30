@@ -1,9 +1,9 @@
 <script lang="ts">
-	import * as Region from '$lib/openapi/region';
-	import Select from '$lib/forms/Select.svelte';
-	import TextInput from '$lib/forms/TextInput.svelte';
-	import Switch from '$lib/forms/Switch.svelte';
-	import * as Validators from '$lib/validation';
+	import * as Region from '#lib/openapi/region/index.ts';
+	import Select from '#lib/forms/Select.svelte';
+	import TextInput from '#lib/forms/TextInput.svelte';
+	import Switch from '#lib/forms/Switch.svelte';
+	import * as Validators from '#lib/validation/index.ts';
 
 	interface Props {
 		// rule is the object we are filling in.

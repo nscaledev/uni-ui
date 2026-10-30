@@ -1,4 +1,4 @@
-import * as Identity from '$lib/openapi/identity';
+import * as Identity from '#lib/openapi/identity/index.ts';
 
 export function statusColor(s: Identity.ResourceHealthStatus): string {
 	switch (s) {

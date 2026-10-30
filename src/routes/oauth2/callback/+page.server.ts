@@ -6,10 +6,10 @@ import { createRemoteJWKSet, jwtVerify } from 'jose';
 
 import type { PageServerLoad } from './$types';
 import { error } from '@sveltejs/kit';
-import { env } from '$env/dynamic/private';
+import { OIDC_CLIENT_ID, OIDC_CLIENT_SECRET } from '$app/env/private';
 
-import type { InternalToken } from '$lib/oauth2';
-import * as OIDC from '$lib/oidc';
+import type { InternalToken } from '#lib/oauth2/index.ts';
+import * as OIDC from '#lib/oidc/index.ts';
 
 type OAuth2Error = {
 	error: string;
@@ -37,12 +37,12 @@ export const load: PageServerLoad = async ({ fetch, url, cookies }) => {
 		error(400, 'OIDC code challenge verifier not set');
 	}
 
-	const clientID = env.OIDC_CLIENT_ID;
+	const clientID = OIDC_CLIENT_ID;
 	if (!clientID) {
 		error(400, 'OIDC client ID not set');
 	}
 
-	const clientSecret = env.OIDC_CLIENT_SECRET;
+	const clientSecret = OIDC_CLIENT_SECRET;
 	if (!clientSecret) {
 		error(400, 'OIDC client secret not set');
 	}

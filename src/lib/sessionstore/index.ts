@@ -1,6 +1,6 @@
 import type { Writable } from 'svelte/store';
 import { writable } from 'svelte/store';
-import { browser } from '$app/environment';
+import { browser } from '$app/env';
 
 // sessionStorage wraps a Svelte store and persists the value in session storage.
 // The initial value comes from session storage.

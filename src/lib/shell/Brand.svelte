@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Logo from '$lib/logos/Logo.svelte';
+	import Logo from '#lib/logos/Logo.svelte';
 </script>
 
 <div class="brand">

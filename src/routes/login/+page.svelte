@@ -1,9 +1,9 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	let { data }: { data: PageData } = $props();
-	import * as Identity from '$lib/openapi/identity';
-	import Logo from '$lib/logos/Logo.svelte';
-	import ProviderIcon from '$lib/logos/ProviderIcon.svelte';
+	import * as Identity from '#lib/openapi/identity/index.ts';
+	import Logo from '#lib/logos/Logo.svelte';
+	import ProviderIcon from '#lib/logos/ProviderIcon.svelte';
 
 	function login(provider: Identity.Oauth2ProviderType) {
 		const providerInput = document.getElementById('provider') as HTMLInputElement;

@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { Accordion } from 'bits-ui';
 
-	import Icon from '$lib/primitives/Icon.svelte';
-	import * as Identity from '$lib/openapi/identity';
-	import * as RBAC from '$lib/rbac';
+	import Icon from '#lib/primitives/Icon.svelte';
+	import * as Identity from '#lib/openapi/identity/index.ts';
+	import * as RBAC from '#lib/rbac/index.ts';
 
 	interface Props {
 		organizations: Array<Identity.OrganizationRead>;
@@ -162,16 +162,16 @@
 
 	$effect.pre(() => {
 		if (openSection) return;
-		const match = nav.find((s) => $page.url.pathname.startsWith(s.base));
+		const match = nav.find((s) => page.url.pathname.startsWith(s.base));
 		if (match) openSection = match.title;
 	});
 
 	// Active sub-item
 	const activeItem = $derived.by(() => {
-		const section = nav.find((s) => $page.url.pathname.startsWith(s.base));
+		const section = nav.find((s) => page.url.pathname.startsWith(s.base));
 		if (!section) return null;
 		return section.items.find((item) =>
-			$page.url.pathname.startsWith(section.base + '/' + item.href)
+			page.url.pathname.startsWith(section.base + '/' + item.href)
 		);
 	});
 </script>
@@ -183,7 +183,7 @@
 		<a
 			href={entry.href}
 			class="nav-item"
-			class:active={$page.url.pathname === entry.href}
+			class:active={page.url.pathname === entry.href}
 			onclick={onClicked}
 		>
 			<Icon name={entry.icon} size={15} />

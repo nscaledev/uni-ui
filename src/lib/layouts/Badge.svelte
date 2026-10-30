@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Icon from '$lib/primitives/Icon.svelte';
+	import Icon from '#lib/primitives/Icon.svelte';
 
 	interface Props {
 		// Icon name (canonical Icon.svelte name). Empty string = no icon.

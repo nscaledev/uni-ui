@@ -1,6 +1,6 @@
-import * as Identity from '$lib/openapi/identity';
-import * as Compute from '$lib/openapi/compute';
-import * as Kubernetes from '$lib/openapi/kubernetes';
+import * as Identity from '#lib/openapi/identity/index.ts';
+import * as Compute from '#lib/openapi/compute/index.ts';
+import * as Kubernetes from '#lib/openapi/kubernetes/index.ts';
 
 export type ChipClass = 'ok' | 'warn' | 'err' | 'info' | 'muted';
 

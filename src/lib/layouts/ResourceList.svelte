@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 
-	import Button from '$lib/forms/Button.svelte';
-	import ButtonIcon from '$lib/forms/ButtonIcon.svelte';
+	import Button from '#lib/forms/Button.svelte';
+	import ButtonIcon from '#lib/forms/ButtonIcon.svelte';
 
 	interface Props {
 		// Title of the resource list.

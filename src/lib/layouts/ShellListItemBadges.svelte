@@ -1,7 +1,7 @@
 <script lang="ts">
-	import * as Identity from '$lib/openapi/identity';
-	import * as ProjectUtil from '$lib/projectutil';
-	import { resolveChip, type OperationalStatus } from '$lib/layouts/effectiveStatus';
+	import * as Identity from '#lib/openapi/identity/index.ts';
+	import * as ProjectUtil from '#lib/projectutil/index.ts';
+	import { resolveChip, type OperationalStatus } from '#lib/layouts/effectiveStatus.ts';
 
 	interface Props {
 		metadata?: Identity.ResourceReadMetadata;

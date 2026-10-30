@@ -1,13 +1,13 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	let { data }: { data: PageData } = $props();
-	import * as Clients from '$lib/clients';
-	import * as Identity from '$lib/openapi/identity';
-	import * as Validation from '$lib/validation';
-	import FormPage from '$lib/layouts/FormPage.svelte';
-	import ShellSection from '$lib/layouts/ShellSection.svelte';
-	import TextInput from '$lib/forms/TextInput.svelte';
-	import MultiSelect from '$lib/forms/MultiSelect.svelte';
+	import * as Clients from '#lib/clients/index.ts';
+	import * as Identity from '#lib/openapi/identity/index.ts';
+	import * as Validation from '#lib/validation/index.ts';
+	import FormPage from '#lib/layouts/FormPage.svelte';
+	import ShellSection from '#lib/layouts/ShellSection.svelte';
+	import TextInput from '#lib/forms/TextInput.svelte';
+	import MultiSelect from '#lib/forms/MultiSelect.svelte';
 	let names = $derived(data.users.map((x) => x.spec.subject));
 	let resource: Identity.UserWrite = $state({
 		spec: { subject: '', state: Identity.UserState.Active, groupIDs: [] }

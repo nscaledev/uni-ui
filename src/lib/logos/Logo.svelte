@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { env } from '$env/dynamic/public';
-	import { browser } from '$app/environment';
+	import { PUBLIC_LOGO } from '$app/env/public';
+	import { browser } from '$app/env';
 
 	interface Props {
 		[key: string]: any;
@@ -35,12 +35,12 @@
 		elem.replaceWith(svg.firstElementChild);
 	}
 
-	if (env.PUBLIC_LOGO) {
-		loadSVG(env.PUBLIC_LOGO);
+	if (PUBLIC_LOGO) {
+		loadSVG(PUBLIC_LOGO);
 	}
 </script>
 
-{#if env.PUBLIC_LOGO}
+{#if PUBLIC_LOGO}
 	<div id="logo"></div>
 {:else}
 	<svg

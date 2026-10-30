@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import { Dialog } from 'bits-ui';
-	import Icon from '$lib/primitives/Icon.svelte';
+	import Icon from '#lib/primitives/Icon.svelte';
 
 	interface Props {
 		icon: string;

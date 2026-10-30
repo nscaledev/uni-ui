@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { ShellPageSettings } from '$lib/layouts/types.ts';
-	import PageHeader from '$lib/layouts/PageHeader.svelte';
+	import type { ShellPageSettings } from '#lib/layouts/types.ts';
+	import PageHeader from '#lib/layouts/PageHeader.svelte';
 
 	interface Props {
 		settings: ShellPageSettings;

@@ -1,8 +1,8 @@
-import { sessionstore } from '$lib/sessionstore';
-import { browser } from '$app/environment';
+import { sessionstore } from '#lib/sessionstore/index.ts';
+import { browser } from '$app/env';
 
-import type { Token, InternalToken } from '$lib/oauth2';
-import type { IDToken } from '$lib/oidc';
+import type { Token, InternalToken } from '#lib/oauth2/index.ts';
+import type { IDToken } from '#lib/oidc/index.ts';
 
 // token is the authorization bearer token for making API requests.
 export const token = sessionstore<InternalToken>('token');

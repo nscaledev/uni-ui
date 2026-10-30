@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { computePosition, flip, offset, shift } from '@floating-ui/dom';
-	import Icon from '$lib/primitives/Icon.svelte';
+	import Icon from '#lib/primitives/Icon.svelte';
 
 	interface Option {
 		id: string;

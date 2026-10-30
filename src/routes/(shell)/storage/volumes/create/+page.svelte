@@ -1,14 +1,14 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { uniqueNamesGenerator, adjectives, animals } from 'unique-names-generator';
-	import * as Clients from '$lib/clients';
-	import * as Region from '$lib/openapi/region';
-	import * as RegionUtil from '$lib/regionutil';
-	import FormPage from '$lib/layouts/FormPage.svelte';
-	import ShellMetadataSection from '$lib/layouts/ShellMetadataSection.svelte';
-	import ShellSection from '$lib/layouts/ShellSection.svelte';
-	import NumberInput from '$lib/forms/NumberInput.svelte';
-	import Select from '$lib/forms/Select.svelte';
+	import * as Clients from '#lib/clients/index.ts';
+	import * as Region from '#lib/openapi/region/index.ts';
+	import * as RegionUtil from '#lib/regionutil/index.ts';
+	import FormPage from '#lib/layouts/FormPage.svelte';
+	import ShellMetadataSection from '#lib/layouts/ShellMetadataSection.svelte';
+	import ShellSection from '#lib/layouts/ShellSection.svelte';
+	import NumberInput from '#lib/forms/NumberInput.svelte';
+	import Select from '#lib/forms/Select.svelte';
 
 	let { data }: { data: PageData } = $props();
 	let metadataValid = $state(false);

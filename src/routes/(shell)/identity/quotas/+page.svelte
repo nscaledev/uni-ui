@@ -1,10 +1,10 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	let { data }: { data: PageData } = $props();
-	import * as Clients from '$lib/clients';
-	import FormPage from '$lib/layouts/FormPage.svelte';
-	import ShellSection from '$lib/layouts/ShellSection.svelte';
-	import NumberInput from '$lib/forms/NumberInput.svelte';
+	import * as Clients from '#lib/clients/index.ts';
+	import FormPage from '#lib/layouts/FormPage.svelte';
+	import ShellSection from '#lib/layouts/ShellSection.svelte';
+	import NumberInput from '#lib/forms/NumberInput.svelte';
 	let quotas = $state(structuredClone(data.quotas));
 	function submit() {
 		Clients.identity()

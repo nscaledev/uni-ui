@@ -1,14 +1,19 @@
-import { env } from '$env/dynamic/public';
+import {
+	PUBLIC_COMPUTE_HOST,
+	PUBLIC_IDENTITY_HOST,
+	PUBLIC_KUBERNETES_HOST,
+	PUBLIC_REGION_HOST
+} from '$app/env/public';
 
-import * as OIDC from '$lib/oidc';
-import type { InternalToken } from '$lib/oauth2';
+import * as OIDC from '#lib/oidc/index.ts';
+import type { InternalToken } from '#lib/oauth2/index.ts';
 
-import * as Kubernetes from '$lib/openapi/kubernetes';
-import * as Compute from '$lib/openapi/compute';
-import * as Identity from '$lib/openapi/identity';
-import * as Region from '$lib/openapi/region';
-import { token, removeCredentials } from '$lib/credentials';
-import { toaster } from '$lib/toaster';
+import * as Kubernetes from '#lib/openapi/kubernetes/index.ts';
+import * as Compute from '#lib/openapi/compute/index.ts';
+import * as Identity from '#lib/openapi/identity/index.ts';
+import * as Region from '#lib/openapi/region/index.ts';
+import { token, removeCredentials } from '#lib/credentials/index.ts';
+import { toaster } from '#lib/toaster.ts';
 
 import { ROOT_CONTEXT, defaultTextMapSetter, trace } from '@opentelemetry/api';
 import type { Span } from '@opentelemetry/api';
@@ -160,7 +165,7 @@ function aggregate<T extends object>(apis: object[]): T {
 // client gets a new initialized client with auth and any additional middlewares.
 export function kubernetes(fetchImpl?: typeof fetch): Kubernetes.DefaultApi {
 	const config = new Kubernetes.Configuration({
-		basePath: env.PUBLIC_KUBERNETES_HOST,
+		basePath: PUBLIC_KUBERNETES_HOST,
 		accessToken: async () => accessToken(fetchImpl),
 		middleware: [authenticationMiddleware(), traceContextMiddleware()],
 		fetchApi: fetchImpl
@@ -177,7 +182,7 @@ export function compute(
 	Compute.InstancesApi &
 	Compute.RegionsApi {
 	const config = new Compute.Configuration({
-		basePath: env.PUBLIC_COMPUTE_HOST,
+		basePath: PUBLIC_COMPUTE_HOST,
 		accessToken: async () => accessToken(fetchImpl),
 		middleware: [authenticationMiddleware(), traceContextMiddleware()],
 		fetchApi: fetchImpl
@@ -203,7 +208,7 @@ export function identity(
 	Identity.ServiceAccountsApi &
 	Identity.UsersApi {
 	const config = new Identity.Configuration({
-		basePath: env.PUBLIC_IDENTITY_HOST,
+		basePath: PUBLIC_IDENTITY_HOST,
 		accessToken: async () => accessToken(fetchImpl),
 		middleware: [authenticationMiddleware(), traceContextMiddleware()],
 		fetchApi: fetchImpl
@@ -234,7 +239,7 @@ export function region(
 	Region.VolumeClassesApi &
 	Region.VolumesApi {
 	const config = new Region.Configuration({
-		basePath: env.PUBLIC_REGION_HOST,
+		basePath: PUBLIC_REGION_HOST,
 		accessToken: async () => accessToken(fetchImpl),
 		middleware: [authenticationMiddleware(), traceContextMiddleware()],
 		fetchApi: fetchImpl
