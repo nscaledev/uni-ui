@@ -44,5 +44,6 @@ export const load: PageServerLoad = async ({ fetch, url, cookies }) => {
 	const target = new URL(oidc.authorization_endpoint);
 	target.search = query.toString();
 
-	redirect(307, target.toString());
+	// SvelteKit 3 blocks off-origin redirects unless allowlisted.
+	redirect(307, target.toString(), { external: [target.origin] });
 };
