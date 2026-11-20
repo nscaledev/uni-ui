@@ -4,7 +4,13 @@
 	import { onMount } from 'svelte';
 	import * as Clients from '#lib/clients/index.ts';
 	import * as Compute from '#lib/openapi/compute/index.ts';
-	import { selectableInstanceFlavors } from '#lib/instanceutil.ts';
+	import {
+		decodeUserData,
+		editableInstanceImageIDs,
+		imageIncompatible,
+		selectableInstanceFlavors,
+		userDataForUpdate
+	} from '#lib/instanceutil.ts';
 	import { startPolling } from '#lib/loadutil.ts';
 	import {
 		attachableVolumes,
@@ -21,6 +27,8 @@
 	import Switch from '#lib/forms/Switch.svelte';
 	import InputChips from '#lib/forms/InputChips.svelte';
 	import Textarea from '#lib/forms/Textarea.svelte';
+	import Button from '#lib/forms/Button.svelte';
+	import Icon from '#lib/primitives/Icon.svelte';
 	import { resolveChip } from '#lib/layouts/effectiveStatus.ts';
 	import Flavor from '#lib/Flavor.svelte';
 	import Image from '#lib/Image.svelte';
@@ -38,15 +46,6 @@
 	function initAllowedSourceAddresses() {
 		return data.instance.spec.networking?.allowedSourceAddresses || [];
 	}
-	function initUserData() {
-		const encoded = data.instance.spec.userData;
-		if (!encoded) return '';
-		try {
-			return decodeURIComponent(escape(atob(encoded)));
-		} catch {
-			return '';
-		}
-	}
 	function initVolumeStatuses(): Array<Compute.InstanceVolumeStatus> {
 		return data.instance.status.volumes ?? [];
 	}
@@ -59,7 +58,22 @@
 	let volumeStatuses: Array<Compute.InstanceVolumeStatus> = $state(initVolumeStatuses());
 	let publicIP = $state(initPublicIP());
 	let allowedSourceAddresses: Array<string> = $state(initAllowedSourceAddresses());
+	function initUserData() {
+		return decodeUserData(data.instance.spec.userData) ?? '';
+	}
+	let storedUserData = $derived(data.instance.spec.userData);
+	let userDataDecodable = $derived(decodeUserData(storedUserData) !== null);
 	let userData = $state(initUserData());
+	let replaceUserData = $state(false);
+	let updatedUserData = $derived(
+		userDataDecodable || replaceUserData
+			? userDataForUpdate(storedUserData, userData)
+			: storedUserData
+	);
+	let flavorChanged = $derived(resource.spec.flavorId !== data.instance.spec.flavorId);
+	let rebuildChanged = $derived(
+		resource.spec.imageId !== data.instance.spec.imageId || updatedUserData !== storedUserData
+	);
 	let flavors = $derived(selectableInstanceFlavors(data.flavors, data.images));
 	let selectedFlavor = $derived(
 		flavors.find((flavor) => flavor.metadata.id === resource.spec.flavorId)
@@ -90,22 +104,12 @@
 	function lookupFlavor(id: string): Compute.Flavor {
 		return flavors.find((x) => x.metadata.id == id) as Compute.Flavor;
 	}
-	let images = $derived(
-		selectedFlavor
-			? data.images.filter(
-					(x) =>
-						x.spec.sizeGiB <= selectedFlavor.spec.disk &&
-						x.spec.architecture === selectedFlavor.spec.architecture
-				)
-			: []
+	let imageIDs = $derived(
+		editableInstanceImageIDs(data.images, selectedFlavor, data.instance.spec.imageId)
 	);
-	function lookupImage(id: string): Compute.Image {
-		return images.find((x) => x.metadata.id == id) as Compute.Image;
-	}
-	$effect.pre(() => {
-		if (images.find((x) => x.metadata.id == resource.spec.imageId)) return;
-		resource.spec.imageId = images.length ? images[0].metadata.id : '';
-	});
+	let selectedImageIncompatible = $derived(
+		imageIncompatible(data.images, selectedFlavor, resource.spec.imageId)
+	);
 	const projectName = $derived(
 		data.projects.find((p) => p.metadata.id === data.instance.metadata.projectId)?.metadata.name ??
 			data.instance.metadata.projectId
@@ -117,7 +121,11 @@
 	);
 	let metadataValid = $state(false);
 	let valid = $derived(
-		metadataValid && !!selectedFlavor && !!resource.spec.imageId && volumeChangesValid
+		metadataValid &&
+			!!selectedFlavor &&
+			!!resource.spec.imageId &&
+			!selectedImageIncompatible &&
+			volumeChangesValid
 	);
 	function submit() {
 		resource.spec.networking = {};
@@ -128,7 +136,7 @@
 		if (publicIP) resource.spec.networking.publicIP = publicIP;
 		if (allowedSourceAddresses.length)
 			resource.spec.networking.allowedSourceAddresses = allowedSourceAddresses;
-		resource.spec.userData = userData ? btoa(unescape(encodeURIComponent(userData))) : undefined;
+		resource.spec.userData = updatedUserData;
 		if (!resource.spec.sshCertificateAuthorityId) delete resource.spec.sshCertificateAuthorityId;
 		Clients.compute()
 			.apiV2InstancesInstanceIDPut({ instanceID: resource.metadata.id, instanceUpdate: resource })
@@ -175,6 +183,24 @@
 			<dt>Name</dt>
 			<dd>{resource.metadata.name || '—'}</dd>
 		</dl>
+		{#if flavorChanged}
+			<p class="destructive-warning">
+				<Icon name="alert" size={16} />
+				<span
+					>Changing the flavor replaces the server. Its IP addresses are not kept and its root disk
+					contents are lost. The new server boots with the current user data.</span
+				>
+			</p>
+		{:else if rebuildChanged}
+			<p class="destructive-warning">
+				<Icon name="alert" size={16} />
+				<span
+					>Changing the image or user data rebuilds the server once it has booted at least once. Its
+					IP addresses and volumes are kept, but its root disk is recreated and its contents
+					destroyed.</span
+				>
+			</p>
+		{/if}
 	{/snippet}
 
 	{#snippet form()}
@@ -196,11 +222,18 @@
 			<RichSelect
 				value={resource.spec.imageId}
 				onValueChange={(e) => (resource.spec.imageId = e.value)}
-				options={images.map((x) => x.metadata.id)}
+				options={imageIDs}
 				label="Choose an instance image."
 				hint="Operating system image for the instance."
 			>
-				{#snippet contents(id: string)}<Image image={lookupImage(id)} />{/snippet}
+				{#snippet contents(id: string)}
+					{@const image = data.images.find((x) => x.metadata.id === id)}
+					{#if image}<Image {image} />{:else}<span class="mono">{id}</span>{/if}
+					{#if id === data.instance.spec.imageId}(current){/if}
+					{#if imageIncompatible(data.images, selectedFlavor, id)}
+						<span class="image-incompatible">(incompatible with selected flavor)</span>
+					{/if}
+				{/snippet}
 			</RichSelect>
 		</ShellSection>
 		<ShellSection title="Storage">
@@ -288,12 +321,33 @@
 			</Select>
 		</ShellSection>
 		<ShellSection title="User Data">
-			<Textarea
-				label="Cloud-init user data"
-				hint="Cloud-init configuration applied on first boot. Accepts a shell script, cloud-config YAML, or a MIME multipart archive."
-				placeholder="#cloud-config"
-				bind:value={userData}
-			/>
+			{#if userDataDecodable || replaceUserData}
+				<Textarea
+					label="Cloud-init user data"
+					hint="Cloud-init configuration applied at boot. Accepts a shell script, cloud-config YAML, or a MIME multipart archive."
+					placeholder="#cloud-config"
+					bind:value={userData}
+				/>
+				{#if storedUserData && !userData}
+					<p class="user-data-note">
+						User data cannot be removed here. The existing user data will be kept.
+					</p>
+				{/if}
+			{/if}
+			{#if !userDataDecodable}
+				<div class="user-data-opaque">
+					<p>
+						{replaceUserData
+							? 'The existing user data will be replaced.'
+							: 'This instance has user data that is not text (for example, gzip-compressed), so it cannot be shown or edited here. It will be kept unchanged.'}
+					</p>
+					<Button
+						icon={replaceUserData ? 'x' : 'edit'}
+						label={replaceUserData ? 'Keep existing user data' : 'Replace user data'}
+						clicked={() => (replaceUserData = !replaceUserData)}
+					/>
+				</div>
+			{/if}
 		</ShellSection>
 	{/snippet}
 </FormPage>
@@ -303,7 +357,29 @@
 		margin-top: 16px;
 	}
 
-	.volume-incompatible {
+	.volume-incompatible,
+	.image-incompatible {
 		color: var(--danger);
+	}
+
+	.destructive-warning {
+		display: flex;
+		gap: 8px;
+		margin: 16px 0 0;
+		color: var(--warn);
+		font-size: 12px;
+	}
+
+	.user-data-note {
+		margin: 8px 0 0;
+		color: var(--warn);
+		font-size: 12px;
+	}
+
+	.user-data-opaque {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 8px;
 	}
 </style>
