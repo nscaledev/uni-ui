@@ -324,21 +324,19 @@
 			{#if userDataDecodable || replaceUserData}
 				<Textarea
 					label="Cloud-init user data"
-					hint="Cloud-init configuration applied at boot. Accepts a shell script, cloud-config YAML, or a MIME multipart archive."
+					hint="Cloud-init configuration applied at boot. Accepts a shell script, cloud-config YAML, or a MIME multipart archive. Leave empty to remove it."
 					placeholder="#cloud-config"
 					bind:value={userData}
 				/>
 				{#if storedUserData && !userData}
-					<p class="user-data-note">
-						User data cannot be removed here. The existing user data will be kept.
-					</p>
+					<p class="user-data-note">The existing user data will be removed.</p>
 				{/if}
 			{/if}
 			{#if !userDataDecodable}
 				<div class="user-data-opaque">
 					<p>
 						{replaceUserData
-							? 'The existing user data will be replaced.'
+							? 'The existing user data will be replaced by the text above, or removed if it is left empty.'
 							: 'This instance has user data that is not text (for example, gzip-compressed), so it cannot be shown or edited here. It will be kept unchanged.'}
 					</p>
 					<Button
