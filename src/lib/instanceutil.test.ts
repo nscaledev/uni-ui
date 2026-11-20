@@ -76,9 +76,9 @@ describe('userDataForUpdate', () => {
 		expect(userDataForUpdate(gzip, '#cloud-config\n')).toBe(btoa('#cloud-config\n'));
 	});
 
-	it('keeps stored data when the text is emptied', () => {
-		expect(userDataForUpdate(stored, '')).toBe(stored);
-		expect(userDataForUpdate(gzip, '')).toBe(gzip);
+	it('clears stored data when the text is emptied', () => {
+		expect(userDataForUpdate(stored, '')).toBe('');
+		expect(userDataForUpdate(gzip, '')).toBe('');
 	});
 
 	it('omits user data when there is none', () => {
