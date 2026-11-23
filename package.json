@@ -70,5 +70,10 @@
 		"svelte-portal": "^2.2.1",
 		"unique-names-generator": "^4.7.1",
 		"uuid": "^14.0.0"
+	},
+	"overrides": {
+		"runed": {
+			"@sveltejs/kit": "$@sveltejs/kit"
+		}
 	}
 }
