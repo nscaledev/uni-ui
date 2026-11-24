@@ -58,11 +58,11 @@ export function decodeUserData(encoded: string | undefined): string | null {
 // Chooses userData for an instance update. The stored value is always resent
 // rather than omitted, because older Compute versions clear omitted user data.
 // Unchanged text resends the stored bytes, as re-encoding may not reproduce
-// them. Null or empty text keeps the stored value.
+// them. Null text keeps the stored value; empty text clears it with "".
 export function userDataForUpdate(
 	stored: string | undefined,
 	text: string | null
 ): string | undefined {
-	if (!text || text === decodeUserData(stored)) return stored;
-	return btoa(unescape(encodeURIComponent(text)));
+	if (text === null || text === decodeUserData(stored)) return stored;
+	return text ? btoa(unescape(encodeURIComponent(text))) : '';
 }
