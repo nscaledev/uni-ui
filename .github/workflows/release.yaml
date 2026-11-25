@@ -70,6 +70,10 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up QEMU
+        # The arm64 image builds under emulation; BuildKit's bundled emulator
+        # intermittently crashes or hangs during npm install.
+        uses: docker/setup-qemu-action@v4
       - name: Build and Push Images
         run: make images -e RELEASE=1 VERSION=${{ github.ref_name }}
       - name: Configure Git
